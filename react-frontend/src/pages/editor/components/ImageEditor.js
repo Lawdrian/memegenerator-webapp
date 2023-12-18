@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Stage, Layer, Image } from 'react-konva';
 import { Grid } from '@mui/material';
 import { useCallback } from 'react';
+import imageCompression from 'browser-image-compression';
+
 import EditableTextField from './EditableTextField';
 import TextPropertiesForm from './TextPropertiesForm';
 import ImageEditorButton from '../components/ImageEditorButton';
+import ImageEditorFooter from '../components/ImageEditorFooter';
 
 function ImageEditor({ imageUrl }) {
   const [textFields, setTextFields] = useState([]);
@@ -108,20 +111,74 @@ function ImageEditor({ imageUrl }) {
     setSelectedTextFieldProps(null);
   };
 
-  const handleDownload = () => {
+  const clearTextFields = () => {
+    setTextFields([]);
+    setSelectedTextFieldIndex(null);
+    setSelectedTextFieldProps(null);
+  };
+
+  /*
+  const handleDownload = async () => {
+    
     const transformers = stageRef.current.find('Transformer');
     transformers.forEach(transformer => transformer.hide());
   
-    const dataUrl = stageRef.current.toDataURL();
+    const dataUrl = stageRef.current.toDataURL({mimeType: 'image/png', quality: 1});
   
     transformers.forEach(transformer => transformer.show());
-  
+
     const link = document.createElement('a');
     link.download = 'canvas.png';
     link.href = dataUrl;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+  */
+
+  // download the image with the given resolution
+  const handleDownload = async (targetFileSize) => {
+    
+    const transformers = stageRef.current.find('Transformer');
+    transformers.forEach(transformer => transformer.hide());
+  
+    const dataUrl = stageRef.current.toDataURL({mimeType: 'image/png', quality: 1});
+  
+    transformers.forEach(transformer => transformer.show());
+  
+    // Convert data URL to file
+    const imageFile = await fetch(dataUrl)
+      .then(res => res.blob())
+      .then(blob => new File([blob], 'canvas.png', { type: 'image/png' }));
+  
+    // Compress the image file
+    const options = {
+      maxSizeMB: targetFileSize || 1, // (max file size in MB)
+      maxWidthOrHeight: 1920, // this will also reduce the image dimensions
+      useWebWorker: true
+    };
+    console.log('compressing image');
+    const compressedFile = await imageCompression(imageFile, options);
+    console.log('done compressing');
+
+    if(compressedFile.size / 1048576 > targetFileSize){
+      console.error('Cannot compress file this much');
+    }
+
+    // Convert compressed file to data URL
+    const reader = new FileReader();
+    reader.readAsDataURL(compressedFile);
+    reader.onloadend = () => {
+      const compressedDataUrl = reader.result;
+  
+      // Download the compressed image
+      const link = document.createElement('a');
+      link.download = 'meme.png';
+      link.href = compressedDataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
   };
 
   return (
@@ -135,8 +192,13 @@ function ImageEditor({ imageUrl }) {
           />
         )
         : (
-          <Grid item style={{ padding: '10px' }}>
+          <Grid container item spacing={2} style={{ padding: '10px' }}>
+            <Grid item>
             <ImageEditorButton onClick={addTextField}>Add Text Field</ImageEditorButton>
+            </Grid>
+            <Grid item>
+            <ImageEditorButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorButton>
+            </Grid>
           </Grid>
         )
         }
@@ -161,7 +223,7 @@ function ImageEditor({ imageUrl }) {
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorButton onClick={handleDownload}>Download Image</ImageEditorButton>
+        <ImageEditorFooter handleDownload={(fileSize) => handleDownload(fileSize)} />
       </Grid>
     </Grid>
   );

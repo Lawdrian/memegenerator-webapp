@@ -1,24 +1,15 @@
 import logo from './logo.svg';
 import './App.css';
+import ImageEditor from './pages/editor/components/ImageEditor';
+import EditorContainer from './pages/editor/container/EditorContainer';
+import Editor from './pages/editor/components/Editor';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <EditorContainer/>
     </div>
+
   );
 }
 

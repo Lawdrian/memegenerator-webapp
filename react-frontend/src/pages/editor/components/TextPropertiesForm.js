@@ -9,7 +9,7 @@ import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 
-import ImageEditorButton from '../components/ImageEditorButton';
+import ImageEditorButton from './ImageEditorButton';
 // Define your font families
 const fontFamilies = ['Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Verdana', 'Trebuchet MS'];
 

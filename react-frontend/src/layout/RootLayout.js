@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom"
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import { AppBar, Button, createTheme, ThemeProvider, Toolbar, Typography } from "@mui/material"
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
 const theme = createTheme({
@@ -33,8 +32,8 @@ export default function RootLayout() {
                     <Button color="inherit" component={NavLink} to="/editor">
                         Editor
                     </Button>
-                    <Button color="inherit" component={NavLink} to="/profile">
-                        Profile
+                    <Button color="inherit" component={NavLink} to="/account">
+                        Account
                     </Button>
                 </Toolbar>
             </AppBar>

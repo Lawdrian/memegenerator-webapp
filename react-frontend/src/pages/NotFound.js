@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Typography, Container, Button } from '@material-ui/core';
+import { Button, Container, Typography } from '@mui/material';
 
 export default function NotFound() {
     return (

@@ -7,35 +7,12 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import store from './store'
 import { Provider } from 'react-redux'
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-
-import Account from './pages/account/account';
-import NotFoundComponent from './pages/NotFoundPage';
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-  },
-  {
-    path: "/account",
-    element: <Account />,
-  },
-  {
-    path:"*",
-    element: <NotFoundComponent />
-  },
-]);
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId="600481405386-ildo9fnlj43mdctp5qcp1t65ssljrcgk.apps.googleusercontent.com">
     <React.StrictMode>
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <App />
       </Provider>
     </React.StrictMode>
   </GoogleOAuthProvider>

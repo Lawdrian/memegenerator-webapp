@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 
 //Components
 import NaviBar from "../../components/navbar";
-import UploadTemplate from '../../components/UploadTemplate';
+
 //Redux - States
 import { setUser } from '../../slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
 import { useSelector, useDispatch } from 'react-redux';
@@ -36,7 +36,6 @@ export default function MyAccount() {
                     </Button>
                 </Grid>
             </Grid>
-            <UploadTemplate/>
         </div>
     );
 }; 

@@ -6,11 +6,11 @@ const theme = createTheme({
     palette: {
         primary: {
             main: '#556cd6', // Hauptfarbe
+            light: '#FFFFFF',
         },
         secondary: {
             main: '#19857b', // Sekundärfarbe
         },
-
     },
     typography: {
         // Schriftart, Schriftgröße etc.

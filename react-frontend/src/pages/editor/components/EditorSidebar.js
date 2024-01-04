@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Grid, Select, MenuItem, ImageListItem, ImageList, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 const EditorSidebar = (props) => {
-  const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage} = {...props}
+  const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage, renderUploadTemplatePage} = {...props}
   const [selectedType, setSelectedType] = useState('Image');
 
   const handleTypeChange = (event) => {
@@ -16,7 +16,7 @@ const EditorSidebar = (props) => {
 
 
   return (
-    <Grid container direction="column" style={{height: '100vh', overflow: 'auto'}}>
+    <Grid container direction="column" justifyContent="flex-start" style={{height: '100vh', overflow: 'auto'}}>
       <Grid item xs={1}>
         <ToggleButtonGroup
           value={selectedType}
@@ -52,12 +52,12 @@ const EditorSidebar = (props) => {
           ))}
         </ImageList>
       </Grid>
-      <Grid  container item direction='column' xs={2} spacing={2} style={{paddingTop: '2rem'}}>
+      <Grid  container item direction='column' xs={2} spacing={2} style={{ alignItems: 'center', paddingTop: '2rem'}}>
         <Grid item>
           <Button variant="contained" color="primary" onClick={renderCreateCanvasPage}>Create Canvas</Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="secondary">Upload Template</Button>
+          <Button variant="contained" color="secondary" onClick={renderUploadTemplatePage}>Upload Template</Button>
         </Grid>
       </Grid>
     </Grid>

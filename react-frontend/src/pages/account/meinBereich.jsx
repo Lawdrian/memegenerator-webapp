@@ -53,7 +53,6 @@ export default function MyAccount() {
                     {showAllMemes && <AllMemes />}
                 </Grid>
             </Grid>
-
         </div>
     );
 }; 

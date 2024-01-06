@@ -32,6 +32,9 @@ export default function RootLayout() {
                     <Button color="inherit" component={NavLink} to="/editor">
                         Editor
                     </Button>
+                    <Button color="inherit" component={NavLink} to="/canvas">
+                        Canvas
+                    </Button>
                     <Button color="inherit" component={NavLink} to="/account">
                         Account
                     </Button>

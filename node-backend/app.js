@@ -15,7 +15,15 @@ const GoogleUser = mongoose.model("GoogleUser");
 const MemeModel = require('./mongoDB/meme.model.js');
 const Meme = mongoose.model("Meme"); //MemeModel
 const TemplatesModel = require('./mongoDB/template.model.js');
-const Templates = mongoose.model("Template");
+const Template = mongoose.model("Template");
+//UPLOAD
+const multer = require('multer');
+
+
+
+//Token 
+const jwt = require('jsonwebtoken');//Token
+const secretKey = crypto.randomBytes(16).toString('hex')  //Symmetrischer Schlüssel für Token mit Länge 256 Bits (32 bytes)
 
 //LOGIN + Registration
 const argon2 = require('argon2');
@@ -60,17 +68,27 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
 });
 
 //--------------------TAB FILE UpLOAD--------------------
-app.post('/upload', verifyToken,(req, res) => {
+// TODO have to add verifyToken later on
+app.post('/save-template', async (req, res) => {
   console.log("UPLOAD");
-  const { base64 } = req.body;
-  Templates.create({ image: base64 })
-  res.send({ Status: "ok" })
-})
-
-// GET-Request für alle Bilder
-app.get("/get-image", async (req, res) => {
+  
+  const {base64} = req.body; //base64 aus dem Request-body extrahieren
+  console.log(base64);
+  console.log(req.body)
   try {
-    await Templates.find({})
+    // Use the model to create a new document
+    await Template.create({name: "templatename", type: "Image", content: base64});
+    res.send({Status:"ok"})//Bild in der Datenbank speichern
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({Status:"error", Message: "Error saving image to database"});
+  }
+});
+
+// GET-Request to retrieve all templates from the database
+app.get("/get-templates", async (req, res) => {
+  try {
+    await Template.find({}, 'name type content')
     .then(data => {
       res.send({status: "ok", data:data})
     })

@@ -8,7 +8,6 @@ import { fetchImgflipTemplates } from "../../../../api/templates";
 
 function ThirdPartyServiceTab({template, setTemplate}) {
 
-  const token = useSelector((state) => state.user.token);
   const [templates, setTemplates] = useState([]); // Setze den Initialwert auf null
   const [selectedTemplateId, setSelectedTemplateId] = useState(null);
 

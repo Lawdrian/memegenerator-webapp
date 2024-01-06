@@ -12,8 +12,8 @@ const { default: mongoose } = require('mongoose');
 //UPLOAD
 const multer = require('multer');
 
-const ImageModel = require('./image.model'); //ImageModel
-const Images = mongoose.model("Template"); //ImageModel
+const ImageModel = require('./template.model'); //ImageModel
+const Template = mongoose.model("Template"); //ImageModel
 
 //Token 
 const jwt = require('jsonwebtoken');//Token
@@ -81,8 +81,11 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
 
 
 //--------------------TAB FILE UpLOAD--------------------
-app.post('/upload', (req, res) => {
+app.post('/save-template', async (req, res) => {
   console.log("UPLOAD");
+  
+  // Deactivate authentification for testing
+  /*
   const token = req.headers.authorization.split(' ')[1]; //Token aus dem autorisierungsheader extrahieren
 
   jwt.verify(token, secretKey, (err) => { //Token verifizieren
@@ -94,12 +97,24 @@ app.post('/upload', (req, res) => {
     res.send({Status:"ok"})//Bild in der Datenbank speichern
   };
 });
+  */
+  const {base64} = req.body; //base64 aus dem Request-body extrahieren
+  console.log(base64);
+  console.log(req.body)
+  try {
+    // Use the model to create a new document
+    await Template.create({name: "templatename", type: "Image", content: base64});
+    res.send({Status:"ok"})//Bild in der Datenbank speichern
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({Status:"error", Message: "Error saving image to database"});
+  }
 });
 
-// GET-Request für alle Bilder
-app.get("/get-image", async (req, res) => {
+// GET-Request to retrieve all templates from the database
+app.get("/get-templates", async (req, res) => {
   try {
-    await Images.find({})
+    await Template.find({}, 'name type content')
     .then(data => {
       res.send({status: "ok", data:data})
     })

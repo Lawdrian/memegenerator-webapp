@@ -8,24 +8,40 @@ import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
+import { useSelector } from 'react-redux';
 import ImageUrlTab from './ImageUrlTab';
 import FileUploadTab from './FileUploadTab';
 import CameraUploadTab from './CameraUploadTab';
 import ThirdPartyServiceTab from './ThirdPartyServiceTab';
 import HandDrawnTab from './HandDrawnTab';
+import { saveTemplate } from '../../../../api/templates';
 
 const UploadTemplateDialog = ({ open, setOpen }) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [template, setTemplate] = useState(null); 
     const theme = useTheme();
+    const statetemplates = useSelector((state) => state.template.templates);
+    const token = useSelector((state) => state.user.token);
 
     const handleChangeTab = (event, newTab) => {
         setSelectedTab(newTab);
     };
 
     const handleClose = () => {
-        console.log('Close clicked');
+        setOpen(false);
     };
+
+    const handleTemplateUpload = () => {
+      try {
+        console.log("template")
+        console.log(statetemplates)
+        saveTemplate(template, token);
+        console.log("Template uploaded successfully");
+      }
+      catch (error) {
+        console.log(error);
+      }
+    }
 
     return (
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
@@ -58,7 +74,8 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
                     <Button
                   variant="contained"
                   color="success"
-                  //disabled={!image} // Disable the button if no image has been uploaded
+                  disabled={!template}
+                  onClick={handleTemplateUpload}
                 >
                   Upload
                 </Button>

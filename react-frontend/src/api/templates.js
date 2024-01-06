@@ -1,6 +1,5 @@
 // This file contains the functions that are used to upload and retrieve meme templates from the database
 
-
 // konvert to a base64-String
 export function convertToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -28,21 +27,24 @@ export async function fetchImgflipTemplates() {
   return data.data.memes || [];
 }
 
-/*
 
-export function retrieveTemplate() {
-  fetch("http://localhost:3001/get-image", {
+export async function getTemplates() {
+  const response = await fetch("http://localhost:3001/get-templates", {
     method: "GET",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.group(data);
-      setAllImage(data.data || []);  // setzt die Daten aus der Datenbank als state wenn nicht leer
-    });
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  console.log(data);
+  return data.data || [];
 }
 
-export function saveTemplate() {
-  fetch("http://localhost:3001/upload", {
+
+export function saveTemplate(template, token) {
+  fetch("http://localhost:3001/save-template", {
     method: "POST",
     crossDomain: true,
     headers: {
@@ -52,7 +54,7 @@ export function saveTemplate() {
       "Authorization": "Bearer " + token, // Setzt den Token als Header
     },
     body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-      base64: image                      // Setzt den base64-codierten String als Body
+      base64: template                      // Setzt den base64-codierten String als Body
     })
   })
     .then((res) => res.json())
@@ -62,4 +64,3 @@ export function saveTemplate() {
     )
     .catch((error) => console.error('Error saving template to database:', error));
 }
-*/

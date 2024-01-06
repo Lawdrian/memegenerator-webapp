@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Grid } from '@mui/material';
 
 
@@ -13,34 +13,62 @@ import image7 from '../assets/cat6.jpg';
 import image8 from '../assets/cat6.jpg';
 import image9 from '../assets/cat6.jpg';
 import Editor from '../components/Editor';
+import { useDispatch } from 'react-redux';
+
+import { getTemplates } from '../../../api/templates';
+import { setTemplates } from '../../../slices/templateSlice';
+import { useSelector } from 'react-redux';
 
 
 const EditorContainer = () => {
 
     // TODO define correct template structure
-    const images = [image1, image2, image3, image4, image5, image6, image7, image8, image9]
-    const templateProps =  images.map((image, index) => {
+    /*
+    const imagess = [image1, image2, image3, image4, image5, image6, image7, image8, image9]
+    const templateProps =  imagess.map((image, index) => {
       return {
         name: `template${index+1}`,
         type: 'Image',
         content: image,
       }
     })
+    */
+
+    
+    const storeTemplates = useSelector((state) => state.template.templates);
+    const [selectedTemplate, setSelectedTemplate] = useState(null)
+    const dispatch = useDispatch()
 
 
-    // TODO connect to Redux store
+    useEffect(() => {
+      // initiate template fetch from backend into store
+      loadTemplates()
+    }, [])
 
-    // TODO initiate template fetch from backend into store
+    /*
+    useEffect(() => {
+      setSelectedTemplate(storeTemplates[0])
+    }, [storeTemplates])
+    */
+    const loadTemplates = async () => {
+      console.log("loadTemplates")
+      const backendTemplates = await getTemplates()
 
-    // TODO fetch template from store
-    const [templates, setTemplates] = useState(templateProps)
-    const [selectedTemplate, setSelectedTemplate] = useState(templates[0])
-
-
+      // Map backendTemplates to match the structure of your templates object
+      const templates = backendTemplates.map(template => ({
+        id: template._id,
+        name: template.name,
+        type: template.type,
+        content: template.content,
+      }));
+      //setTemplates(backendTemplates)
+      dispatch(setTemplates({ templates: templates }))
+      console.log("Templates loaded into frontend")
+    }
 
     return (
       <Editor 
-        templates={templates} 
+        templates={storeTemplates} 
         selectedTemplate={selectedTemplate} 
         setSelectedTemplate={setSelectedTemplate}
       />

@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import EditorContainer from './pages/editor/container/EditorContainer';
 import Account from './pages/account/Account';
 import NotFound from './pages/NotFound';
+import CanvasCreator from './pages/CanvasCreator';
 
 //layouts
 import RootLayout from './layout/RootLayout';
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<RootLayout/>}>
       <Route index element={<Home />} />
       <Route path="editor" element={<EditorContainer />} />
+      <Route path="canvas" element={<CanvasCreator />} />
       <Route path="account" element={<Account/>} />
       <Route path="*" element={<NotFound />} />
     </Route>

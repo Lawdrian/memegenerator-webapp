@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from 'react-redux';
 import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
 
-import Webcam from "react-webcam"; // FOR CAMERA FUNCTION: Importiert die Webcam-Komponente
+import Webcam from "react-webcam"; // FOR CAMERA FUNCTION: import the webcam component
 import React from "react";
 import { Grid } from "@mui/material";
 
 function CameraUploadTab() {
 
   const token = useSelector((state) => state.user.token);
-  const [image, setImage] = useState(null); // Setze den Initialwert auf null
-  const [allImage, setAllImage] = useState([]); // Setze den Initialwert auf ein leeres Array
+  const [image, setImage] = useState(null); 
+  const [setAllImage] = useState([]); 
 
-  const webcamRef = React.useRef(null); //FOR CAMERA FUNCTION: Referenz auf die Webcam
+  const webcamRef = React.useRef(null); //FOR CAMERA FUNCTION: referenze to the webcam
 
   function capture(){
-    const imageSrc = webcamRef.current.getScreenshot(); // FOR CAMERA FUNCTION: Holt sich das Bild von der Webcam
-    setImage(imageSrc); // Setzt das Bild als state
-    setAllImage((prevImages) => [...prevImages, imageSrc]); // Fügt das Bild dem Array hinzu
+    const imageSrc = webcamRef.current.getScreenshot(); // FOR CAMERA FUNCTION: get the image out of webcam
+    setImage(imageSrc); 
+    setAllImage((prevImages) => [...prevImages, imageSrc]); 
   }
 
   function uploadImage() {
@@ -28,11 +28,11 @@ function CameraUploadTab() {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token, // Setzt den Token als Header
+        "Access-Control-Allow-Origin": "*",  
+        "Authorization": "Bearer " + token, 
       },
-      body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-        base64: image                      // Setzt den base64-codierten String als Body
+      body: JSON.stringify({               
+        base64: image               
       })
     })
       .then((res) => res.json())
@@ -81,7 +81,7 @@ function CameraUploadTab() {
                 </Grid>
 
 
-                {image && ( // Wenn ein Bild vorhanden ist, zeige es an (Kurzschlussauswertung) 
+                {image && (  
                     <div>
                         <h2>Preview:</h2>
                         <img src={image} alt="captured" />

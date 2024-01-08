@@ -35,10 +35,10 @@ export default function MyMemes() {
 
 
     function covertTobase64(e) {
-        var reader = new FileReader();            // Web-API: ermöglicht asynchron Dateien vom Client zu lesen
-        reader.readAsDataURL(e.target.files[0]);  // liest die Datei als URL
-        reader.onload = function () {             // onload: wird aufgerufen, wenn  Lesevorgang abgeschlossen 
-          setMeme(reader.result);                // setzt den base64-codierten String als state
+        var reader = new FileReader();            // Web-API: makes it possible to read aynchronous data from client 
+        reader.readAsDataURL(e.target.files[0]);  
+        reader.onload = function () {             // onload: called when reading finished  
+          setMeme(reader.result);                // set  base64-decoded String as state
         };
         reader.onerror = error => {
           console.log("Error: ", error);
@@ -53,10 +53,10 @@ export default function MyMemes() {
             "Content-Type": "application/json",
             Accept: "application/json",        
             "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-            "Authorization": "Bearer " + token, // Setzt den Token als Header
+            "Authorization": "Bearer " + token, // set token as header
           },
-          body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-            base64: meme                      // Setzt den base64-codierten String als Body
+          body: JSON.stringify({                // converts base64-decoded String in JSON
+            base64: meme                     
           })
         })
           .then((res) => res.json())
@@ -147,29 +147,3 @@ export default function MyMemes() {
         </Grid>
     )
 }
-
-
-
-
-// CREATE MEMES
-/*
-
-    fetch("http://localhost:3001/create-meme", {
-      method: "POST",
-      headers:
-      {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token,
-      },
-      body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-        base64: image                      // Setzt den base64-codierten String als Body
-      })    
-    })
-
-
-
-
-*/
-

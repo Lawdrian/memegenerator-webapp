@@ -6,15 +6,15 @@ import Button from '@mui/material/Button';
 function FileUploadTab() {
 
   const token = useSelector((state) => state.user.token);
-  const [image, setImage] = useState(null); // Setze den Initialwert auf null
-  const [allImage, setAllImage] = useState([]); // Setze den Initialwert auf ein leeres Array
+  const [image, setImage] = useState(null); 
+  const [allImage, setAllImage] = useState([]);
 
-  //Konvertierung in base64-codierten String
+
   function covertTobase64(e) {
-    var reader = new FileReader();            // Web-API: ermöglicht asynchron Dateien vom Client zu lesen
-    reader.readAsDataURL(e.target.files[0]);  // liest die Datei als URL
-    reader.onload = function () {             // onload: wird aufgerufen, wenn  Lesevorgang abgeschlossen 
-      setImage(reader.result);                // setzt den base64-codierten String als state
+    var reader = new FileReader();          
+    reader.readAsDataURL(e.target.files[0]);  
+    reader.onload = function () {             
+      setImage(reader.result);                
     };
     reader.onerror = error => {
       console.log("Error: ", error);
@@ -28,7 +28,7 @@ function FileUploadTab() {
       .then((res) => res.json())
       .then((data) => {
         console.group(data);
-        setAllImage(data.data || []);  // setzt die Daten aus der Datenbank als state wenn nicht leer
+        setAllImage(data.data || []); 
       });
     }
 
@@ -39,11 +39,11 @@ function FileUploadTab() {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token, // Setzt den Token als Header
+        "Access-Control-Allow-Origin": "*",  
+        "Authorization": "Bearer " + token,
       },
-      body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-        base64: image                      // Setzt den base64-codierten String als Body
+      body: JSON.stringify({               
+        base64: image                     
       })
     })
       .then((res) => res.json())

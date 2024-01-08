@@ -8,8 +8,8 @@ import Button from '@mui/material/Button';
 
 function ImageUrlTab() {
   const token = useSelector((state) => state.user.token); 
-  const [inputUrl, setInputUrl] = useState(""); // Setze den Initialwert auf einen leeren String
-  const [allImage, setAllImage] = useState([]); // Setze den Initialwert auf ein leeres Array
+  const [inputUrl, setInputUrl] = useState(""); 
+  const [allImage, setAllImage] = useState([]); 
   
   function handleUrlChange(e) {
     setInputUrl(e.target.value);
@@ -23,11 +23,11 @@ function ImageUrlTab() {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token, // Setzt den Token als Header
+        "Access-Control-Allow-Origin": "*",  
+        "Authorization": "Bearer " + token, 
       },
-      body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-        base64: inputUrl                      // Setzt den base64-codierten String als Body
+      body: JSON.stringify({                
+        base64: inputUrl                   
       })
     })
       .then((res) => res.json())
@@ -46,7 +46,7 @@ function ImageUrlTab() {
       .then((res) => res.json())
       .then((data) => {
         console.group(data);
-        setAllImage(data.data || []);  // setzt die Daten aus der Datenbank als state wenn nicht leer
+        setAllImage(data.data || []); 
       });
   }
 
@@ -92,7 +92,7 @@ function ImageUrlTab() {
                 padding: "20px",
                 borderRadius: "8px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                marginBottom: "20px", // Beispiel für mehr Abstand nach unten
+                marginBottom: "20px", 
               }}
             />
           )

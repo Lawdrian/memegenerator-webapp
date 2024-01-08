@@ -6,13 +6,12 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
 //Components
-import NaviBar from "../../components/navbar";
 import UploadTemplatePopup from '../../components/UploadTemplatePopup';
 import MyMemes from '../../components/MyMemes';
 import AllMemes from '../../components/AllMemes';
 
 //Redux - States
-import { setUser } from '../../slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
+import { setUser } from '../../slices/userSlice'; 
 import { useSelector, useDispatch } from 'react-redux';
 
 

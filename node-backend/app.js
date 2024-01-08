@@ -17,9 +17,8 @@ const Meme = mongoose.model("Meme"); //MemeModel
 const TemplatesModel = require('./mongoDB/template.model.js');
 const Templates = mongoose.model("Template");
 
-
 //LOGIN + Registration
-const argon2 = require('argon2'); //Passwort-Sicherheit
+const argon2 = require('argon2');
 
 // ##### IMPORTANT
 // ### Your backend project has to switch the MongoDB port like this
@@ -40,7 +39,6 @@ app.use(cors()); // allow cross origin requests
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
@@ -48,10 +46,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-//Token
 const jwt = require('jsonwebtoken');
 const { verifyToken, secretKey } = require('./middlewares.js');
-
 
 app.use(function(req,res,next){  req.db = db;
   next();
@@ -66,10 +62,10 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
 //--------------------TAB FILE UpLOAD--------------------
 app.post('/upload', verifyToken,(req, res) => {
   console.log("UPLOAD");
-  const { base64 } = req.body; //base64 aus dem Request-body extrahieren
+  const { base64 } = req.body;
   Templates.create({ image: base64 })
-  res.send({ Status: "ok" })//Bild in der Datenbank speichern
-});
+  res.send({ Status: "ok" })
+})
 
 // GET-Request für alle Bilder
 app.get("/get-image", async (req, res) => {
@@ -86,18 +82,18 @@ app.get("/get-image", async (req, res) => {
 ///////////////////////SIGNUP_SIGNIN///////////////////////////
 app.post('/registration', async (req, res) => {
   try {
-    const { email, password } = req.body; //Registrationsdaten aus Request-body extrahieren
+    const { email, password } = req.body; //exrtact registraion-data out of request-body 
 
-    const existingUser = await User.findOne({ email }); //email bereits vorhanden?
+    const existingUser = await User.findOne({ email }); 
     if (existingUser) {
       return res.status(409).json({ error: 'Email already exists' });
     }
 
-    const hashedPassword = await argon2.hash(password); //Passwort hashen durch argon2
+    const hashedPassword = await argon2.hash(password); //hasing pw with argon2
 
     const newUser = await User.create({ email, password:hashedPassword });
 
-    res.json({ success: true, user: newUser }); //Response: Success!
+    res.json({ success: true, user: newUser }); 
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -108,7 +104,7 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }); //user mit email finden
+    const user = await User.findOne({ email }); 
 
     if (!user) {    // Check if the user exists
       return res.status(401).json({ error: 'Email not found ' });
@@ -131,15 +127,13 @@ app.post('/api-login', async (req, res) => {
     const { googleId } = req.body;
   
     try {
-      // Hier kannst du die Google ID verwenden und entsprechend verarbeiten
       console.log('Received API-Login ID:', googleId);
   
       const user = await User.findOne({ googleId });
       const token = jwt.sign({ googleId }, secretKey, { expiresIn: '1h' });
 
       if (!user) {
-        // Benutzer existiert nicht, daher erstellen
-        const newUser = await GoogleUser.create({ googleId }); // Verwende 'googleId' für die Konsistenz
+        const newUser = await GoogleUser.create({ googleId }); 
   
         res.json({
             success: 'User successfully created in the database && logged in',
@@ -147,7 +141,6 @@ app.post('/api-login', async (req, res) => {
             token: token
           });      
         } else {
-        // Benutzer existiert bereits
         res.json({ success: 'Success API-authentification - logged in', token:token });
       }
     } catch (error) {
@@ -156,14 +149,14 @@ app.post('/api-login', async (req, res) => {
     }
   });
   
-  
+///////////////////////SIGNUP_SIGNIN END///////////////////////////
+ 
 
 
 ///////////////////////////////////////////MEMES///////////////////////////////////////////
-
 app.post('/create-meme', verifyToken, async (req, res) => {
   console.log("CREATE MEME");
-  const { base64 } = req.body; //base64 aus dem Request-body extrahieren
+  const { base64 } = req.body; 
   const { decodedJwt } = res.locals;
   
   const user = await User.findOne({ _id: decodedJwt.userId });
@@ -174,7 +167,7 @@ app.post('/create-meme', verifyToken, async (req, res) => {
     return res.status(500).json({ error: 'Missing Meme' });
   }
   Meme.create({ image: base64, creator: user._id })
-  res.send({ Status: "ok" })//Bild in der Datenbank speichern
+  res.send({ Status: "ok" })
 })
 
 // GET-Request for self-created memes
@@ -193,8 +186,8 @@ app.get('/get-my-meme', verifyToken, async (req, res) => {
 // GET-Request for all memes
 app.get('/get-all-memes', async (req, res) => {
   console.log("GET ALL MEMES");
-  const memes = await Meme.find({private: false}) //TODO Privacy false checken
-  .populate('comments.user', 'email') // auflösen der Referenz und nur die 'email'-Eigenschaft des usesr wird zurückgegeben
+  const memes = await Meme.find({private: false}) 
+  .populate('comments.user', 'email') // resolve the reference and only the 'email' property of the user is returned
   res.json({ success: 'Success', memes: memes });
 })
 
@@ -236,7 +229,7 @@ app.put('/meme-vote', verifyToken, async(req,res) => {
   );
 
   if (existingVote) {
-    // Wenn der Vote bereits existiert, löschen Sie ihn
+    // If vote exists, delete it
     const updateMeme = await Meme.findOneAndUpdate(
       { _id: memeId },
       {
@@ -291,8 +284,7 @@ app.put('/meme-comment', verifyToken, async(req,res) =>{
   }
   return res.json({success: 'Sucess', comment: updatedMeme})
 });
-
-//////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////MEMES-END///////////////////////////////////////////
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);

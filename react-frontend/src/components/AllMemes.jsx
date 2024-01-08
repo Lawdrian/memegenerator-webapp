@@ -8,10 +8,8 @@ import "./myMemes.css";
 
 export default function MyMemes() {
     const [allImage, setAllImage] = useState([]);
-    const [focusMeme, setFocusMeme] = useState(false);
     const [commentContent, setCommentContent] = useState('');
 
-    const [meme, setMeme] = useState(null);
     const token = useSelector((state) => state.user.token);
 
     function handleCommentChange(event) {

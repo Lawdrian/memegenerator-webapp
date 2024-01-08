@@ -12,8 +12,8 @@ import '../uploadTabs/uploadTabs.css';
 function ThirdPartyServiceTab() {
 
   const token = useSelector((state) => state.user.token);
-  const [image, setImage] = useState(null); // Setze den Initialwert auf null
-  const [allImage, setAllImage] = useState([]); // Setze den Initialwert auf ein leeres Array
+  const [image, setImage] = useState(null); 
+  const [allImage, setAllImage] = useState([]); 
 
 
 
@@ -25,11 +25,11 @@ function ThirdPartyServiceTab() {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token, // Setzt den Token als Header
+        "Access-Control-Allow-Origin": "*", 
+        "Authorization": "Bearer " + token, 
       },
-      body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-        base64: image                      // Setzt den base64-codierten String als Body
+      body: JSON.stringify({               
+        base64: image                      
       })
     })
       .then((res) => res.json())
@@ -81,7 +81,7 @@ function ThirdPartyServiceTab() {
           </Button>
         </Grid>
         <Grid>
-          {image && ( // Wenn ein Bild vorhanden ist, zeige es an (Kurzschlussauswertung) 
+          {image && ( // If an image is available, display it (short-circuit evaluation)
             <div>
               <h2>Preview:</h2>
               console.log(image)

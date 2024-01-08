@@ -1,15 +1,15 @@
-const mongoose = require("mongoose"); // Importiere das Mongoose-Modul
+const mongoose = require("mongoose"); // import of mongoose-modul 
 const Schema = mongoose.Schema;
 
-// Erstelle ein neues Schema für die Bilder
+//Create new schema for images
 // Schema = JSON-Struktur
 const ImageSchema = new Schema(    
     {
-        image: String   // Bild als String
+        image: String   // image as string
     },
     {
-        collection: "Template", // Name der Collection in der Datenbank
+        collection: "Template", // name of collection in db
     }
 );
-mongoose.model("Template", ImageSchema);  // Erstellen eines Models mit dem Namen "Template" und dem Schema "ImageSchema"
+mongoose.model("Template", ImageSchema);  // Create model with the name "Template" and schema "ImageSchema"
 

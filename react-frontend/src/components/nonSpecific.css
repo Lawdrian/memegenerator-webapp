@@ -1,9 +1,9 @@
 .navi-bar{
-    z-index: 1;                    /* Ein Z-Index-Wert von 10 für das header-Element festlegen */
-    display: flex;                  /* Flexibles Layout: Elemente im header sollen Platz gleichmäßig verteilen */
-    position: sticky;               /* Das header-Element bleibt an der oberen Bildschirmkante "sticky" haften, wenn der Nutzer scrollt */
-    top: 0px;                       /* Die Entfernung des header-Elements zur oberen Bildschirmkante beträgt 0 Pixel */
-    backdrop-filter: blur(30px);    /* Hintergrundelemente im header blurren wir mit einer Hintergrundunschärfe */
+    z-index: 1;                   
+    display: flex;                  
+    position: sticky;               
+    top: 0px;                       
+    backdrop-filter: blur(30px);   
     border-bottom: solid 1px grey;
     box-shadow: 0 0 50px rgb(67, 30, 104);
     background-color: rgb(40,40,52);
@@ -18,8 +18,8 @@
 .nav-linker ul {
     display: flex;
     justify-content: space-between;
-    list-style-type: none; /* Entfernt Aufzählungspunkte von der Liste */
-    padding: 0; /* Entfernt den Standardabstand der Liste */
+    list-style-type: none; 
+    padding: 0; 
   }
 
   .nav-linker ul li {
@@ -54,5 +54,5 @@ font-weight: 500;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* 100% der Bildschirmhöhe */
+    height: 100vh;
   }

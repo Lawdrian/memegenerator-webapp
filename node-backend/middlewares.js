@@ -11,7 +11,6 @@ function verifyToken(req, res, next) {
     const token = req.header("Authorization").split(" ")[1];
 
     jwt.verify(token, secretKey, async (err, decoded) => {
-        //Token verifizieren
         if (err) {
             console.error("Error verifying token:", err);
             res.status(401).json({ success: false, error: "Token not verified" });

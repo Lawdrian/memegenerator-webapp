@@ -44,7 +44,7 @@ function HandDrawnTab() {
 
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
-    ctx.strokeStyle = "#000"; // Setze die Zeichenfarbe
+    ctx.strokeStyle = "#000"; 
 
     ctx.lineTo(x, y);
     ctx.stroke();

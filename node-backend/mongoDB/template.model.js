@@ -1,8 +1,9 @@
 const mongoose = require("mongoose"); // Importiere das Mongoose-Modul
+const Schema = mongoose.Schema;
 
 // Erstelle ein neues Schema für die Bilder
 // Schema = JSON-Struktur
-const ImageSchema = new mongoose.Schema(    
+const ImageSchema = new Schema(    
     {
         image: String   // Bild als String
     },

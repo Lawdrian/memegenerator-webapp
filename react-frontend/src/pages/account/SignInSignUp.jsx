@@ -45,9 +45,8 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function Sign_in_and_up() {
+export default function SignInSignUp() {
 
-    const user = useSelector((state) => state.user.currentUser);
     const [googleLoginResponse, setGoogleLoginResponse] = useState(null);
 
     const dispatch = useDispatch();
@@ -55,7 +54,7 @@ export default function Sign_in_and_up() {
     const handleLoginSubmit = (event) => {
         event.preventDefault();                         //verhindert neuladen
         const formdata = new FormData(event.currentTarget);
-
+        console.log("Login gestartet");
         fetch(`http://localhost:3001/login`, {
             method: 'POST',
             headers: {
@@ -145,7 +144,7 @@ export default function Sign_in_and_up() {
         <ThemeProvider theme={defaultTheme}>
 
             {/* ------------SIGN-IN------------ */}
-            <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid container style = {{marginTop: "-20px", height: "94vh"}}>
                 <CssBaseline />
                 <Grid
                     item

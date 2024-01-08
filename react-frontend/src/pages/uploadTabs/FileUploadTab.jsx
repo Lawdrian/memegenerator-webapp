@@ -30,7 +30,7 @@ function FileUploadTab() {
         console.group(data);
         setAllImage(data.data || []);  // setzt die Daten aus der Datenbank als state wenn nicht leer
       });
-  }
+    }
 
   function uploadImage() {
     fetch("http://localhost:3001/upload", {
@@ -53,6 +53,7 @@ function FileUploadTab() {
       )
       .catch((error) => console.error('Error uploading image:', error));
   }
+
 
   useEffect(() => {
     getImage();
@@ -86,7 +87,7 @@ function FileUploadTab() {
                 padding: "20px",
                 borderRadius: "8px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                marginBottom: "20px", // Beispiel für mehr Abstand nach unten
+                marginBottom: "20px", 
               }}
             />
           )

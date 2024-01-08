@@ -31,8 +31,8 @@ const UploadTemplatePopup = ({ onClose }) => {
 
     return (
         <Grid>
-            <Button variant="contained" color="primary" onClick={handleOpen}>
-                Open Dialog
+            <Button variant="contained" color="secondary" onClick={handleOpen}>
+                Upload Templaes
             </Button>
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="ld">
                 <AppBar position="static">

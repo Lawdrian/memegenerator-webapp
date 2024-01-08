@@ -6,18 +6,17 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors'); //cross-Origin resource sharing
 const bodyParser = require('body-parser');
-const crypto = require('crypto');
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 
-//UPLOAD
-const multer = require('multer');
+//MongoDB Models
+const UserModel = require('./mongoDB/user.model.js');
+const User = mongoose.model("User"); 
+const GoogleUser = mongoose.model("GoogleUser"); 
+const MemeModel = require('./mongoDB/meme.model.js');
+const Meme = mongoose.model("Meme"); //MemeModel
+const TemplatesModel = require('./mongoDB/template.model.js');
+const Templates = mongoose.model("Template");
 
-const ImageModel = require('./image.model'); //ImageModel
-const Images = mongoose.model("Template"); //ImageModel
-
-//Token 
-const jwt = require('jsonwebtoken');//Token
-const secretKey = crypto.randomBytes(16).toString('hex')  //Symmetrischer Schlüssel für Token mit Länge 256 Bits (32 bytes)
 
 //LOGIN + Registration
 const argon2 = require('argon2'); //Passwort-Sicherheit
@@ -49,7 +48,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
+//Token
+const jwt = require('jsonwebtoken');
+const { verifyToken, secretKey } = require('./middlewares.js');
 
 
 app.use(function(req,res,next){  req.db = db;
@@ -62,44 +63,18 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
   useUnifiedTopology: true,
 });
 
-////////////////////////FALLS WIR ES AUF SERVER SPEICHERN WOLLEN////////////////////////
-// // Multer config - Speicheern in Ordner images
-// const storage = multer.diskStorage({      //Speicherort und Dateiname
-//   destination: function (req, file, cb) { //Speicherort
-//     return cb(null, "./images")
-//   },
-//   filename: function (req, file, cb) {    //Dateiname
-//     return cb(null, `${Date.now()}_${file.originalname}`) //Dateiname = Zeitstempel + Originalname
-//   }
-// })
-// // Multer config
-// const storage = multer.memoryStorage(); // Dateien werden im Arbeitsspeicher gehalten
-//
-// // Multer upload
-// const upload = multer({storage})
-///////////////////////////////////////////////////////////////////////////
-
-
 //--------------------TAB FILE UpLOAD--------------------
-app.post('/upload', (req, res) => {
+app.post('/upload', verifyToken,(req, res) => {
   console.log("UPLOAD");
-  const token = req.headers.authorization.split(' ')[1]; //Token aus dem autorisierungsheader extrahieren
-
-  jwt.verify(token, secretKey, (err) => { //Token verifizieren
-    const {base64} = req.body; //base64 aus dem Request-body extrahieren
-    if(err){// ungültiger Token
-      return res.status(401).json({ error: 'Authentication failed' });
-    }else{
-    Images.create({image: base64})
-    res.send({Status:"ok"})//Bild in der Datenbank speichern
-  };
-});
+  const { base64 } = req.body; //base64 aus dem Request-body extrahieren
+  Templates.create({ image: base64 })
+  res.send({ Status: "ok" })//Bild in der Datenbank speichern
 });
 
 // GET-Request für alle Bilder
 app.get("/get-image", async (req, res) => {
   try {
-    await Images.find({})
+    await Templates.find({})
     .then(data => {
       res.send({status: "ok", data:data})
     })
@@ -108,27 +83,19 @@ app.get("/get-image", async (req, res) => {
   }
 })
 
-
-
-
-
-
-// DENNIS - REGISTRATION------------------------------
-
-// Registration
+///////////////////////SIGNUP_SIGNIN///////////////////////////
 app.post('/registration', async (req, res) => {
-  const users = db.get('users');
   try {
     const { email, password } = req.body; //Registrationsdaten aus Request-body extrahieren
 
-    const existingUser = await users.findOne({ email }); //email bereits vorhanden?
+    const existingUser = await User.findOne({ email }); //email bereits vorhanden?
     if (existingUser) {
       return res.status(409).json({ error: 'Email already exists' });
     }
 
     const hashedPassword = await argon2.hash(password); //Passwort hashen durch argon2
 
-    const newUser = await users.insert({ email, password:hashedPassword });
+    const newUser = await User.create({ email, password:hashedPassword });
 
     res.json({ success: true, user: newUser }); //Response: Success!
   } catch (error) {
@@ -136,15 +103,12 @@ app.post('/registration', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// Login
 app.post('/login', async (req, res) => {
   console.log("LOGIN");
-  const users = req.db.get('users');
   try {
     const { email, password } = req.body;
 
-    const user = await users.findOne({ email }); //user mit email finden
+    const user = await User.findOne({ email }); //user mit email finden
 
     if (!user) {    // Check if the user exists
       return res.status(401).json({ error: 'Email not found ' });
@@ -163,21 +127,19 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 app.post('/api-login', async (req, res) => {
-    const users = req.db.get('users');
     const { googleId } = req.body;
   
     try {
       // Hier kannst du die Google ID verwenden und entsprechend verarbeiten
       console.log('Received API-Login ID:', googleId);
   
-      const user = await users.findOne({ googleId });
-      const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+      const user = await User.findOne({ googleId });
+      const token = jwt.sign({ googleId }, secretKey, { expiresIn: '1h' });
 
       if (!user) {
         // Benutzer existiert nicht, daher erstellen
-        const newUser = await users.insert({ googleId }); // Verwende 'googleId' für die Konsistenz
+        const newUser = await GoogleUser.create({ googleId }); // Verwende 'googleId' für die Konsistenz
   
         res.json({
             success: 'User successfully created in the database && logged in',
@@ -196,26 +158,141 @@ app.post('/api-login', async (req, res) => {
   
   
 
-// the login middleware. Requires BasicAuth authentication
-app.use((req,res,next) => {
-  const users = db.get('users');
-  users.findOne({basicauthtoken: req.headers.authorization}).then(user => {
-    if (user) {
-      req.username = user.username;  // test test => Basic dGVzdDp0ZXN0
-      next()
-    }
-    else {
-      res.set('WWW-Authenticate', 'Basic realm="401"')
-      res.status(401).send()
-    }
-  }).catch(e => {
-    console.error(e)
-    res.set('WWW-Authenticate', 'Basic realm="401"')
-    res.status(401).send()
-  })
+
+///////////////////////////////////////////MEMES///////////////////////////////////////////
+
+app.post('/create-meme', verifyToken, async (req, res) => {
+  console.log("CREATE MEME");
+  const { base64 } = req.body; //base64 aus dem Request-body extrahieren
+  const { decodedJwt } = res.locals;
+  
+  const user = await User.findOne({ _id: decodedJwt.userId });
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
+  }
+  if(!base64){
+    return res.status(500).json({ error: 'Missing Meme' });
+  }
+  Meme.create({ image: base64, creator: user._id })
+  res.send({ Status: "ok" })//Bild in der Datenbank speichern
 })
 
+// GET-Request for self-created memes
+app.get('/get-my-meme', verifyToken, async (req, res) => {
+  console.log("GET MY MEMES");
+  const { decodedJwt } = res.locals;
+  
+  const user = await User.findOne({ _id: decodedJwt.userId });
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
+  }
+  const memes = await Meme.find({ creator: user._id });
+  res.json({ success: 'Success', memes: memes });
+})
 
+// GET-Request for all memes
+app.get('/get-all-memes', async (req, res) => {
+  console.log("GET ALL MEMES");
+  const memes = await Meme.find({private: false}) //TODO Privacy false checken
+  .populate('comments.user', 'email') // auflösen der Referenz und nur die 'email'-Eigenschaft des usesr wird zurückgegeben
+  res.json({ success: 'Success', memes: memes });
+})
+
+app.put('/update-meme-privacy', verifyToken, async (req, res) => {
+  console.log("UPDATE MEME PRIVACY");
+  const {private,  memeId } = req.body;
+  const decodedJwt = res.locals.decodedJwt;
+  if(!decodedJwt?.email) //'?' Chaining-Operator -> if res.locals.decodeJWT is defined and got email 
+  {
+    return res.status(500).json({ error: 'Email not in token' });
+  }
+  const updateMeme = await Meme.findOneAndUpdate(
+    { _id: memeId, creator: decodedJwt.userId },
+    { private: private }, 
+    { new: true }
+    );
+    if (!updateMeme) {
+      console.log(updateMeme);
+      return res.status(404).json({ error: "Meme not found " });
+    }
+  
+    res.status(200).json(updateMeme);
+})
+
+app.put('/meme-vote', verifyToken, async(req,res) => {
+  console.log("++++VOTE++++");
+  const { memeId, vote } = req.body;
+  const decodedJwt = res.locals.decodedJwt;
+
+
+  const existingVote = await Meme.findOne(
+    {
+      _id: memeId,
+      $or: [
+        { "upVotes": { $elemMatch: { voter: decodedJwt.userId } } },
+        { "downVotes": { $elemMatch: { voter: decodedJwt.userId } } }
+      ]
+    }
+  );
+
+  if (existingVote) {
+    // Wenn der Vote bereits existiert, löschen Sie ihn
+    const updateMeme = await Meme.findOneAndUpdate(
+      { _id: memeId },
+      {
+        $pull: {
+          "upVotes": { voter: decodedJwt.userId },
+          "downVotes": { voter: decodedJwt.userId }
+        }
+      },
+      { new: true }
+    );
+    console.log("Vote removed:", updateMeme);
+  }
+
+  const updateMeme = await Meme.findOneAndUpdate(
+      { _id: memeId },
+      {
+        $push: {
+          [vote]: {
+            voteCount: 1,
+            voter: decodedJwt.userId
+          }
+        }
+      },
+      { new: true }
+    );
+
+    if (!updateMeme) {
+      console.log(updateMeme);
+      return res.status(404).json({ error: "Meme not found " });
+    }
+    console.log("Vote added:", updateMeme);
+
+    res.status(200).json(updateMeme);
+})
+
+app.put('/meme-comment', verifyToken, async(req,res) =>{
+  console.log("+++Make Comment+++");
+  const {memeId, comment} = req.body;
+  const decodedJwt = res.locals.decodedJwt;
+  console.log(comment);
+
+  const updatedMeme = await Meme.findOneAndUpdate(
+    { _id: memeId },
+    {
+      $push: { comments: { user: decodedJwt.userId, content: comment } }
+    },
+    { new: true }
+  );
+
+  if(!updatedMeme){
+    return res.status(404).json({ error: "Error creating Comment"});
+  }
+  return res.json({success: 'Sucess', comment: updatedMeme})
+});
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);

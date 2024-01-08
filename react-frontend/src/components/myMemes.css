@@ -1,0 +1,20 @@
+.myMemes {
+    height: 300px;
+    border-Radius: 4px;
+    box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+.myMemes:hover {
+    box-Shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.focusMeme{
+    
+    height: 100%;
+    max-height: 650px;
+    border-Radius: 50px;
+    padding: 20px;
+}

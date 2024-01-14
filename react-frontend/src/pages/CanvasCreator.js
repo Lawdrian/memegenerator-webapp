@@ -59,7 +59,7 @@ const CanvasCreator = () => {
   const navigate = useNavigate();
 
 
-  const imageTemplates = templates.filter(template => template.type === 'Image');
+  const imageTemplates = templates.filter(template => template.type === 'image');
 
 
   // Function to handle template selection
@@ -86,7 +86,7 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      saveTemplate(dataUrl, token);
+      saveTemplate({content: dataUrl, type: "image", name: "canvasTemplate"}, token);
       console.log("Template uploaded successfully");
     }
     catch (error) {

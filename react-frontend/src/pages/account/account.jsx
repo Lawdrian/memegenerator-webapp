@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SignInSignUp from './SignInSignUp';
-import MyAccount from "./MeinBereich";
+import MyAccount from "./meinBereich";
 
 import { useSelector } from 'react-redux';
 

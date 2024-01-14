@@ -5,6 +5,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { Button, Grid, TextField } from '@mui/material';
 
 import { convertUrlToBase64 } from "../../../../api/templates";
+import { emptyUploadTemplate } from "./UploadTemplateDialog";
 
 
 
@@ -12,7 +13,7 @@ function ImageUrlTab({ template, setTemplate }) {
   const [inputUrl, setInputUrl] = useState(""); // Setze den Initialwert auf einen leeren String
   
   useEffect(() => {
-    setTemplate();
+    setTemplate(emptyUploadTemplate);
   }, []);
 
   function handleUrlChange(e) {
@@ -39,7 +40,7 @@ function ImageUrlTab({ template, setTemplate }) {
               disabled={!inputUrl}
               onClick={async (e) => {
                 const base64 = await convertUrlToBase64(inputUrl);
-                setTemplate(base64);
+                setTemplate({...template, content: base64, type: 'image'});
               }}
             >
               Preview
@@ -48,7 +49,7 @@ function ImageUrlTab({ template, setTemplate }) {
         </Grid>
       </Grid>
       <Grid item xs={9}>
-        {template && <img src={template} style={{maxWidth: '50%', maxHeight: '50%'}} />}
+        {template.content && <img src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} />}
       </Grid>
     </Grid>
   )

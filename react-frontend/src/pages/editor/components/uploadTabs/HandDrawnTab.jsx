@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { Stage, Layer, Line } from 'react-konva';
+import { emptyUploadTemplate } from "./UploadTemplateDialog";
 
   function HandDrawnTab({ template, setTemplate}) {
     const [lines, setLines] = useState([]);
@@ -12,7 +13,7 @@ import { Stage, Layer, Line } from 'react-konva';
     const stageRef = useRef(null);
   
     useEffect(() => {
-      setTemplate();
+      setTemplate(emptyUploadTemplate);
     }, []);
 
     const handleMouseDown = (e) => {
@@ -46,7 +47,7 @@ import { Stage, Layer, Line } from 'react-konva';
     if (stageRef.current) {
       const dataUrl = stageRef.current.toDataURL();
       console.log(dataUrl);
-      setTemplate(dataUrl);
+      setTemplate({...template, content: dataUrl, type: 'image'});
       // Now you can send dataUrl to the server or use it as the src for an Image element
     }
   }
@@ -116,7 +117,7 @@ import { Stage, Layer, Line } from 'react-konva';
         </Grid>
       </Grid>
       <Grid item xs={6}>
-        {template && <img src={template} style={{maxWidth: '50%', maxHeight: '50%'}} />}
+        {template.content && <img src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} />}
       </Grid>
     </Grid>
   );

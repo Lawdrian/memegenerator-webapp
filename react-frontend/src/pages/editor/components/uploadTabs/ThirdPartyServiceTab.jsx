@@ -18,7 +18,7 @@ function ThirdPartyServiceTab({template, setTemplate}) {
   }, []);
 
   const handleClickEvent = (image) => {
-    setTemplate(image.url) 
+    setTemplate({...template, content: image.url, type: 'image'}) 
     setSelectedTemplateId(image.id); // Set the selected template when an image is clicked
   }
 

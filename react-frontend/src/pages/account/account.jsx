@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Sign_in_and_up from './Login';
+import Sign_in_and_up from './login';
 import MyAccount from "./MeinBereich";
 
 import { useDispatch, useSelector } from 'react-redux';

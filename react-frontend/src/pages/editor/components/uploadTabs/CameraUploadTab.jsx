@@ -5,18 +5,19 @@ import Button from '@mui/material/Button';
 import Webcam from "react-webcam"; // FOR CAMERA FUNCTION: Importiert die Webcam-Komponente
 import React from "react";
 import { Grid } from "@mui/material";
+import { emptyUploadTemplate } from "./UploadTemplateDialog";
 
 function CameraUploadTab({template, setTemplate}) {
 
   const webcamRef = useRef(null); //FOR CAMERA FUNCTION
 
   useEffect(() => {
-    setTemplate();
+    setTemplate(emptyUploadTemplate);
   }, []);
 
   function capture(){
     const imageSrc = webcamRef.current.getScreenshot(); // FOR CAMERA FUNCTION: Holt sich das Bild von der Webcam
-    setTemplate(imageSrc); // Setzt das Bild als state
+    setTemplate({...template, content: imageSrc, type: 'image'}); // Setzt das Bild als state
   }
 
 
@@ -45,7 +46,7 @@ function CameraUploadTab({template, setTemplate}) {
         </Grid>
       </Grid>
       <Grid item xs={6}>
-        {template && <img src={template} style={{maxWidth: '50%', maxHeight: '50%'}} />}
+        {template.content && <img src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} />}
       </Grid>
     </Grid>
     )

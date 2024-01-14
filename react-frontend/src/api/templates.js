@@ -54,7 +54,9 @@ export function saveTemplate(template, token) {
       "Authorization": "Bearer " + token, // Setzt den Token als Header
     },
     body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-      base64: template                      // Setzt den base64-codierten String als Body
+      base64: template.content,                   // Setzt den base64-codierten String als Body
+      type: template.type,
+      name: template.name,
     })
   })
     .then((res) => res.json())

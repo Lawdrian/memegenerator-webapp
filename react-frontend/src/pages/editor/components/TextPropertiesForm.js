@@ -92,6 +92,15 @@ function TextPropertiesForm({ textProps, onPropChange, removeTextField }) {
     onPropChange(syntheticEvent);
   }, 30, { leading: false}) // 30ms throttle time, no leading edge (will only call once every 30ms)
 
+  const handleAnimationChange = (event) => {
+    const syntheticEvent = {
+      target: {
+        name: 'animation',
+        value: event.target.value,
+      },
+    };
+    onPropChange(syntheticEvent);
+  };
 
   return (
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
@@ -143,6 +152,52 @@ function TextPropertiesForm({ textProps, onPropChange, removeTextField }) {
             <FormatAlignRightIcon />
           }
       </IconButton>
+
+      {textProps.animation && (
+        <>
+          <Divider orientation="vertical" flexItem />
+          <Typography>Animation:</Typography>
+          <Select
+            labelId="animation-label"
+            value={textProps.animation}
+            onChange={handleAnimationChange}
+          >
+            <MenuItem key="none" value="none">
+              None
+            </MenuItem>
+            <MenuItem key="bounce" value="bounce">
+              Bounce
+            </MenuItem>
+            <MenuItem key="flash" value="flash">
+              Flash
+            </MenuItem>
+            <MenuItem key="pulse" value="pulse">
+              Pulse
+            </MenuItem>
+            <MenuItem key="rubberBand" value="rubberBand">
+              Rubber Band
+            </MenuItem>
+            <MenuItem key="shake" value="shake">
+              Shake
+            </MenuItem>
+            <MenuItem key="swing" value="swing">
+              Swing
+            </MenuItem>
+            <MenuItem key="tada" value="tada">
+              Tada
+            </MenuItem>
+            <MenuItem key="wobble" value="wobble">
+              Wobble
+            </MenuItem>
+            <MenuItem key="jello" value="jello">
+              Jello
+            </MenuItem>
+            <MenuItem key="heartBeat" value="heartBeat">
+              Heart Beat
+            </MenuItem>
+          </Select>
+        </>
+      )}
 
       <Divider orientation="vertical" flexItem />
 

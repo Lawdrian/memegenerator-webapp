@@ -98,12 +98,15 @@ app.post('/save-template', async (req, res) => {
   };
 });
   */
-  const {base64} = req.body; //base64 aus dem Request-body extrahieren
+  const {base64, type, name} = req.body; //base64 aus dem Request-body extrahieren
   console.log(base64);
-  console.log(req.body)
+  console.log(req.body);
+  if (type !== 'image' && type !== 'gif' && type !== 'video') {
+    return res.status(400).json({ error: 'Invalid type' });
+  }
   try {
     // Use the model to create a new document
-    await Template.create({name: "templatename", type: "Image", content: base64});
+    await Template.create({name: name, type: type, content: base64});
     res.send({Status:"ok"})//Bild in der Datenbank speichern
   } catch (err) {
     console.log(err);
@@ -124,7 +127,139 @@ app.get("/get-templates", async (req, res) => {
 })
 
 
+app.post('/add-text-to-gif', (req, res) => {
+    try {
+      const { gifBase64, text, textProperties } = req.body;
 
+      const img = new Image();
+      img.src = Buffer.from(gifBase64, 'base64');
+  
+      img.onload = () => {
+        const canvas = createCanvas(img.width, img.height);
+        const ctx = canvas.getContext('2d');
+    
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        ctx.font = `${textProperties.size}px Arial`;
+        ctx.fillStyle = textProperties.color;
+        ctx.fillText(text, textProperties.x, textProperties.y);
+    
+        const encoder = new GIFEncoder(img.width, img.height);
+        encoder.start();
+        encoder.setRepeat(0);
+        encoder.setDelay(500);
+        encoder.addFrame(ctx);
+        encoder.finish();
+    
+        const newGifBase64 = Buffer.from(encoder.out.getData()).toString('base64');
+    
+        res.json({ newGifBase64 });
+    };
+    
+    }
+    catch (error) {
+      console.error('Error during adding text to GIF:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
+});
+
+
+// Split a gif into frames and send it to client
+const gifFrames = require('gif-frames');
+
+app.get('/gif-to-imagedata', (req, res) => {
+  const gifUrl = 'https://konvajs.org/assets/yoda.gif'; // replace with your gif url
+  //const gifUrl = 'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDkwdjdpMjF4MGFpcTVmN3ZtZ3d4OGdjd3VucnF0cjN1cWN4eDYwbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/D8d9waDRkLu7U8Jlar/giphy.gif'; // replace with your gif url
+  //const gifUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExcm9yczF5aHN0b2h2MTExNmpvemw4M2J1bDYxeHR1N2hjM3lydGhsZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/pyTkBNVthpwp0WVFw0/giphy.gif'; // replace with your gif url
+
+  gifFrames({ url: gifUrl, frames: 'all' }, function (err, frameData) {
+    if (err) {
+      res.status(500).json({ error: 'Failed to fetch the gif' });
+      return;
+    }
+
+    const frames = frameData.map((frame) => {
+      return new Promise((resolve, reject) => {
+        const chunks = [];
+        frame.getImage()
+          .on('data', chunk => chunks.push(chunk))
+          .on('end', () => resolve(Buffer.concat(chunks).toString('base64')))
+          .on('error', reject);
+      });
+    });
+
+    Promise.all(frames)
+      .then(data => res.json({ frames: data }))
+      .catch(err => res.status(500).json({ error: 'Failed to process the frames' }));
+  });
+});
+
+
+// receive image frames, a text and text properties and return a gif
+
+const Jimp = require('jimp');
+const GIFEncoder = require('gifencoder');
+const fs = require('fs');
+const { PassThrough } = require('stream');
+
+app.post('/create-gif', async (req, res) => {
+  const images = req.body.images; // get images from request body
+  const text = req.body.text; // get text from request body
+  const animationType = req.body.animationType; // get animationType from request body
+  console.log(images.length, text)
+
+  // read the first image to get its dimensions
+  const firstImageBuffer = Buffer.from(images[0], 'base64');
+  const firstImage = await Jimp.read(firstImageBuffer);
+
+  const encoder = new GIFEncoder(firstImage.bitmap.width, firstImage.bitmap.height);
+
+  // pipe the image data to the response
+  res.setHeader('Content-Type', 'image/gif');
+  
+  // create a PassThrough stream and pipe the image data to the response and a file
+  const passThrough = new PassThrough();
+  passThrough.pipe(res);
+  passThrough.pipe(fs.createWriteStream('output.gif'));
+
+  const readStream = encoder.createReadStream();
+  readStream.pipe(passThrough);
+
+  encoder.start();
+  encoder.setRepeat(0);   // 0 for repeat, -1 for no-repeat
+  encoder.setDelay(500);  // frame delay in ms
+  encoder.setQuality(10); // image quality. 20 is default.
+
+  const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK); // load font
+
+  // process all images
+  await Promise.all(images.map(async (imagePath, i) => {
+    const imageBuffer = Buffer.from(imagePath, 'base64');
+    const image = await Jimp.read(imageBuffer);
+
+    var opacity = 1;
+    console.log(animationType)
+    // calculate opacity based on current frame
+    if (animationType === 'fade-out') {
+      opacity = Math.min(1 - (i / (images.length - 1)), 1);
+    } else if (animationType === 'fade-in') {
+      opacity = Math.min(i / (images.length - 1), 1);
+    }
+    // create a new image with the text
+    const textImage = new Jimp(image.bitmap.width, image.bitmap.height, 0x00000000);
+    textImage.print(font, 100, 100, `Frame ${i + 1}`, image.bitmap.width);
+
+    // adjust the opacity of the textImage
+    textImage.opacity(opacity);
+
+    // composite the text image onto the original image
+    const combinedImage = image.composite(textImage, 0, 0);
+
+    encoder.addFrame(combinedImage.bitmap.data);
+  }));
+
+  encoder.finish();
+});
 
 
 

@@ -1,6 +1,22 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+/*
+meme: {
+	_id, 
+	name, // name from template
+	createdBy, // User object
+	format, // data format ('image', 'gif', 'video')
+	content, // base64 encoded meme
+	usedTemplate, // Template object
+	private, // true or false
+	upVotes,
+	downVotes,
+	comments,
+	createdAt, //creation time
+	updatedAt, //update time
+}
+*/
 const MemeSchema = new Schema(
     {
         name: { type: String, default: "myMeme" }, // name of the meme

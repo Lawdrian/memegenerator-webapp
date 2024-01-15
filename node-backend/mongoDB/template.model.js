@@ -3,6 +3,17 @@ const Schema = mongoose.Schema;
 
 // create a schema to save the templates in the database
 // Schema = JSON-structure of the database
+/*
+template: {
+	_id, 
+	name, // name from template
+	createdBy, // User object
+	format, // data format ('image', 'gif', 'video')
+	content, // base64 encoded meme
+	createdAt, //creation time
+	updatedAt, //update time
+}
+*/
 const TemplateSchema = new Schema(    
     {
         name: {type: String, default: "myTemplate"}, // name of the template

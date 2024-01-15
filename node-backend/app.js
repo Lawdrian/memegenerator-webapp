@@ -70,14 +70,16 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
 //--------------------TAB FILE UpLOAD--------------------
 // TODO have to add verifyToken later on
 app.post('/save-template', async (req, res) => {
-  console.log("UPLOAD");
   
-  const {base64} = req.body; //base64 aus dem Request-body extrahieren
-  console.log(base64);
-  console.log(req.body)
+  const {base64} = req.body;
+  const {name} = req.body; 
+  const {type} = req.body;
+  if(type !== "image" && type !== "gif" && type !== "video") {
+    res.status(400).send({Status:"error", Message: "Invalid template type"});
+  }
   try {
     // Use the model to create a new document
-    await Template.create({name: "templatename", type: "Image", content: base64});
+    await Template.create({name: name, type: "image", content: base64});
     res.send({Status:"ok"})//Bild in der Datenbank speichern
   } catch (err) {
     console.log(err);

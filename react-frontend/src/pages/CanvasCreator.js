@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Stage, Layer, Image, Transformer } from 'react-konva';
-import useImage from 'use-image';
 import { useSelector } from 'react-redux';
-import { Grid, ImageListItem, ImageList, Typography, Box, Button } from '@mui/material';
+import { Grid, ImageListItem, ImageList, Typography, Box, Button, TextField, Divider } from '@mui/material';
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +50,7 @@ const URLImage = ({ image }) => {
 };
 
 const CanvasCreator = () => {
+  const [canvasName, setCanvasName] = useState("myCanvas");
   const [selectedTemplates, setSelectedTemplates] = useState([]);
   const [stageDimensions, setStageDimensions] = useState({ width: 500, height: 500 });
   const stageRef = useRef(null);
@@ -86,7 +86,7 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      saveTemplate({content: dataUrl, type: "image", name: "canvasTemplate"}, token);
+      saveTemplate({content: dataUrl, type: "image", name: canvasName}, token);
       console.log("Template uploaded successfully");
     }
     catch (error) {
@@ -146,7 +146,16 @@ const CanvasCreator = () => {
             </Resizable>
           </Grid>
           <Grid item style={{ marginTop: 'auto' }}>
-            <Box p={2} display="flex" justifyContent="flex-start" gap={2}>
+          <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
+              <Typography>Canvas Name:</Typography>
+              <TextField 
+                sx={{ width: '200px' }} 
+                id="text" 
+                type="text" 
+                value={canvasName} 
+                onChange={(event) => setCanvasName(event.target.value)} 
+              />
+              <Divider orientation="vertical" flexItem />
               <Button
                 variant="contained"
                 color="success"

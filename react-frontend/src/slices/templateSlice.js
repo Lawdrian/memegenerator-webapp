@@ -6,7 +6,7 @@ const templateSlice = createSlice({
         templates: [{
             id: null,
             name: null,
-            type: null,
+            format: null,
             content: null,
         }],
     },

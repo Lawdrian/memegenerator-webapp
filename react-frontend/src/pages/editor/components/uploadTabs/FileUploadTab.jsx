@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import SendIcon from '@mui/icons-material/Send';
 import { Button, Grid } from '@mui/material';
-import { convertToBase64 as convertToBase64 } from "../../../../api/templates";
+import { convertToBase64 } from "../../../../utils/base64Conversions";
 import { emptyUploadTemplate } from "./UploadTemplateDialog";
 
 function FileUploadTab({ template, setTemplate }) {
 
   useEffect(() => {
-    setTemplate(emptyUploadTemplate);
+    setTemplate({...emptyUploadTemplate, name: template.name});
   }, []);
 
-  // map the MIME Type to a file type used by the backend
-  const mapFileType = (mimeType) => {
+  // map the MIME Type to a file format used by the backend
+  const mapFileFormat = (mimeType) => {
     switch (mimeType) {
       case 'image/jpeg':
         return 'image';
@@ -22,7 +22,7 @@ function FileUploadTab({ template, setTemplate }) {
       case 'video/mp4':
         return 'video';
       default:
-        throw new Error('Unsupported file type');
+        throw new Error('Unsupported file format');
     }
   }
 
@@ -41,14 +41,14 @@ function FileUploadTab({ template, setTemplate }) {
               hidden
               onChange={async (e) => {
                 const base64 = await convertToBase64(e.target.files[0]);
-                setTemplate({...template, content: base64, type: mapFileType(e.target.files[0].type)});
+                setTemplate({...template, content: base64, format: mapFileFormat(e.target.files[0].type)});
               }}
             />
           </Button>
           <Button onClick={() => console.log(template)}>Log Template</Button>
       </Grid>
       <Grid item xs={9}>
-        {template.content && (template.type == 'video' ? 
+        {template.content && (template.format == 'video' ? 
           <video src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} controls /> :
           <img src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} />
         )}  

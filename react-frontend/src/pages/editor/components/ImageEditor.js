@@ -20,7 +20,7 @@ export const defaultTextProps = {
   align: 'center',
 };
 
-function ImageEditor({ imageUrl }) {
+function ImageEditor({ imageUrl, handleSaveMeme }) {
   const [textFields, setTextFields] = useState([]);
   const [image, setImage] = useState(null);
 
@@ -140,7 +140,7 @@ function ImageEditor({ imageUrl }) {
   */
 
   // download the image with the given resolution
-  const handleDownload = async (targetFileSize) => {
+  const handleMemeCreation = async (targetFileSize, memeName, local, privacy) => {
     
     const transformers = stageRef.current.find('Transformer');
     transformers.forEach(transformer => transformer.hide());
@@ -174,13 +174,18 @@ function ImageEditor({ imageUrl }) {
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
   
-      // Download the compressed image
-      const link = document.createElement('a');
-      link.download = 'meme.png';
-      link.href = compressedDataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if(local == true) {
+        // Download the compressed image
+        const link = document.createElement('a');
+        link.download = `${memeName.replace(/\s/g, '') || 'meme'}.png`; // delete spaces
+        link.href = compressedDataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // Upload the compressed image
+        handleSaveMeme(compressedDataUrl, memeName, privacy);
+      }
     };
   };
 
@@ -226,7 +231,7 @@ function ImageEditor({ imageUrl }) {
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorFooter handleDownload={(fileSize) => handleDownload(fileSize)} />
+        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} />
       </Grid>
     </Grid>
   );

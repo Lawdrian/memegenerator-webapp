@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Box, Typography, TextField, Divider, InputAdornment } from '@mui/material';
 
 import ImageEditorButton from '../components/ImageEditorButton';
+import { saveMeme } from '../../../api/meme';
 
-const ImageEditorFooter = ({handleDownload}) => {
+const ImageEditorFooter = ({handleMemeCreation}) => {
 
     const [fileSize, setFileSize] = useState(1);
     const [memeName, setMemeName] = useState("myMeme");
@@ -31,8 +32,9 @@ const ImageEditorFooter = ({handleDownload}) => {
         onChange={(event) => setMemeName(event.target.value)} 
       />
       <Divider orientation="vertical" flexItem />
-      <ImageEditorButton onClick={() => handleDownload(fileSize)}>download</ImageEditorButton>
-      <ImageEditorButton onClick={() => console.log("TODO: SAVE TO SERVER")}>save to profile</ImageEditorButton>
+      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, true)}>download</ImageEditorButton>
+      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, false, false)}>save public</ImageEditorButton>
+      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, false, true)}>save private</ImageEditorButton>
     </Box>
     )
 

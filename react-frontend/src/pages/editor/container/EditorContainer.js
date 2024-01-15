@@ -15,29 +15,26 @@ import image9 from '../assets/cat6.jpg';
 import Editor from '../components/Editor';
 import { useDispatch } from 'react-redux';
 
-import { getTemplates } from '../../../api/templates';
+import { getTemplates } from '../../../api/template';
 import { setTemplates } from '../../../slices/templateSlice';
 import { useSelector } from 'react-redux';
+import { saveMeme } from '../../../api/meme';
+
+export const defaultMemeProps = {
+  name: 'myMeme',
+  content: '',
+  format: '',
+  usedTemplateId: '',
+  private: false
+}
 
 
 const EditorContainer = () => {
-
-    // TODO define correct template structure
-    /*
-    const imagess = [image1, image2, image3, image4, image5, image6, image7, image8, image9]
-    const templateProps =  imagess.map((image, index) => {
-      return {
-        name: `template${index+1}`,
-        type: 'Image',
-        content: image,
-      }
-    })
-    */
-
-    
+ 
     const storeTemplates = useSelector((state) => state.template.templates);
     const [selectedTemplate, setSelectedTemplate] = useState(null)
     const dispatch = useDispatch()
+    const token = useSelector((state) => state.user.token);
 
 
     useEffect(() => {
@@ -45,25 +42,34 @@ const EditorContainer = () => {
       loadTemplates()
     }, [])
 
-    /*
-    useEffect(() => {
-      setSelectedTemplate(storeTemplates[0])
-    }, [storeTemplates])
-    */
     const loadTemplates = async () => {
       console.log("loadTemplates")
-      const backendTemplates = await getTemplates()
+      const backendTemplates = await getTemplates(token)
 
       // Map backendTemplates to match the structure of your templates object
       const templates = backendTemplates.map(template => ({
-        id: template._id,
+        _id: template._id,
         name: template.name,
-        type: template.type,
+        format: template.format,
         content: template.content,
       }));
       //setTemplates(backendTemplates)
-      dispatch(setTemplates({ templates: templates }))
+      dispatch(setTemplates({ templates: backendTemplates }))
       console.log("Templates loaded into frontend")
+    }
+
+    const handleSaveMeme = (content, name, privacy) => {
+      const meme = {
+        ...defaultMemeProps,
+        content: content,
+        name: name,
+        format: selectedTemplate.format,
+        templateId: selectedTemplate._id,
+        private: privacy
+      }
+      console.log("handleSaveMeme")
+      console.log(meme)
+      saveMeme(meme, token)
     }
 
     return (
@@ -71,6 +77,7 @@ const EditorContainer = () => {
         templates={storeTemplates} 
         selectedTemplate={selectedTemplate} 
         setSelectedTemplate={setSelectedTemplate}
+        handleSaveMeme={handleSaveMeme}
       />
     )
 

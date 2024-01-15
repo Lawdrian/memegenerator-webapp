@@ -12,12 +12,12 @@ function CameraUploadTab({template, setTemplate}) {
   const webcamRef = useRef(null); //FOR CAMERA FUNCTION
 
   useEffect(() => {
-    setTemplate(emptyUploadTemplate);
+    setTemplate({...emptyUploadTemplate, name: template.name});
   }, []);
 
   function capture(){
     const imageSrc = webcamRef.current.getScreenshot(); // FOR CAMERA FUNCTION: Holt sich das Bild von der Webcam
-    setTemplate({...template, content: imageSrc, type: 'image'}); // Setzt das Bild als state
+    setTemplate({...template, content: imageSrc, format: 'image'}); // Setzt das Bild als state
   }
 
 

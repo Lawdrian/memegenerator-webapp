@@ -4,7 +4,8 @@ import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
 import React from "react";
 import { Grid } from "@mui/material";
-import { fetchImgflipTemplates } from "../../../../api/templates";
+import { fetchImgflipTemplates } from "../../../../api/template";
+import { convertUrlToBase64 } from "../../../../utils/base64Conversions";
 
 function ThirdPartyServiceTab({template, setTemplate}) {
 
@@ -18,8 +19,10 @@ function ThirdPartyServiceTab({template, setTemplate}) {
   }, []);
 
   const handleClickEvent = (image) => {
-    setTemplate({...template, content: image.url, type: 'image'}) 
-    setSelectedTemplateId(image.id); // Set the selected template when an image is clicked
+    convertUrlToBase64(image.url).then(base64 => {
+      setTemplate({...template, content: base64, format: 'image'}) 
+      setSelectedTemplateId(image.id); // Set the selected template when an image is clicked
+    })
   }
 
   const imageStyle = {

@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react';
 import { Grid, Select, MenuItem, ImageListItem, ImageList, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 const EditorSidebar = (props) => {
   const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage, renderUploadTemplatePage} = {...props}
-  const [selectedType, setSelectedType] = useState('image');
+  const [selectedFormat, setSelectedFormat] = useState('image');
 
-  const handleTypeChange = (event) => {
-    setSelectedType(event.target.value);
+  const handleFormatChange = (event) => {
+    setSelectedFormat(event.target.value);
     console.log(filteredTemplates)
     console.log(templates)
   };
@@ -19,17 +19,17 @@ const EditorSidebar = (props) => {
     console.log(selectedTemplate)
   }, [selectedTemplate])
 
-  const filteredTemplates = templates.filter(template => template.type === selectedType);
+  const filteredTemplates = templates.filter(template => template.format === selectedFormat);
 
 
   return (
     <Grid container direction="column" justifyContent="flex-start" style={{height: '100vh', overflow: 'auto'}}>
       <Grid item xs={1}>
         <ToggleButtonGroup
-          value={selectedType}
+          value={selectedFormat}
           exclusive
-          onChange={handleTypeChange}
-          aria-label="template type"
+          onChange={handleFormatChange}
+          aria-label="template format"
           style={{width: '100%'}}
           fullWidth
         >

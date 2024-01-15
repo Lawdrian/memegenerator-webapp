@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import CanvasCreator from '../../CanvasCreator';
 
 const Editor = (props) => {
-    const {templates, selectedTemplate, setSelectedTemplate} = {...props}
+    const {templates, selectedTemplate, setSelectedTemplate, handleSaveMeme} = {...props}
     const [uploadTemplatePage, setUploadTemplatePage] = useState(false)
     const navigate = useNavigate();
 
@@ -27,7 +27,7 @@ const Editor = (props) => {
           <EditorSidebar templates={templates} selectedTemplate={selectedTemplate} setSelectedTemplate={setSelectedTemplate} renderCreateCanvasPage={renderCanvasPage} renderUploadTemplatePage={renderUploadTemplatePage}/>
         </Grid>
         <Grid item xs={8}>
-          <ImageEditor imageUrl={selectedTemplate?.content}/>
+          <ImageEditor imageUrl={selectedTemplate?.content} handleSaveMeme={handleSaveMeme}/>
         </Grid>
       </Grid>
     )

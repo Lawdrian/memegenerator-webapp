@@ -3,12 +3,19 @@ const Schema = mongoose.Schema;
 
 const MemeSchema = new Schema(
     {
-        image: { type: String, required: true },
-        creator: {
+        name: { type: String, default: "myMeme" }, // name of the meme
+        createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
-        },
+        }, // user who created the meme
+        format: {type: String, required: true}, // type of the meme either "image" or "gif" or "video"
+        content: { type: String, required: true }, // meme as base64 string
+        usedTemplate: {
+            type: Schema.Types.ObjectId,
+            ref: 'Template',
+            required: true
+        }, // template used to create the meme
         private: {
             type: Boolean,
             default: false
@@ -54,7 +61,7 @@ const MemeSchema = new Schema(
         ]
     },
     {
-        timestamps: true,
+        timestamps: true, // adds createdAt and updatedAt fields automatically
         collection: "Meme"
     }
 );

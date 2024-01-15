@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Dialog from '@mui/material/Dialog';
-import AppBar from '@mui/material/AppBar';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import { AppBar, Box, Button, Dialog, Divider, Grid, Tab, Tabs, TextField, Typography } from '@mui/material';
 
 import { useSelector } from 'react-redux';
 import ImageUrlTab from './ImageUrlTab';
@@ -14,11 +8,11 @@ import FileUploadTab from './FileUploadTab';
 import CameraUploadTab from './CameraUploadTab';
 import ThirdPartyServiceTab from './ThirdPartyServiceTab';
 import HandDrawnTab from './HandDrawnTab';
-import { saveTemplate } from '../../../../api/templates';
+import { saveTemplate } from '../../../../api/template';
 
 export const emptyUploadTemplate = {
   name: 'newtemplate',
-  type: '',
+  format: '',
   content: '',
 };
 
@@ -39,6 +33,7 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
 
     const handleTemplateUpload = () => {
       try {
+        console.log("token", token)
         console.log("template")
         console.log(statetemplates)
         saveTemplate(template, token);
@@ -76,8 +71,17 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
               </Box>
             </Grid>
             <Grid item xs={1}>
-            <Box p={2} display="flex" justifyContent="space-between">
-                    <Button
+            <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
+              <Typography>Template Name:</Typography>
+              <TextField 
+                sx={{ width: '200px' }} 
+                id="text" 
+                type="text" 
+                value={template.name} 
+                onChange={(event) => setTemplate({ ...template, name: event.target.value})} 
+              />
+              <Divider orientation="vertical" flexItem />
+              <Button
                   variant="contained"
                   color="success"
                   disabled={!template}

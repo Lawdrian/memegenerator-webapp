@@ -13,7 +13,7 @@ import { emptyUploadTemplate } from "./UploadTemplateDialog";
     const stageRef = useRef(null);
   
     useEffect(() => {
-      setTemplate(emptyUploadTemplate);
+      setTemplate({...emptyUploadTemplate, name: template.name});
     }, []);
 
     const handleMouseDown = (e) => {
@@ -47,7 +47,7 @@ import { emptyUploadTemplate } from "./UploadTemplateDialog";
     if (stageRef.current) {
       const dataUrl = stageRef.current.toDataURL();
       console.log(dataUrl);
-      setTemplate({...template, content: dataUrl, type: 'image'});
+      setTemplate({...template, content: dataUrl, format: 'image'});
       // Now you can send dataUrl to the server or use it as the src for an Image element
     }
   }

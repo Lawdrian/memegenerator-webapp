@@ -1,25 +1,5 @@
 // This file contains the functions that are used to upload and retrieve meme templates from the database
 
-// konvert to a base64-String
-export function convertToBase64(file) {
-  return new Promise((resolve, reject) => {
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      resolve(reader.result);
-    };
-    reader.onerror = error => {
-      reject("Error: " + error);
-    };
-  });
-}
-
-export async function convertUrlToBase64(url) {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return convertToBase64(blob);
-}
-
 export async function fetchImgflipTemplates() {
   const response = await fetch("https://api.imgflip.com/get_memes");
   const data = await response.json();
@@ -29,7 +9,7 @@ export async function fetchImgflipTemplates() {
 
 
 export async function getTemplates() {
-  const response = await fetch("http://localhost:3001/get-templates", {
+  const response = await fetch("http://localhost:3001/template", {
     method: "GET",
   });
 
@@ -44,19 +24,19 @@ export async function getTemplates() {
 
 
 export function saveTemplate(template, token) {
-  fetch("http://localhost:3001/save-template", {
+  fetch("http://localhost:3001/template", {
     method: "POST",
     crossDomain: true,
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",        
       "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-      "Authorization": "Bearer " + token, // Setzt den Token als Header
+      "Authorization": "Bearer " + token, // set authorization token in header
     },
-    body: JSON.stringify({                // Konvertiert den base64-codierten String in JSON
-      base64: template.content,                   // Setzt den base64-codierten String als Body
-      type: template.type,
+    body: JSON.stringify({
       name: template.name,
+      content: template.content,
+      format: template.format,
     })
   })
     .then((res) => res.json())

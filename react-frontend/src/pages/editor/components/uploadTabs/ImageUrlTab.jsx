@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import SendIcon from '@mui/icons-material/Send';
 import { Button, Grid, TextField } from '@mui/material';
 
-import { convertUrlToBase64 } from "../../../../api/templates";
+import { convertUrlToBase64 } from "../../../../utils/base64Conversions";
 import { emptyUploadTemplate } from "./UploadTemplateDialog";
 
 
@@ -13,7 +13,7 @@ function ImageUrlTab({ template, setTemplate }) {
   const [inputUrl, setInputUrl] = useState(""); // Setze den Initialwert auf einen leeren String
   
   useEffect(() => {
-    setTemplate(emptyUploadTemplate);
+    setTemplate({...emptyUploadTemplate, name: template.name});
   }, []);
 
   function handleUrlChange(e) {
@@ -40,7 +40,7 @@ function ImageUrlTab({ template, setTemplate }) {
               disabled={!inputUrl}
               onClick={async (e) => {
                 const base64 = await convertUrlToBase64(inputUrl);
-                setTemplate({...template, content: base64, type: 'image'});
+                setTemplate({...template, content: base64, format: 'image'});
               }}
             >
               Preview

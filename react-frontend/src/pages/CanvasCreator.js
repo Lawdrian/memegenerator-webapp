@@ -6,7 +6,7 @@ import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { useNavigate } from 'react-router-dom';
 
-import { saveTemplate } from '../api/templates';
+import { saveTemplate } from '../api/template';
 
 
 // this functional component renders a movable and transformable konva Image component
@@ -59,7 +59,7 @@ const CanvasCreator = () => {
   const navigate = useNavigate();
 
 
-  const imageTemplates = templates.filter(template => template.type === 'image');
+  const imageTemplates = templates.filter(template => template.format === 'image');
 
 
   // Function to handle template selection
@@ -86,7 +86,7 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      saveTemplate({content: dataUrl, type: "image", name: canvasName}, token);
+      saveTemplate({content: dataUrl, format: "image", name: canvasName}, token);
       console.log("Template uploaded successfully");
     }
     catch (error) {

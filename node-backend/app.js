@@ -20,7 +20,6 @@ const Template = mongoose.model("Template");
 const multer = require('multer');
 
 
-
 //Token 
 const jwt = require('jsonwebtoken');//Token
 const secretKey = crypto.randomBytes(16).toString('hex')  //Symmetrischer Schlüssel für Token mit Länge 256 Bits (32 bytes)

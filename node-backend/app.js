@@ -28,6 +28,9 @@ const argon2 = require('argon2'); //Passwort-Sicherheit
 const MONGODB_PORT = process.env.DBPORT || '27017';
 const db = require('monk')(`127.0.0.1:${MONGODB_PORT}/omm-ws2223`); // connect to database omm-2021
 console.log(`Connected to MongoDB at port ${MONGODB_PORT}`)
+
+// For posts
+const postsRouter = require('./routes/posts');
 // ######
 
 var indexRouter = require('./routes/index');
@@ -48,6 +51,7 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use('/api', postsRouter);
 
 
 

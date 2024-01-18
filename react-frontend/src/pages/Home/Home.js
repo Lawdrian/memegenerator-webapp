@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
 import { set } from "lodash";
+import Post from "./Posts/Post";
 
 export default function Home() {
   const [memes, setMemes] = useState(Array.from({ length: 20 }));
   const [hasMore, setHasMore] = useState(true);
+
   const fetchMoreData = () => {
     if (memes.length < 2000) {
       setTimeout(() => {
@@ -16,6 +18,17 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    // call data from API
+    axios
+      .get("/get-image") 
+      .then((response) => {
+        const data = response.data.data || [];
+        setMemes(data);
+      })
+      .catch((error) => console.error("Fehler beim Abrufen der Daten:", error));
+  }, []);
+
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <InfiniteScroll
@@ -23,11 +36,12 @@ export default function Home() {
         next={fetchMoreData}
         hasMore={hasMore}
         loader={<h4>Loading...</h4>}
-        
       >
         {memes.map((i, index) => (
           <div style={{ height: 400 }} key={index}>
-            Image - #{index + 1}
+            <div className="home__posts">
+            <Post title={memes.title} imageUrl={memes.image} />
+            </div>
           </div>
         ))}
       </InfiniteScroll>

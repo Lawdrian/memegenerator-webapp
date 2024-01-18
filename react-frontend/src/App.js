@@ -3,7 +3,7 @@ import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } 
 
 
 //pages
-import Home from './pages/Home';
+import Home from './pages/Home/Home';
 import EditorContainer from './pages/editor/container/EditorContainer';
 import Account from './pages/account/Account';
 import NotFound from './pages/NotFound';

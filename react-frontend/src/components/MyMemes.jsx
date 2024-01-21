@@ -19,6 +19,11 @@ export default function MyMemes() {
         getSelfCreatedMemes(setAllImage, token);
     }, []);
 
+    const handleMemeUpload = (e) => {
+        const base64 = convertToBase64(e.target.files[0]);
+        setFocusMeme(base64);
+    }
+
     return (
         <Grid style = {{padding: "50px", background:"#DDDDDD44"}}>
             <h1 style = {{letterSpacing:"5px", fontWeight:"100", fontSize:"40px"}}> MEINE MEMES</h1>
@@ -27,7 +32,7 @@ export default function MyMemes() {
             <input
                 accept="image/*"
                 type="file"
-                onChange={convertToBase64}
+                onChange= {handleMemeUpload}
             />
             <Button variant="contained" color="primary" onClick={() => saveMeme(
                     {

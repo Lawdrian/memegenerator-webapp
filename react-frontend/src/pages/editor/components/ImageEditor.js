@@ -9,7 +9,18 @@ import TextPropertiesForm from './TextPropertiesForm';
 import ImageEditorButton from '../components/ImageEditorButton';
 import ImageEditorFooter from '../components/ImageEditorFooter';
 
-function ImageEditor({ imageUrl }) {
+export const defaultTextProps = {
+  fontSize: 40,
+  fontFamily: 'Arial',
+  fill: '#000000',
+  backgroundColor: '#ca2b2b',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  textDecoration: 'none',
+  align: 'center',
+};
+
+function ImageEditor({ imageUrl, handleSaveMeme }) {
   const [textFields, setTextFields] = useState([]);
   const [image, setImage] = useState(null);
 
@@ -27,18 +38,10 @@ function ImageEditor({ imageUrl }) {
   //const stageWidth = 800; // replace with your desired width
   //const stageHeight = 600; // replace with your desired height
   const initialTextWidth = 200;
-  
 
-  const defaultTextProps = {
-    fontSize: 40,
-    fontFamily: 'Arial',
-    fill: '#000000',
-    backgroundColor: '#ca2b2b',
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    textDecoration: 'none',
-    align: 'center',
-  };
+  useEffect(() => {
+    console.log("imageUrl: " + imageUrl)
+  }, [imageUrl])
 
   // set the image state once the image is loaded and scale the image to fit the container
   useEffect(() => {
@@ -137,7 +140,7 @@ function ImageEditor({ imageUrl }) {
   */
 
   // download the image with the given resolution
-  const handleDownload = async (targetFileSize) => {
+  const handleMemeCreation = async (targetFileSize, memeName, local, privacy) => {
     
     const transformers = stageRef.current.find('Transformer');
     transformers.forEach(transformer => transformer.hide());
@@ -171,18 +174,23 @@ function ImageEditor({ imageUrl }) {
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
   
-      // Download the compressed image
-      const link = document.createElement('a');
-      link.download = 'meme.png';
-      link.href = compressedDataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if(local == true) {
+        // Download the compressed image
+        const link = document.createElement('a');
+        link.download = `${memeName.replace(/\s/g, '') || 'meme'}.png`; // delete spaces
+        link.href = compressedDataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // Upload the compressed image
+        handleSaveMeme(compressedDataUrl, memeName, privacy);
+      }
     };
   };
 
   return (
-    <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '100vh', overflow: 'auto', }}>
+    <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '100vh', overflow: 'hidden', }}>
       <Grid item style={{ height: '10vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
         {selectedTextFieldProps ? (
           <TextPropertiesForm
@@ -223,7 +231,7 @@ function ImageEditor({ imageUrl }) {
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorFooter handleDownload={(fileSize) => handleDownload(fileSize)} />
+        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} />
       </Grid>
     </Grid>
   );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Grid } from '@mui/material';
 
 
@@ -13,36 +13,71 @@ import image7 from '../assets/cat6.jpg';
 import image8 from '../assets/cat6.jpg';
 import image9 from '../assets/cat6.jpg';
 import Editor from '../components/Editor';
+import { useDispatch } from 'react-redux';
+
+import { getTemplates } from '../../../api/template';
+import { setTemplates } from '../../../slices/templateSlice';
+import { useSelector } from 'react-redux';
+import { saveMeme } from '../../../api/meme';
+
+export const defaultMemeProps = {
+  name: 'myMeme',
+  content: '',
+  format: '',
+  usedTemplateId: '',
+  private: false
+}
 
 
 const EditorContainer = () => {
+ 
+    const storeTemplates = useSelector((state) => state.template.templates);
+    const [selectedTemplate, setSelectedTemplate] = useState(null)
+    const dispatch = useDispatch()
+    const token = useSelector((state) => state.user.token);
 
-    // TODO define correct template structure
-    const images = [image1, image2, image3, image4, image5, image6, image7, image8, image9]
-    const templateProps =  images.map((image, index) => {
-      return {
-        name: `template${index+1}`,
-        type: 'Image',
-        content: image,
+
+    useEffect(() => {
+      // initiate template fetch from backend into store
+      loadTemplates()
+    }, [])
+
+    const loadTemplates = async () => {
+      console.log("loadTemplates")
+      const backendTemplates = await getTemplates(token)
+
+      // Map backendTemplates to match the structure of your templates object
+      const templates = backendTemplates.map(template => ({
+        _id: template._id,
+        name: template.name,
+        format: template.format,
+        content: template.content,
+      }));
+      //setTemplates(backendTemplates)
+      dispatch(setTemplates({ templates: backendTemplates }))
+      console.log("Templates loaded into frontend")
+    }
+
+    const handleSaveMeme = (content, name, privacy) => {
+      const meme = {
+        ...defaultMemeProps,
+        content: content,
+        name: name,
+        format: selectedTemplate.format,
+        templateId: selectedTemplate._id,
+        private: privacy
       }
-    })
-
-
-    // TODO connect to Redux store
-
-    // TODO initiate template fetch from backend into store
-
-    // TODO fetch template from store
-    const [templates, setTemplates] = useState(templateProps)
-    const [selectedTemplate, setSelectedTemplate] = useState(templates[0])
-
-
+      console.log("handleSaveMeme")
+      console.log(meme)
+      saveMeme(meme, token)
+    }
 
     return (
       <Editor 
-        templates={templates} 
+        templates={storeTemplates} 
         selectedTemplate={selectedTemplate} 
         setSelectedTemplate={setSelectedTemplate}
+        handleSaveMeme={handleSaveMeme}
       />
     )
 

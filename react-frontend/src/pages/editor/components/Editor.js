@@ -2,31 +2,32 @@ import React, {useState} from 'react';
 import { Grid } from "@mui/material";
 import ImageEditor from "./ImageEditor";
 import EditorSidebar from "./EditorSidebar";
+import UploadTemplateDialog from './uploadTabs/UploadTemplateDialog';
+import { useNavigate } from 'react-router-dom';
+
+import CanvasCreator from '../../CanvasCreator';
 
 const Editor = (props) => {
-    const {templates, selectedTemplate, setSelectedTemplate} = {...props}
-    const [renderCanvasPage, setRenderCanvasPage] = useState(false)
+    const {templates, selectedTemplate, setSelectedTemplate, handleSaveMeme} = {...props}
+    const [uploadTemplatePage, setUploadTemplatePage] = useState(false)
+    const navigate = useNavigate();
 
-    const renderCreateCanvasPage = () => {
-      setRenderCanvasPage(true);
+    const renderCanvasPage = () => {
+      navigate('../canvas')
     }
 
-
-    if(renderCanvasPage) {
-      return (
-        <h1>
-          Canvas Editor
-        </h1>
-      )
+    const renderUploadTemplatePage = () => {
+      setUploadTemplatePage(true);
     }
 
     return (
       <Grid container style={{maxHeight: '100vh', overflow: 'auto', }}>
+        <UploadTemplateDialog open={uploadTemplatePage} setOpen={setUploadTemplatePage}/>
         <Grid item xs={4}>
-          <EditorSidebar templates={templates} selectedTemplate={selectedTemplate} setSelectedTemplate={setSelectedTemplate} renderCreateCanvasPage={renderCreateCanvasPage}/>
+          <EditorSidebar templates={templates} selectedTemplate={selectedTemplate} setSelectedTemplate={setSelectedTemplate} renderCreateCanvasPage={renderCanvasPage} renderUploadTemplatePage={renderUploadTemplatePage}/>
         </Grid>
         <Grid item xs={8}>
-          <ImageEditor imageUrl={selectedTemplate.content}/>
+          <ImageEditor imageUrl={selectedTemplate?.content} handleSaveMeme={handleSaveMeme}/>
         </Grid>
       </Grid>
     )

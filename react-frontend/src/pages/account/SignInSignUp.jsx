@@ -14,18 +14,14 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import GoogleButton from 'react-google-button'
-import { Navigate } from "react-router-dom";
-
-import store from '../../store';
-
 
 import {useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
 //REDUX
 import{ useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUser, setProfile } from '../../slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
+import { useDispatch } from 'react-redux';
+import { setUser} from '../../slices/userSlice'; 
 
 
 function Copyright(props) {
@@ -41,21 +37,19 @@ function Copyright(props) {
     );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
-export default function Sign_in_and_up() {
+export default function SignInSignUp() {
 
-    const user = useSelector((state) => state.user.currentUser);
     const [googleLoginResponse, setGoogleLoginResponse] = useState(null);
 
     const dispatch = useDispatch();
     
     const handleLoginSubmit = (event) => {
-        event.preventDefault();                         //verhindert neuladen
+        event.preventDefault();//prevents reload of page
         const formdata = new FormData(event.currentTarget);
-
+        console.log("Login gestartet");
         fetch(`http://localhost:3001/login`, {
             method: 'POST',
             headers: {
@@ -75,8 +69,8 @@ export default function Sign_in_and_up() {
     };
 
     const handleRegistrationSubmit = async (event) => {
-        event.preventDefault();                         //verhindert neuladen
-        const data = new FormData(event.currentTarget); //FOrmData Objekt, dass die Daten des abgeschickten Formulars enthält
+        event.preventDefault();                     
+        const data = new FormData(event.currentTarget); //FOrmData Objekt, that contains the data of the submited form
 
         fetch(`http://localhost:3001/registration`, {
             method: 'POST',
@@ -127,7 +121,6 @@ export default function Sign_in_and_up() {
                         body: new URLSearchParams({ googleId: googleIdFromGoogleOAuth }).toString(),
                     })
                         .then(result => {
-                            // Hier sind die Benutzerinformationen einschließlich der E-Mail-Adresse
                             dispatch(setUser({ token: result.token, user: res.data }));
                             console.log(result);
                         })
@@ -145,7 +138,7 @@ export default function Sign_in_and_up() {
         <ThemeProvider theme={defaultTheme}>
 
             {/* ------------SIGN-IN------------ */}
-            <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid container style = {{marginTop: "-20px", height: "94vh"}}>
                 <CssBaseline />
                 <Grid
                     item

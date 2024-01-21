@@ -1,4 +1,5 @@
 // This file contains the functions that are used to upload and retrieve meme templates from the database
+import { setTemplates, setTemplatesLoaded } from "../slices/templateSlice";
 
 export async function fetchImgflipTemplates() {
   const response = await fetch("https://api.imgflip.com/get_memes");
@@ -7,8 +8,8 @@ export async function fetchImgflipTemplates() {
   return data.data.memes || [];
 }
 
-
-export async function getTemplates() {
+// I am using Redux Thunk here -> this function needs to be invoked with dispatch(getTemplates())
+export const getTemplates = () => async (dispatch) =>{
   const response = await fetch("http://localhost:3001/template", {
     method: "GET",
   });
@@ -18,12 +19,15 @@ export async function getTemplates() {
   }
 
   const data = await response.json();
-  console.log(data);
-  return data.data || [];
+  if(data.data === null) {
+    console.error("getTemplates: templates data is empty");
+  } else {
+    dispatch(setTemplates({templates: data.data} || []));
+  }
 }
 
-
-export function saveTemplate(template, token) {
+// I am using Redux Thunk here -> this function needs to be invoked with dispatch(saveTemplate(template, token))
+export const saveTemplate = (template, token) => async (dispatch) => {
   fetch("http://localhost:3001/template", {
     method: "POST",
     crossDomain: true,
@@ -40,10 +44,14 @@ export function saveTemplate(template, token) {
     })
   })
     .then((res) => res.json())
-    .then((data) =>
-      console.log(data),
-      alert("template saved successfully")
-    )
+    .then((data) => {
+      if(data.error) {
+        alert("Error saving template to database")
+      } else {
+        alert("template saved successfully")
+        dispatch(setTemplatesLoaded({templatesLoaded: false}))
+      }
+  })
     .catch((error) => console.error('Error saving template to database:', error));
 }
 

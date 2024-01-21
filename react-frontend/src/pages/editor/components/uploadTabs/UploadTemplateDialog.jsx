@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, Button, Dialog, Divider, Grid, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { useSelector } from 'react-redux';
 import ImageUrlTab from './ImageUrlTab';
 import FileUploadTab from './FileUploadTab';
 import CameraUploadTab from './CameraUploadTab';
@@ -17,6 +17,8 @@ export const emptyUploadTemplate = {
 };
 
 const UploadTemplateDialog = ({ open, setOpen }) => {
+    const dispatch = useDispatch();
+
     const [selectedTab, setSelectedTab] = useState(0);
     const [template, setTemplate] = useState(emptyUploadTemplate); 
     const theme = useTheme();
@@ -36,7 +38,7 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
         console.log("token", token)
         console.log("template")
         console.log(statetemplates)
-        saveTemplate(template, token);
+        dispatch(saveTemplate(template, token));
         console.log("Template uploaded successfully");
       }
       catch (error) {
@@ -84,7 +86,7 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
               <Button
                   variant="contained"
                   color="success"
-                  disabled={!template}
+                  disabled={!template.content}
                   onClick={handleTemplateUpload}
                 >
                   Upload

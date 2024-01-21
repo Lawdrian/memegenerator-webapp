@@ -39,10 +39,6 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
   //const stageHeight = 600; // replace with your desired height
   const initialTextWidth = 200;
 
-  useEffect(() => {
-    console.log("imageUrl: " + imageUrl)
-  }, [imageUrl])
-
   // set the image state once the image is loaded and scale the image to fit the container
   useEffect(() => {
     const img = new window.Image();
@@ -173,7 +169,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
     reader.readAsDataURL(compressedFile);
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
-  
+      console.log(compressedDataUrl)
       if(local == true) {
         // Download the compressed image
         const link = document.createElement('a');

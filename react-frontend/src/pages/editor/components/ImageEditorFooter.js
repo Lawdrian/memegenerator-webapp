@@ -34,7 +34,7 @@ const ImageEditorFooter = ({handleMemeCreation}) => {
       <Divider orientation="vertical" flexItem />
       <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, true)}>download</ImageEditorButton>
       <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, false, false)}>save public</ImageEditorButton>
-      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, false, true)}>save private</ImageEditorButton>
+      <ImageEditorButton color='warning' onClick={() => handleMemeCreation(fileSize, memeName, false, true)}>save private</ImageEditorButton>
     </Box>
     )
 

@@ -9,11 +9,11 @@ const theme = createTheme({
     palette: {
         primary: {
             main: '#556cd6', // Hauptfarbe
+            light: '#FFFFFF',
         },
         secondary: {
             main: '#19857b', // Sekundärfarbe
         },
-
     },
     typography: {
         // Schriftart, Schriftgröße etc.
@@ -35,6 +35,9 @@ export default function RootLayout() {
                     </Button>
                     <Button color="inherit" component={NavLink} to="/editor">
                         Editor
+                    </Button>
+                    <Button color="inherit" component={NavLink} to="/canvas">
+                        Canvas
                     </Button>
                     <Button color="inherit" component={NavLink} to="/account">
                         Account

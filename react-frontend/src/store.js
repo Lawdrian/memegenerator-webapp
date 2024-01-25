@@ -5,11 +5,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import dictationReducer from './slices/dictationSlice';
 import userReducer from './slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
+import templateReducer from './slices/templateSlice';
 
 const store = configureStore({
   reducer: {
     dictation: dictationReducer,
     user: userReducer,
+    template: templateReducer,
   },
 });
 

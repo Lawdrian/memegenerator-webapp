@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { useState } from "react";
 import { Grid,Button, TextField} from "@mui/material";
+import { getAllMemes, handleCommentSubmit, handleDownVote, handleUpVote } from "../api/meme.js";
 
 //CSS
 import "./myMemes.css";
 
-export default function MyMemes() {
+export default function AllMemes() {
     const [allImage, setAllImage] = useState([]);
     const [commentContent, setCommentContent] = useState('');
 
@@ -15,67 +16,12 @@ export default function MyMemes() {
     function handleCommentChange(event) {
         setCommentContent(event.target.value);
     }
-    function handleCommentSubmit(image) {
-        console.log(commentContent);
-        fetch('http://localhost:3001/meme-comment', {
-            headers:{
-                'Authorization': 'Bearer ' + token,
-                'Content-Type': 'application/json'
-            },
-            method: "PUT",
-            body: JSON.stringify({
-                memeId: image._id,
-                comment: commentContent,
-            })
-        })
-    };
-
-    function getAllmemes() {
-        fetch("http://localhost:3001/get-all-memes", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                "Authorization": "Bearer " + token,
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setAllImage(data.memes || []);
-            });
-
-    }
 
     useEffect(() => {
-        getAllmemes();
+        getAllMemes(setAllImage, token);
     }, []);
 
-//HANDLERS
-function handleUpVote(memeID){
-    fetch('http://localhost:3001/meme-vote', {
-        headers: {
-            "Authorization": "Bearer " + token,
-            'Content-Type': 'application/json'
-        }, 
-        method: 'PUT',
-        body: JSON.stringify({
-            memeId: memeID,
-            vote: "upVotes",
-        })
-    });
-}
-function handleDownVote(memeID){
-    fetch('http://localhost:3001/meme-vote', {
-        headers: {
-            "Authorization": "Bearer " + token,
-            'Content-Type': 'application/json'
-        }, 
-        method: 'PUT',
-        body: JSON.stringify({
-            memeId: memeID,
-            vote: "downVotes",
-        })
-    });
-}
+
 
     return (
         <Grid style = {{padding: "50px", background:"#DDDDDD44"}}>
@@ -84,7 +30,7 @@ function handleDownVote(memeID){
                     <Grid style = {{padding:5}}>
                         <Grid container>
                             <Grid item xs = {12} md={4}>
-                                <img src={image.image} style={{ width: "auto", height: "300px" }} />
+                                <img src={image.content} style={{ width: "auto", height: "300px" }} />
                             </Grid>
                             <Grid item xs = {12} md={9} >
                                 {image.comments && image.comments.length > 0 && (
@@ -101,10 +47,10 @@ function handleDownVote(memeID){
 
                         </Grid>
                         <Grid container>
-                            <Button onClick={() => handleUpVote(image._id)} variant="contained" color="success" style={{ margin: 5 }}>
+                            <Button onClick={() => handleUpVote(image._id, token)} variant="contained" color="success" style={{ margin: 5 }}>
                                 Like
                             </Button>
-                            <Button onClick={() => handleDownVote(image._id)} variant="contained" color="error"  style = {{margin:5}}>
+                            <Button onClick={() => handleDownVote(image._id, token)} variant="contained" color="error"  style = {{margin:5}}>
                                 Dislike
                             </Button>
                         </Grid>
@@ -118,7 +64,7 @@ function handleDownVote(memeID){
                                 />
                             </Grid>
                             <Grid item xs={4}>
-                                <Button variant="contained" color="primary" onClick={() => handleCommentSubmit(image)}>
+                                <Button variant="contained" color="primary" onClick={() => handleCommentSubmit(image, commentContent, token)}>
                                     Senden
                                 </Button>
                             </Grid>

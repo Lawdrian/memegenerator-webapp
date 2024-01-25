@@ -15,7 +15,8 @@ const GoogleUser = mongoose.model("GoogleUser");
 const MemeModel = require('./mongoDB/meme.model.js');
 const Meme = mongoose.model("Meme"); //MemeModel
 const TemplatesModel = require('./mongoDB/template.model.js');
-const Templates = mongoose.model("Template");
+const Template = mongoose.model("Template");
+
 
 //LOGIN + Registration
 const argon2 = require('argon2');
@@ -59,23 +60,42 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
   useUnifiedTopology: true,
 });
 
-//--------------------Templates--------------------
-app.post('/upload', verifyToken,(req, res) => {
-  console.log("UPLOAD");
-  const { base64 } = req.body;
-  Templates.create({ image: base64 })
-  res.send({ Status: "ok" })
-})
+//--------------------TAB FILE UpLOAD--------------------
+app.post('/template', verifyToken, async (req, res) => {
+  const {content, name, format} = req.body;
 
-// GET-Request for templates
-app.get("/get-image",verifyToken, async (req, res) => {
+  const { decodedJwt } = res.locals;
+  const user = await User.findOne({ _id: decodedJwt.userId });
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
+  }
+  if(format !== "image" && format !== "gif" && format !== "video") {
+    res.status(400).send({Status:"error", Message: "Invalid template type"});
+  }
   try {
-    await Templates.find({})
-    .then(data => {
-      res.send({status: "ok", data:data})
-    })
+    // Use the model to create a new document
+    await Template.create(
+      {
+        name: name, 
+        createdBy: user._id,
+        format: "image", 
+        content: content
+      });
+    res.status(201).json({Status:"ok", Message: "Template saved to database"})
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({Status:"error", Message: "Error saving image to database"});
+  }
+});
+
+// GET-Request to retrieve all templates from the database
+app.get("/template", async (req, res) => {
+  try {
+    const data = await Template.find({});
+    res.send({status: "ok", data:data});
   } catch (error) {
-    
+    console.log(error);
+    res.status(500).send({status: "error", message: "Error retrieving templates"});
   }
 })
 
@@ -156,18 +176,31 @@ app.post('/api-login', async (req, res) => {
 ///////////////////////////////////////////MEMES///////////////////////////////////////////
 app.post('/create-meme', verifyToken, async (req, res) => {
   console.log("CREATE MEME");
-  const { base64 } = req.body; 
+  const { content, name, format, templateId, private } = req.body; 
+
   const { decodedJwt } = res.locals;
   
   const user = await User.findOne({ _id: decodedJwt.userId });
+  const usedTemplate = await Template.findOne({ _id: templateId });
   if (!user) {
     return res.status(401).json({ error: 'User not found' });
   }
-  if(!base64){
-    return res.status(500).json({ error: 'Missing Meme' });
+  if(!content || !name || !format || !templateId){
+    console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "private: ", private)
+    return res.status(400).json({ error: 'Missing data' });
   }
-  Meme.create({ image: base64, creator: user._id })
-  res.send({ Status: "ok" })
+  Meme.create(
+    { 
+      content: content, 
+      name: name, 
+      format: format, 
+      createdBy: user._id,
+      private: private,
+      usedTemplate: usedTemplate._id
+    }
+  )
+  res.status(201).json({Status:"ok", Message: "Meme saved to database"})
+  
 })
 
 // GET-Request for self-created memes
@@ -179,8 +212,8 @@ app.get('/get-my-meme', verifyToken, async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: 'User not found' });
   }
-  const memes = await Meme.find({ creator: user._id });
-  res.json({ success: 'Success', memes: memes });
+  const memes = await Meme.find({ createdBy: user._id });
+  res.status(200).json({Status:"ok", memes: memes})
 })
 
 // GET-Request for all memes
@@ -188,6 +221,7 @@ app.get('/get-all-memes', async (req, res) => {
   console.log("GET ALL MEMES");
   const memes = await Meme.find({private: false}) 
   .populate('comments.user', 'email') // resolve the reference and only the 'email' property of the user is returned
+  console.log(memes[0].name)
   res.json({ success: 'Success', memes: memes });
 })
 
@@ -200,7 +234,7 @@ app.put('/update-meme-privacy', verifyToken, async (req, res) => {
     return res.status(500).json({ error: 'Email not in token' });
   }
   const updateMeme = await Meme.findOneAndUpdate(
-    { _id: memeId, creator: decodedJwt.userId },
+    { _id: memeId, createdBy: decodedJwt.userId },
     { private: private }, 
     { new: true }
     );

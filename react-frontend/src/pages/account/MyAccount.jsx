@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
 //Components
-import UploadTemplatePopup from '../../components/UploadTemplatePopup';
 import MyMemes from '../../components/MyMemes';
 import AllMemes from '../../components/AllMemes';
 import TextDictation from '../../components/Accessibility/TextDictation';
@@ -43,9 +42,6 @@ export default function MyAccount() {
                 </Grid>
                 <br />
                 <Grid>
-                    <UploadTemplatePopup />
-                </Grid>
-                <Grid>
                 <Button onClick={() => setShowMyMemes(prevState => !prevState)}>Show My Memes</Button>
                     {showMyMemes && <MyMemes />}
                 </Grid>
@@ -54,7 +50,6 @@ export default function MyAccount() {
                     {showAllMemes && <AllMemes />}
                 </Grid>
             </Grid>
-
         </div>
     );
 }; 

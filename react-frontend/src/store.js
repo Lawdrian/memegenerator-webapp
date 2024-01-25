@@ -3,10 +3,12 @@
 * Automatically serializes the state and persists it to local storage.
 */
 import { configureStore } from '@reduxjs/toolkit';
+import dictationReducer from './slices/dictationSlice';
 import userReducer from './slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
 
 const store = configureStore({
   reducer: {
+    dictation: dictationReducer,
     user: userReducer,
   },
 });

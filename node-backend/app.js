@@ -59,7 +59,7 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
   useUnifiedTopology: true,
 });
 
-//--------------------TAB FILE UpLOAD--------------------
+//--------------------Templates--------------------
 app.post('/upload', verifyToken,(req, res) => {
   console.log("UPLOAD");
   const { base64 } = req.body;
@@ -67,8 +67,8 @@ app.post('/upload', verifyToken,(req, res) => {
   res.send({ Status: "ok" })
 })
 
-// GET-Request für alle Bilder
-app.get("/get-image", async (req, res) => {
+// GET-Request for templates
+app.get("/get-image",verifyToken, async (req, res) => {
   try {
     await Templates.find({})
     .then(data => {

@@ -2,6 +2,9 @@ import { NavLink, Outlet } from "react-router-dom"
 import { AppBar, Button, createTheme, ThemeProvider, Toolbar, Typography } from "@mui/material"
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
+//Components
+import TextToSpeech from '../components/Accessibility/TextToSpeech';
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -26,6 +29,7 @@ export default function RootLayout() {
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         Meme Generator
                     </Typography>
+                    <TextToSpeech />
                     <Button color="inherit" component={NavLink} to="/" exact>
                         Home
                     </Button>
@@ -35,6 +39,7 @@ export default function RootLayout() {
                     <Button color="inherit" component={NavLink} to="/account">
                         Account
                     </Button>
+
                 </Toolbar>
             </AppBar>
 

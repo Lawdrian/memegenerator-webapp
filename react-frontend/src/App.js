@@ -18,13 +18,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import checkServerAvailability from './api/server';
 import { saveMeme } from './api/meme';
 import { resetMemeCache } from './slices/serverSlice';
+import { getDrafts } from './api/draft';
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout/>}>
       <Route index element={<Account />} />
-      <Route path="editor" element={<EditorContainer />} />
+      <Route path="editor/*" element={<EditorContainer />} />
       <Route path="canvas" element={<CanvasCreator />} />
       <Route path="account" element={<Account/>} />
       <Route path="*" element={<NotFound />} />
@@ -35,13 +36,13 @@ const router = createBrowserRouter(
 function App() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
-  const meme = useSelector((state) => state.server.cachedMemes);
+  const cachedMeme = useSelector((state) => state.server.cachedMemes);
   const serverReachable = useSelector((state) => state.server.serverReachable);
+  const draftsLoaded = useSelector((state) => state.draft.draftsLoaded);
 
   // check server availability every 10 seconds
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log("cached memes: ");
       dispatch(checkServerAvailability());
     }, 10000);
 
@@ -51,21 +52,24 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if(serverReachable && meme != [] && meme != undefined) {
+    if(serverReachable && cachedMeme != [] && cachedMeme !== undefined && cachedMeme.length > 0) {
       console.log("Uploading cached memes");
-      console.log(meme)
-      meme.forEach(meme => {
+      cachedMeme.forEach(meme => {
         console.log(meme);
         saveMeme(meme, token);
       });
       dispatch(resetMemeCache());
     }
-  }, [serverReachable,])
-
-  useEffect(() => {
-    console.log(meme)
-  }, [meme])
+  }, [serverReachable])
  
+  // fetch drafts from database on page load
+  useEffect(() => {
+    if(token && !draftsLoaded) {
+      dispatch(getDrafts(token));
+    }
+  }, [token, draftsLoaded])
+
+
   return (
     <RouterProvider router={router} />
   );

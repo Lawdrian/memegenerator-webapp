@@ -2,14 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Layer, Text, Transformer } from 'react-konva';
 import Konva from 'konva';
 
-function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelected, initialTextWidth, initialPosition}) {
+function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelected, initialTextWidth, onPropertyChange}) {
   const [textNode, setTextNode] = useState(null);
   const [trNode, setTrNode] = useState(null);
   const textareaRef = useRef(null);
   const stageSize = { width: stageRef.current.width(), height: stageRef.current.height() };
   const [isEditable, setIsEditable] = useState(false);
-  const [position, setPosition] = useState(initialPosition ?? { x: 50, y: 80});
-
+ 
   const stage = stageRef.current.getStage();
 
   // handle the selection of the text field
@@ -21,6 +20,7 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
             width: textNode.width() * textNode.scaleX(),
             scaleX: 1,
           });
+          onPropertyChange("rotation", textNode.rotation());
           // check, if there is currently a textarea and also update the rotation of the textarea
           if (textareaRef.current) {
             // it isn't allowed to edit the text while rotating it -> textarea will be deleted when rotating text
@@ -118,7 +118,9 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
       // update the text of the textnode on every keypress inside the textarea
       handler = () => {
         if(textNode) {
-          textNode.text(textarea.value);
+          const newValue = textarea.value;
+          textNode.text(newValue);
+          onPropertyChange("text", newValue);
           // update the textarea's height to match the textNode's height
           textarea.style.height = `${textarea.scrollHeight}px`;
         } else {
@@ -132,7 +134,9 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
       // remove old textarea
       if (textareaRef.current) {
         // update text node with the textarea value
-        textNode.text(textareaRef.current.value);
+        const newValue = textareaRef.current.value
+        textNode.text(newValue);
+        onPropertyChange("text", newValue);
         textNode.show();
         
         // remove the textarea from the DOM
@@ -177,13 +181,12 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
     };
   }, []);
 
-
   const handleDragMove = e => {
-    setPosition({ x: e.target.x(), y: e.target.y() });
+    onPropertyChange("position", { x: e.target.x(), y: e.target.y() });
   };
 
   const handleDragEnd = e => {
-    setPosition({ x: e.target.x(), y: e.target.y() });
+    onPropertyChange("position", { x: e.target.x(), y: e.target.y() });
   };
 
   const checkFontStyle = () => {
@@ -202,13 +205,14 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
   return (
         <Layer>
             <Text
-              x={position.x}
-              y={position.y}
+              x={textProps.position.x}
+              y={textProps.position.y}
               width={initialTextWidth} // Set the width of the text box
               fontSize={textProps.fontSize}
               fontFamily={textProps.fontFamily}
+              rotation={textProps.rotation}
               fill={textProps.fill}
-              text="Some text"
+              text={textProps.text}
               align={textProps.align}
               textDecoration={textProps.textDecoration}
               fontStyle={checkFontStyle()}

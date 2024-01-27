@@ -68,6 +68,16 @@ function TextPropertiesForm({ textProps, onPropChange, removeTextField }) {
     onPropChange(syntheticEvent);
   };
 
+  const handleFontSizeChange = (event) => {
+    const syntheticEvent = {
+      target: {
+        name: 'fontSize',
+        value: Number(event.target.value),
+      },
+    };
+    onPropChange(syntheticEvent);
+  };
+
   const handleToggleAlignment = () => {
     switch(textProps.align) {
       case 'left': 
@@ -96,7 +106,7 @@ function TextPropertiesForm({ textProps, onPropChange, removeTextField }) {
   return (
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
       <Typography>Size:</Typography>
-      <TextField sx={{ width: '100px' }} id="fontSize" type="number" name="fontSize" value={textProps.fontSize} onChange={onPropChange} />
+      <TextField sx={{ width: '100px' }} id="fontSize" type="number" name="fontSize" value={textProps.fontSize} onChange={handleFontSizeChange} />
       <Divider orientation="vertical" flexItem />
       
       <Typography>Font:</Typography>

@@ -5,18 +5,17 @@ const templateSlice = createSlice({
     initialState: {
         templatesLoaded: false,
         templates: [{
-            id: null,
+            _id: null,
             name: null,
             format: null,
             content: null,
         }],
     },
     reducers: {
-        setTemplates: (state, action) => {
-            const { templates } = action.payload || {}; 
-            if(templates !== null) {
+        setTemplates: (state, action) => {  
+            if(action.payload !== null && action.payload != []) {
                 console.log("templates successfully loaded")
-                state.templates = templates;
+                state.templates = action.payload;
                 state.templatesLoaded = true;
             } else {
                 console.error("setTemplates: templates data is empty");
@@ -24,9 +23,8 @@ const templateSlice = createSlice({
             
         },
         setTemplatesLoaded: (state, action) => {
-            const { templatesLoaded } = action.payload || {}; 
-            if(templatesLoaded === true || templatesLoaded === false) {
-                state.templatesLoaded = templatesLoaded;
+            if(action.payload === true || action.payload === false) {
+                state.templatesLoaded = action.payload;
             } else {
                 console.error("setTemplatesLoaded: templatesLoaded must be true or false");
             }

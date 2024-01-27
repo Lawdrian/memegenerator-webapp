@@ -37,7 +37,7 @@ export default function AllMemes() {
 
     return (
         <Grid style={{ padding: "50px", background: "#DDDDDD44" }}>
-            {allImage.map((image) => (
+            {setAllImage && allImage.map((image) => (
                 <Grid style={{ padding: 5 }} key={image._id}>
                     <Grid container>
                         <Grid item xs={12} md={4}>

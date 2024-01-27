@@ -52,12 +52,11 @@ export default function MyMemes() {
                 )}>
                 Upload Meme
             </Button>
-            <br/>
 
             <Grid>
-                {allImage.map((data) => {
+                {allImage.map((data, index) => {
                     return (
-                        <Grid style={{margin: 10 }}>
+                        <Grid key={index} style={{margin: 10 }}>
                             <Grid style = {{height:"400px"}}>
                                 <img
                                     className="myMemes"

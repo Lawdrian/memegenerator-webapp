@@ -3,7 +3,7 @@ import { Stage, Layer, Image } from 'react-konva';
 import { Grid } from '@mui/material';
 import { useCallback } from 'react';
 import imageCompression from 'browser-image-compression';
-
+import { throttle } from 'lodash';
 import EditableTextField from './EditableTextField';
 import TextPropertiesForm from './TextPropertiesForm';
 import { ImageEditorButton, ImageEditorTextfieldButton, ImageEditorClearButton } from '../components/ImageEditorButton';
@@ -18,15 +18,18 @@ export const defaultTextProps = {
   fontWeight: 'normal',
   textDecoration: 'none',
   align: 'center',
+  position: { x: 50, y: 80 },
+  rotation: 0,
+  text: 'Some text',
 };
 
-function ImageEditor({ imageUrl, handleSaveMeme }) {
+function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) {
   const [textFields, setTextFields] = useState([]);
   const [image, setImage] = useState(null);
 
   // state variables for for text properties form
   const [selectedTextFieldIndex, setSelectedTextFieldIndex] = useState(null);
-  const [selectedTextFieldProps, setSelectedTextFieldProps] = useState(null);
+  //const [selectedTextFieldProps, setSelectedTextFieldProps] = useState(null);
 
   const [stageSize, setStageSize] = useState({width: window.innerWidth, height: window.innerHeight});
 
@@ -67,36 +70,63 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
 
   }, [imageUrl]);
 
+  useEffect(() => {
+    if(draftProps) {
+      setTextFields(draftProps.textProperties)
+    }
+  }, [draftProps])
+
 
 
   const handleTextFieldSelect = (index, props) => {
     setSelectedTextFieldIndex(index);
-    setSelectedTextFieldProps(props);
+    //setSelectedTextFieldProps(props);
   };
 
   const handleTextFieldDeselect = () => {
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   }
 
   // handlePropChange is called when a property of a textfield is changed in the TextPropertiesForm
   const handlePropChange = useCallback((name, value) => {
     const newProps = {
-      ...selectedTextFieldProps,
+      ...textFields[selectedTextFieldIndex],
       [name]: value,
     };
-    setSelectedTextFieldProps(newProps);
+    //setSelectedTextFieldProps(newProps);
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === selectedTextFieldIndex ? newProps : textField
       )
     );
   },
-  [selectedTextFieldProps, selectedTextFieldIndex]
+  [textFields, selectedTextFieldIndex]
   );
+
+  // update the textField porperties state once a property inside the EditableTextField component changes
+  const handleEditableTextFieldChange = throttle((property, value, key) => {
+    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
+    setTextFields(prevTextFields =>
+      prevTextFields.map((textField, index) =>
+        index === key ? {...textField, [property]: value} : textField
+      )
+    );
+  }, 300, { leading: false})
+
+  const handleTextChange = throttle((text, key) => {
+    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
+    setTextFields(prevTextFields =>
+      prevTextFields.map((textField, index) =>
+        index === key ? {...textField, text: text} : textField
+      )
+    );
+  }, 300, { leading: false})
 
   const addTextField = () => {
     setTextFields(prevTextFields => [...prevTextFields, {...defaultTextProps}]);
+    //setSelectedTextFieldIndex(textFields.length-1);
+    //setSelectedTextFieldProps({...defaultTextProps});
   };
 
   const removeTextField = (index) => {
@@ -107,13 +137,13 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
 
     setTextFields(prevTextFields => prevTextFields.filter((_, i) => i !== index));
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   };
 
   const clearTextFields = () => {
     setTextFields([]);
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   };
 
   /*
@@ -185,13 +215,17 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
     };
   };
 
+  const handleDraftCreation = (draftName) => {
+    handleSaveDraft(textFields, draftName);
+  }
+
   return (
     <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '100vh', overflow: 'hidden', }}>
       <Grid item style={{ height: '10vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
-        {selectedTextFieldProps ? (
+        {textFields[selectedTextFieldIndex] ? (
           <TextPropertiesForm
             removeTextField={() => removeTextField(selectedTextFieldIndex)}
-            textProps={selectedTextFieldProps}
+            textProps={textFields[selectedTextFieldIndex] ?? null}
             onPropChange={(event) => handlePropChange(event.target.name, event.target.value)}
           />
         )
@@ -215,7 +249,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
           {textFields.map((textProps, index) => (
             <EditableTextField 
               initialTextWidth={initialTextWidth}
-              initialPosition={{ x: 50, y: 80 }}
+              onPropertyChange={(property, value) => handleEditableTextFieldChange(property, value, index)}
               stageRef={stageRef}
               key={index}
               isSelected={index === selectedTextFieldIndex}
@@ -227,7 +261,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} />
+        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
       </Grid>
     </Grid>
   );

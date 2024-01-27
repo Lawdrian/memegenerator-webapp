@@ -21,7 +21,7 @@ export const getTemplates = () => async (dispatch) =>{
     if(data.data === null) {
       console.error("getTemplates: templates data is empty");
     } else {
-      dispatch(setTemplates({templates: data.data} || []));
+      dispatch(setTemplates(data.data || []));
     }
   }
   catch(error){
@@ -53,7 +53,7 @@ export const saveTemplate = (template, token) => async (dispatch) => {
         alert("Error saving template to database")
       } else {
         alert("template saved successfully")
-        dispatch(setTemplatesLoaded({templatesLoaded: false}))
+        dispatch(setTemplatesLoaded(false))
       }
   })
     .catch((error) => console.error('Error saving template to database:', error));

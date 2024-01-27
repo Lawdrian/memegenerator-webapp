@@ -1,4 +1,5 @@
 // This file contains the functions that are used to upload and retrieve meme templates from the database
+import { setServerNotReachable } from "../slices/serverSlice";
 import { setTemplates, setTemplatesLoaded } from "../slices/templateSlice";
 
 export async function fetchImgflipTemplates() {
@@ -10,19 +11,22 @@ export async function fetchImgflipTemplates() {
 
 // I am using Redux Thunk here -> this function needs to be invoked with dispatch(getTemplates())
 export const getTemplates = () => async (dispatch) =>{
-  const response = await fetch("http://localhost:3001/template", {
-    method: "GET",
-  });
+  
+  try {
+    const response = await fetch("http://localhost:3001/template", {
+      method: "GET",
+    });
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    const data = await response.json();
+    if(data.data === null) {
+      console.error("getTemplates: templates data is empty");
+    } else {
+      dispatch(setTemplates({templates: data.data} || []));
+    }
   }
-
-  const data = await response.json();
-  if(data.data === null) {
-    console.error("getTemplates: templates data is empty");
-  } else {
-    dispatch(setTemplates({templates: data.data} || []));
+  catch(error){
+    console.error("getTemplates: ", error);
+    dispatch(setServerNotReachable());
   }
 }
 

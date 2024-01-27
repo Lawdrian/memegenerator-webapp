@@ -1,6 +1,7 @@
 const token = localStorage.getItem("token");
 
 export function saveMeme(meme, token) {
+
   fetch("http://localhost:3001/create-meme", {
     method: "POST",
     crossDomain: true,
@@ -18,12 +19,22 @@ export function saveMeme(meme, token) {
       private: meme.private                     
     })
   })
-    .then((res) => res.json())
-    .then((data) =>
-      console.log(data),
-      alert("meme Uploaded Successfully")
-    )
-    .catch((error) => console.error('Error uploading image:', error));
+  .then((res) => {
+    console.log("response")
+    console.log(res)
+    if (res.status === 201) {
+      alert("Meme saved successfully")      
+      return res.json(); // Resolve with the JSON data if the status is 201
+    } else if (res.status === 401) {
+      alert("Unauthorized")
+    } else {
+      alert("Error during Meme save")
+    }
+  })
+  .catch((error) => {
+    console.error('Error uploading image:', error)
+    alert("Error during Meme save")
+  })
 }
 
 export function getAllMemes(callBack, token) {

@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import dictationReducer from './slices/dictationSlice';
 import userReducer from './slices/userSlice'; 
 import templateReducer from './slices/templateSlice';
+import serverSlice from './slices/serverSlice';
 
 const persistedUserState = JSON.parse(localStorage.getItem('user')) || null; 
 
@@ -14,6 +15,7 @@ const store = configureStore({
     dictation: dictationReducer,
     user: userReducer,
     template: templateReducer,
+    server: serverSlice
   },
   preloadedState: {
     user: persistedUserState,

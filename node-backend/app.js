@@ -349,6 +349,12 @@ app.put('/meme-comment', verifyToken, async(req,res) =>{
 });
 ///////////////////////////////////////////MEMES-END///////////////////////////////////////////
 
+// API-endpoint to check if the server is reachable
+app.get('/health-check', async (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'Server is reachable' });
+})
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

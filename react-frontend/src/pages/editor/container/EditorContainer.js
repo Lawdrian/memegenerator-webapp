@@ -6,6 +6,7 @@ import { getTemplates } from '../../../api/template';
 import { useSelector } from 'react-redux';
 import { saveMeme } from '../../../api/meme';
 import { useDispatch } from 'react-redux';
+import { cacheMeme } from '../../../slices/serverSlice';
 
 export const defaultMemeProps = {
   name: 'myMeme',
@@ -20,6 +21,7 @@ const EditorContainer = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null)
     const dispatch = useDispatch();
     const storeTemplates = useSelector((state) => state.template);
+    const serverReachable = useSelector((state) => state.server.serverReachable);
     const token = useSelector((state) => state.user.token);
 
     if(!storeTemplates.templatesLoaded) {
@@ -35,9 +37,14 @@ const EditorContainer = () => {
         templateId: selectedTemplate._id,
         private: privacy
       }
-      console.log("handleSaveMeme")
-      console.log(meme)
-      saveMeme(meme, token)
+      if(serverReachable) {
+        console.log("Sending meme to server")
+        saveMeme(meme, token)
+      } else {
+        console.log("Storing meme in redux store")
+        dispatch(cacheMeme(meme))
+      }
+
     }
 
     return (

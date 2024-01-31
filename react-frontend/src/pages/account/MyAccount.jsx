@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 //Components
 import MyMemes from '../../components/MyMemes';
 import AllMemes from '../../components/AllMemes';
-
+import TextDictation from '../../components/Accessibility/TextDictation';
 //Redux - States
 import { setUser } from '../../slices/userSlice'; 
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,6 +30,7 @@ export default function MyAccount() {
     return (
         <div>
             <h1>Eingeloggt mit der Email {user.email}</h1>
+            <TextDictation/>
             <Grid spacing={2} alignItems="center">
                 <Grid>
                     <h2>Ausloggen</h2>

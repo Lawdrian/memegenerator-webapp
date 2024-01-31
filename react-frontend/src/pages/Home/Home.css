@@ -1,0 +1,36 @@
+/* Home.css */
+
+/* Container for the templates */
+.template-list {
+    display: flex;
+    flex-direction: column; /* Display templates in a single column */
+    align-items: center; /* Center templates horizontally */
+  }
+  
+  /* Individual template item */
+  .template {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Add some spacing between templates */
+    max-width: 500px; /* Limit the width of the template */
+  }
+  
+  /* Style the template image */
+  .template-image img {
+    max-width: 100%; /* Ensure the image doesn't exceed its container width */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Center the image horizontally */
+  }
+  
+  /* Style the template name */
+  .template h2 {
+    font-size: 16px;
+    margin-top: 10px;
+    color: #333;
+  }
+  

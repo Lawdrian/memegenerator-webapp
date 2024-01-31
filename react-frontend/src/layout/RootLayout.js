@@ -26,7 +26,7 @@ export default function RootLayout() {
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         Meme Generator
                     </Typography>
-                    <Button color="inherit" component={NavLink} to="/" exact>
+                    <Button color="inherit" component={NavLink} to="/" exact="true">
                         Home
                     </Button>
                     <Button color="inherit" component={NavLink} to="/editor">

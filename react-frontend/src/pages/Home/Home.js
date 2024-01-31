@@ -1,50 +1,50 @@
 import React, { useState, useEffect } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
 import axios from "axios";
-import { set } from "lodash";
 import Post from "./Posts/Post";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
+import { setTemplates } from "../../slices/templateSlice";
+import { v4 as uuidv4 } from "uuid";
+import "./Home.css";
 
-export default function Home() {
-  const [memes, setMemes] = useState(Array.from({ length: 20 }));
-  const [hasMore, setHasMore] = useState(true);
-
-  const fetchMoreData = () => {
-    if (memes.length < 2000) {
-      setTimeout(() => {
-        setMemes(memes.concat(Array.from({ length: 20 })));
-      }, 1500);
-    } else {
-      setHasMore(false);
-    }
-  };
+function Home() {
+  const dispatch = useDispatch();
+  const templates = useSelector((state) => state.template.templates);
 
   useEffect(() => {
-    // call data from API
-    axios
-      .get("/get-image") 
-      .then((response) => {
-        const data = response.data.data || [];
-        setMemes(data);
+    fetch("http://localhost:3001/template")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          dispatch(setTemplates({ templates: data.data }));
+        } else {
+          console.error("Failed calling templates", data.message);
+        }
       })
-      .catch((error) => console.error("Fehler beim Abrufen der Daten:", error));
-  }, []);
+      .catch((error) => {
+        console.error("Failed calling templates", error);
+      });
+  }, [dispatch]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <InfiniteScroll
-        dataLength={memes.length}
-        next={fetchMoreData}
-        hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-      >
-        {memes.map((i, index) => (
-          <div style={{ height: 400 }} key={index}>
-            <div className="home__posts">
-            <Post title={memes.title} imageUrl={memes.image} />
+    <div>
+      <h1>Templates</h1>
+      <div className="template-list">
+        {templates.map((template) => {
+          const key = uuidv4();
+          return (
+            <div key={key} className="template">
+              <h2>{template.name}</h2>
+              <div className="template-image">
+                <img src={template.content} alt={`Template ${template.id}`} />
+              </div>
+              {/* Add more information or styling as needed */}
             </div>
-          </div>
-        ))}
-      </InfiniteScroll>
+          );
+        })}
+      </div>
     </div>
   );
 }
+
+export default Home;

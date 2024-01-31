@@ -5,11 +5,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
 import templateReducer from './slices/templateSlice';
+import memeReducer from './slices/memeSlice';
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     template: templateReducer,
+    meme: memeReducer,
   },
 });
 

@@ -1,59 +1,38 @@
 import React, { useState } from "react";
-import "./Post.css";
+import "./Post.css"
+import axios from "axios"; // Import axios for making API requests
 
-function Post({ title, imageUrl }) {
-  //const [thumbsUp, setThumbsUp] = useState(0);
-  //const [thumbsDown, setThumbsDown] = useState(0);
+function Post({ title, imageUrl, id }) {
   const [comments, setComments] = useState([]);
-  //const [userRating, setUserRating] = useState(null); // Zustand für die Bewertung des Benutzers
-  const [currentComment, setCurrentComment] = useState(""); // Zustand für den aktuellen Kommentar
+  const [currentComment, setCurrentComment] = useState("");
 
-  // function for rating
-  /* const rate = (rating) => {
-    if (userRating === null || userRating === rating) {
-      const newRating = userRating === null ? rating : null;
-      setUserRating(newRating);
-
-      // API-call
-      const endpoint = newRating === "thumbsUp" ? `/api/posts/${id}/like` : `/api/posts/${id}/dislike`;
-      axios.post(endpoint)
-        .then(response => {
-          if (newRating === "thumbsUp") {
-            setThumbsUp(thumbsUp + 1);
-          } else if (newRating === "thumbsDown") {
-            setThumbsDown(thumbsDown + 1);
-          }
-        })
-        .catch(error => console.error('Fehler:', error));
-    }
-  }; */
-
-  // Funktion zum Hinzufügen eines Kommentars
+  // Function to add a comment
   const addComment = () => {
     if (currentComment !== "") {
       setComments([...comments, currentComment]);
-      setCurrentComment(""); // Kommentar zurücksetzen
+      setCurrentComment(""); // Reset the comment input
     }
   };
 
-  /*
-  <div className="post__rating">
-            <button onClick={() => rate("thumbsUp")}>&#128077;</button>
-            <span>{thumbsUp}</span>
-            <button onClick={() => rate("thumbsDown")}>&#128078;</button>
-            <span>{thumbsDown}</span>
-          </div>
-  */
+  // Function to handle rating
+  const rate = (rating) => {
+    // Make an API call to rate the post
+    const endpoint = rating === "thumbsUp" ? `/api/posts/${id}/like` : `/api/posts/${id}/dislike`;
+    axios
+      .post(endpoint)
+      .then((response) => {
+        // Handle the response, e.g., update UI or state
+      })
+      .catch((error) => console.error("Error rating post:", error));
+  };
 
   return (
     <div className="post-container">
       <div className="post">
         <div className="post__image">
-        <img src={imageUrl} alt="Post Image" />
+          <img src={imageUrl} alt="Post Image" />
         </div>
         <div className="post__footer">
-          
-
           <div className="post__comments">
             <p>Comments so far</p>
             <div>
@@ -73,6 +52,10 @@ function Post({ title, imageUrl }) {
       </div>
       <div className="post__title">
         <h3>{title}</h3>
+      </div>
+      <div className="post__rating">
+        <button onClick={() => rate("thumbsUp")}>&#128077;</button>
+        <button onClick={() => rate("thumbsDown")}>&#128078;</button>
       </div>
     </div>
   );

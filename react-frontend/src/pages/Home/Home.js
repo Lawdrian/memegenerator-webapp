@@ -1,48 +1,75 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Post from "./Posts/Post";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
-import { setTemplates } from "../../slices/templateSlice";
-import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { setMemes } from "../../slices/memeSlice";
+import { getAllMemes } from "../../api/meme";
 import "./Home.css";
 
 function Home() {
   const dispatch = useDispatch();
-  const templates = useSelector((state) => state.template.templates);
+  const allMemes = useSelector((state) => state.meme.memes);
+  const token = useSelector((state) => state.user.token);
+  const navigate = useNavigate();
+
+  const [displayedMemes, setDisplayedMemes] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const memesPerLoad = 40;
 
   useEffect(() => {
-    fetch("http://localhost:3001/template")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "ok") {
-          dispatch(setTemplates({ templates: data.data }));
-        } else {
-          console.error("Failed calling templates", data.message);
-        }
-      })
-      .catch((error) => {
-        console.error("Failed calling templates", error);
-      });
-  }, [dispatch]);
+    getAllMemes((memes) => {
+      dispatch(setMemes({ memes }));
+      setDisplayedMemes(memes.slice(0, memesPerLoad));
+    }, token);
+  }, [dispatch, token]);
+
+  const fetchMoreData = () => {
+    if (displayedMemes.length >= allMemes.length) {
+      setHasMore(false);
+    } else {
+      setTimeout(() => {
+        setDisplayedMemes(
+          displayedMemes.concat(
+            allMemes.slice(
+              displayedMemes.length,
+              displayedMemes.length + memesPerLoad
+            )
+          )
+        );
+      }, 1500);
+    }
+  };
+  // <ShareButton
+  //memeLink={`${window.location.href}meme/${meme._id}`}/>
 
   return (
-    <div>
-      <h1>Templates</h1>
-      <div className="template-list">
-        {templates.map((template) => {
-          const key = uuidv4();
-          return (
-            <div key={key} className="template">
-              <h2>{template.name}</h2>
-              <div className="template-image">
-                <img src={template.content} alt={`Template ${template.id}`} />
+    <div className="home">
+      <h1>Memes</h1>
+      <InfiniteScroll
+        dataLength={displayedMemes.length}
+        next={fetchMoreData}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+      >
+        <div className="meme-list">
+          {displayedMemes.map((meme) => (
+            <div key={meme._id || meme.name} className="meme-card">
+              <div className="meme-title">{meme.name || "Next Meme"}</div>
+              <div className="meme-image">
+                {meme.content ? (
+                  <img
+                    src={meme.content}
+                    alt={`Meme ${meme._id}`}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                ) : (
+                  <div className="empty-meme">No Image</div>
+                )}
               </div>
-              {/* Add more information or styling as needed */}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      </InfiniteScroll>
     </div>
   );
 }

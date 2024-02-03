@@ -24,8 +24,24 @@ const memeSlice = createSlice({
 
             state.memes = memes;
         },
+        updateLikesDislikes: (state, action) => {
+            const { memeId, upVotes, downVotes } = action.payload;
+            const meme = state.memes.find(meme => meme._id === memeId);
+            if (meme) {
+                meme.upVotes = upVotes;
+                meme.downVotes = downVotes;
+            }
+        },
+        addComment: (state, action) => {
+            const { memeId, comment } = action.payload;
+            const meme = state.memes.find(meme => meme._id === memeId);
+            if (meme) {
+                meme.comments.push(comment);
+            }
+        },
     },
 });
 
-export const { setMemes } = memeSlice.actions;
+export const { setMemes, updateLikesDislikes, addComment } = memeSlice.actions;
 export default memeSlice.reducer;
+

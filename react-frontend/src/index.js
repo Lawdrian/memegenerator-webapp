@@ -10,11 +10,9 @@ import { Provider } from 'react-redux'
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId="600481405386-ildo9fnlj43mdctp5qcp1t65ssljrcgk.apps.googleusercontent.com">
-    <React.StrictMode>
       <Provider store={store}>
         <App />
       </Provider>
-    </React.StrictMode>
   </GoogleOAuthProvider>
 );
 // If you want to start measuring performance in your app, pass a function

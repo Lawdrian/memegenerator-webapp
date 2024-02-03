@@ -24,11 +24,6 @@ export default function MyMemes() {
             <h1 style = {{letterSpacing:"5px", fontWeight:"100", fontSize:"40px"}}> MEINE MEMES</h1>
             <Divider />
             <br />
-            <input
-                accept="image/*"
-                type="file"
-                onChange={convertToBase64}
-            />
             <Grid>
                 {allImage.map((data, index) => {
                     return (

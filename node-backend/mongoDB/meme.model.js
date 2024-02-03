@@ -4,12 +4,13 @@ const Schema = mongoose.Schema;
 /*
 meme: {
 	_id, 
-	name, // name from template
+	name, // name from meme
+    description, // description from meme
 	createdBy, // User object
 	format, // data format ('image', 'gif', 'video')
 	content, // base64 encoded meme
 	usedTemplate, // Template object
-	private, // true or false
+	privacy, // "public", "unlisted", "private"
 	upVotes,
 	downVotes,
 	comments,
@@ -20,6 +21,7 @@ meme: {
 const MemeSchema = new Schema(
     {
         name: { type: String, default: "myMeme" }, // name of the meme
+        description: { type: String, default: "A funny Meme" }, // name of the meme
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',
@@ -32,9 +34,9 @@ const MemeSchema = new Schema(
             ref: 'Template',
             required: true
         }, // template used to create the meme
-        private: {
-            type: Boolean,
-            default: false
+        privacy: {
+            type: String,
+            default: "public"
         },
         upVotes: [ //Array of Objects
             {

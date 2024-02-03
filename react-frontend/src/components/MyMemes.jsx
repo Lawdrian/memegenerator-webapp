@@ -29,19 +29,6 @@ export default function MyMemes() {
                 type="file"
                 onChange={convertToBase64}
             />
-            <Button variant="contained" color="primary" onClick={() => saveMeme(
-                    {
-                        content: focusMeme, 
-                        name: "accountMeme",
-                        format: "image",
-                        templateId: "1", //TODO: replace with actual templateId  
-                        private: true,
-                    },
-                    token
-                )}>
-                Upload Meme
-            </Button>
-
             <Grid>
                 {allImage.map((data, index) => {
                     return (
@@ -73,20 +60,25 @@ export default function MyMemes() {
                 <Grid style = {{background:"#FFFFFFF0"}}>
                     <img
                         className="focusMeme"
-                        src={focusMeme.image}
+                        src={focusMeme.content}
                         alt="Focused Meme"
-                        onClick={() => changeMemePrivacy(focusMeme._id, token)} //TODO: what is the meening of this? What privacy?
                     />
                     <Divider />
                     <Grid container>
                         <Grid item xs={12} style={{ margin: "20px" }}>
                             <Typography variant="h6">SICHTBARKEIT</Typography>
                             <br />
-                            <Button variant="contained" onClick={() => changeMemePrivacy(0, focusMeme._id, token)} style={{ width: "15%" }}>
-                                Privat</Button>
+                            <Button variant="contained" onClick={() => changeMemePrivacy("private", focusMeme._id, token)} style={{ width: "15%" }}>
+                                private
+                            </Button>
                             <br />
-                            <Button variant="contained" onClick={() => changeMemePrivacy(1, focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
-                                Öffentlich</Button>
+                            <Button variant="contained" onClick={() => changeMemePrivacy("public", focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
+                                public
+                            </Button>
+                            <br />
+                            <Button variant="contained" onClick={() => changeMemePrivacy("unlisted", focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
+                                unlisted
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>

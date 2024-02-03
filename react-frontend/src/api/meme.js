@@ -1,6 +1,6 @@
 export function saveMeme(meme, token) {
 
-  fetch("http://localhost:3001/create-meme", {
+  fetch("http://localhost:3001/meme", {
     method: "POST",
     crossDomain: true,
     headers: {
@@ -10,11 +10,14 @@ export function saveMeme(meme, token) {
       "Authorization": "Bearer " + token, // set token as header
     },
     body: JSON.stringify({                // converts base64-decoded String in JSON
-      content: meme.content,
+      data: [{
       name: meme.name,
+      description: meme.description,
       format: meme.format,
       templateId: meme.templateId,
-      private: meme.private                     
+      privacy: meme.privacy,
+      content: meme.content 
+    }]                 
     })
   })
   .then((res) => {
@@ -36,7 +39,7 @@ export function saveMeme(meme, token) {
 }
 
 export function getAllMemes(callBack, token) {
-  fetch("http://localhost:3001/get-all-memes", {
+  fetch("http://localhost:3001/meme", {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
@@ -72,7 +75,7 @@ export function changeMemePrivacy(privacy, memeId, token){
           "Content-Type": "application/json",
           "Authorization": "Bearer " + token,
       },
-      body: JSON.stringify({private: privacy, memeId: memeId})
+      body: JSON.stringify({privacy: privacy, memeId: memeId})
       })
 }
 

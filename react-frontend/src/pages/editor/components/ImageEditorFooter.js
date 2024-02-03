@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Divider, InputAdornment } from '@mui/material';
+import { Box, Typography, TextField, Divider, InputAdornment, Radio, FormControlLabel, FormControl, FormLabel, RadioGroup } from '@mui/material';
 
 import ImageEditorButton from '../components/ImageEditorButton';
-import { saveMeme } from '../../../api/meme';
 
 const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
 
     const [fileSize, setFileSize] = useState(1);
     const [memeName, setMemeName] = useState("myMeme");
+    const [memeDescription, setMemeDescription] = useState("A funny meme");
+    const [memePrivacy, setMemePrivacy] = useState("public");
 
     return(
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
       <Typography>File Size:</Typography>
       <TextField 
-        sx={{ width: '150px' }} 
+        sx={{ width: '100px' }} 
         id="fileSize" 
         type="number" 
         value={fileSize} 
@@ -23,19 +24,39 @@ const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
         }}
       />
       <Divider orientation="vertical" flexItem />
-      <Typography>Meme Name:</Typography>
+      <Typography>Name:</Typography>
       <TextField 
-        sx={{ width: '200px' }} 
+        sx={{ width: '150px' }} 
         id="text" 
         type="text" 
         value={memeName} 
         onChange={(event) => setMemeName(event.target.value)} 
       />
       <Divider orientation="vertical" flexItem />
-      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, true)}>download</ImageEditorButton>
-      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, false, false)}>save public</ImageEditorButton>
-      <ImageEditorButton color='warning' onClick={() => handleMemeCreation(fileSize, memeName, false, true)}>save private</ImageEditorButton>
+      <Typography>Description:</Typography>
+      <TextField 
+        sx={{ width: '250px' }} 
+        id="text" 
+        type="text" 
+        value={memeDescription} 
+        onChange={(event) => setMemeDescription(event.target.value)} 
+      />
+      <Divider orientation="vertical" flexItem />
+      <FormControl>
+        <RadioGroup
+          defaultValue="public"
+          name="radio-buttons-group"
+          value={memePrivacy}
+          onChange={(event) => setMemePrivacy(event.target.value)}
+        >
+          <FormControlLabel value="public" control={<Radio />} label="public" />
+          <FormControlLabel value="unlisted" control={<Radio />} label="unlisted" />
+          <FormControlLabel value="private" control={<Radio />} label="private" />
+        </RadioGroup>
+      </FormControl>
+      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, false)}>save</ImageEditorButton>
       <ImageEditorButton color='info' onClick={() => handleDraftCreation(memeName)}>save draft</ImageEditorButton>
+      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, true)}>download</ImageEditorButton>
     </Box>
     )
 

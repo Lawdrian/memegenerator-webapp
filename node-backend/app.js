@@ -64,7 +64,7 @@ mongoose.connect("mongodb://127.0.0.1:27017", {
 
 //--------------------TAB FILE UpLOAD--------------------
 app.post('/template', verifyToken, async (req, res) => {
-  const {content, name, format} = req.body;
+  const {content, name, description, format} = req.body;
 
   const { decodedJwt } = res.locals;
   const user = await User.findOne({ _id: decodedJwt.userId });
@@ -79,6 +79,7 @@ app.post('/template', verifyToken, async (req, res) => {
     await Template.create(
       {
         name: name, 
+        description: description,
         createdBy: user._id,
         format: "image", 
         content: content
@@ -176,32 +177,51 @@ app.post('/api-login', async (req, res) => {
 
 
 ///////////////////////////////////////////MEMES///////////////////////////////////////////
-app.post('/create-meme', verifyToken, async (req, res) => {
-  console.log("CREATE MEME");
-  const { content, name, format, templateId, private } = req.body; 
+app.post('/meme', verifyToken, async (req, res) => {
 
-  const { decodedJwt } = res.locals;
-  
-  const user = await User.findOne({ _id: decodedJwt.userId });
-  const usedTemplate = await Template.findOne({ _id: templateId });
-  if (!user) {
-    return res.status(401).json({ error: 'User not found' });
-  }
-  if(!content || !name || !format || !templateId){
-    console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "private: ", private)
-    return res.status(400).json({ error: 'Missing data' });
-  }
-  Meme.create(
-    { 
-      content: content, 
-      name: name, 
-      format: format, 
-      createdBy: user._id,
-      private: private,
-      usedTemplate: usedTemplate._id
+  try {
+    console.log("CREATE MEME");
+    const { decodedJwt } = res.locals;
+    const user = await User.findOne({ _id: decodedJwt.userId });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
     }
-  )
-  res.status(201).json({Status:"ok", Message: "Meme saved to database"})
+
+    // read the meme data from the request body. Has to be an array of objects
+    const {data} = req.body;
+    if(!data || data.length === 0){
+      return res.status(400).json({ error: 'No data' });
+    }
+    // iterate over each meme and save it to the database
+    console.log(data)
+    console.log(typeof data)
+    data.map(async (meme) => {
+      const { content, name, description, format, templateId, privacy } = meme; 
+      
+      const usedTemplate = await Template.findOne({ _id: templateId });
+      if(!content || !format || !templateId){
+        console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "privacy: ", privacy)
+        return res.status(400).json({ error: 'Missing data' });
+      }
+      Meme.create(
+        { 
+          content: content, 
+          name: name, 
+          description: description,
+          format: format, 
+          createdBy: user._id,
+          privacy: privacy,
+          usedTemplate: usedTemplate._id
+        }
+      )
+    })
+
+    res.status(201).json({Status:"ok", Message: "Meme saved to database"})
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({Status:"error", Message: "Error saving meme to database"});
+  }
   
 })
 
@@ -219,17 +239,53 @@ app.get('/get-my-meme', verifyToken, async (req, res) => {
 })
 
 // GET-Request for all memes
-app.get('/get-all-memes', async (req, res) => {
+app.get('/meme/:id?', async (req, res) => {
   console.log("GET ALL MEMES");
-  const memes = await Meme.find({private: false}) 
-  .populate('comments.user', 'email') // resolve the reference and only the 'email' property of the user is returned
-  console.log(memes[0].name)
-  res.json({ success: 'Success', memes: memes });
-})
+
+  try {
+    const { id } = req.params;
+    const { user, format, usedTemplate, ordering, max } = req.query;
+    
+    if (id) {
+      console.log("id" + id); // logs the id parameter from the URL
+    }
+    let memes;
+    if(id) {
+      if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({ error: 'Invalid id' });
+      }
+      // find a meme by its id, that is either public or unlisted
+      memes = await Meme.find({ _id: id, privacy: { $in: ["public", "unlisted"] } })
+        .populate('comments.user', 'email');
+    } else {
+      let query = {privacy: { $in: ["public", "unlisted"] }};
+      if(user) {
+        query.createdBy = user;
+      }
+      if(format) {
+        query.format = format;
+      }
+      if(usedTemplate) {
+        query.usedTemplate = usedTemplate;
+      }
+      console.log("query", query);
+      memes = await Meme.find(query)
+      .sort({ createdAt: ordering === 'desc' ? -1 : 1 }) // sort by creation date
+      .limit(max ? parseInt(max) : 0) // limit the number of memes
+      .populate('comments.user', 'email');
+    }
+    console.log("memes", memes);
+    res.json({ success: 'Success', memes: memes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while processing your request.' });
+  }
+});
+  
 
 app.put('/update-meme-privacy', verifyToken, async (req, res) => {
   console.log("UPDATE MEME PRIVACY");
-  const {private,  memeId } = req.body;
+  const {privacy,  memeId } = req.body;
   const decodedJwt = res.locals.decodedJwt;
   if(!decodedJwt?.email) //'?' Chaining-Operator -> if res.locals.decodeJWT is defined and got email 
   {
@@ -237,7 +293,7 @@ app.put('/update-meme-privacy', verifyToken, async (req, res) => {
   }
   const updateMeme = await Meme.findOneAndUpdate(
     { _id: memeId, createdBy: decodedJwt.userId },
-    { private: private }, 
+    { privacy: privacy }, 
     { new: true }
     );
     if (!updateMeme) {
@@ -328,7 +384,7 @@ app.put('/meme-comment', verifyToken, async(req,res) =>{
 
 app.post('/draft', verifyToken, async (req, res) => {
   console.log("CREATE DRAFT");
-  const { textProperties, name, format, templateId, private } = req.body; 
+  const { textProperties, name, format, templateId } = req.body; 
 
   const { decodedJwt } = res.locals;
   
@@ -338,7 +394,7 @@ app.post('/draft', verifyToken, async (req, res) => {
     return res.status(401).json({ error: 'User not found' });
   }
   if(!textProperties || !name || !format || !templateId){
-    console.log("textProperties: ", textProperties, "name: ", name, "format: ", format, "templateId: ", templateId, "private: ", private)
+    console.log("textProperties: ", textProperties, "name: ", name, "format: ", format, "templateId: ", templateId)
     return res.status(400).json({ error: 'Missing data' });
   }
   Draft.create(
@@ -347,7 +403,7 @@ app.post('/draft', verifyToken, async (req, res) => {
       name: name, 
       format: format, 
       createdBy: user._id,
-      private: private,
+      privacy: privacy,
       usedTemplate: usedTemplate._id
     }
   )

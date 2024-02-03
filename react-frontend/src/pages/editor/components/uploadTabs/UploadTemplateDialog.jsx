@@ -12,6 +12,7 @@ import { saveTemplate } from '../../../../api/template';
 
 export const emptyUploadTemplate = {
   name: 'newtemplate',
+  description: 'A good template',
   format: '',
   content: '',
 };
@@ -74,13 +75,22 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
             </Grid>
             <Grid item xs={1}>
             <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
-              <Typography>Template Name:</Typography>
+              <Typography>Name:</Typography>
               <TextField 
-                sx={{ width: '200px' }} 
+                sx={{ width: '150px' }} 
                 id="text" 
                 type="text" 
                 value={template.name} 
                 onChange={(event) => setTemplate({ ...template, name: event.target.value})} 
+              />
+              <Divider orientation="vertical" flexItem />
+              <Typography>Description:</Typography>
+              <TextField 
+                sx={{ width: '250px' }} 
+                id="text" 
+                type="text" 
+                value={template.description} 
+                onChange={(event) => setTemplate({ ...template, description: event.target.value})} 
               />
               <Divider orientation="vertical" flexItem />
               <Button

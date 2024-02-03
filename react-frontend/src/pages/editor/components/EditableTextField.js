@@ -50,6 +50,7 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
     if (stageRef.current) {
       stageRef.current.off('click tap');
       stageRef.current.on('click tap', () => {
+        console.log("stage clicked");
         if(isEditable) {
           setIsEditable(false);
         } else {
@@ -60,6 +61,12 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
     }
   }, [stageRef, isSelected, isEditable]);
 
+  // if the user clicks on another textNode, then this one should be deselected
+  useEffect(() => {
+    if(!isSelected && isEditable) {
+      setIsEditable(false);
+    }
+  }, [isSelected]);
 
   // handle the creation of the textarea over the textfield
   useEffect(() => { 

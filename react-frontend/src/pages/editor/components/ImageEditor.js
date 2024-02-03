@@ -166,7 +166,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
   */
 
   // download the image with the given resolution
-  const handleMemeCreation = async (targetFileSize, memeName, local, privacy) => {
+  const handleMemeCreation = async (targetFileSize, memeName, memeDescription, memePrivacy, download) => {
     
     const transformers = stageRef.current.find('Transformer');
     transformers.forEach(transformer => transformer.hide());
@@ -200,7 +200,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
       console.log(compressedDataUrl)
-      if(local == true) {
+      if(download == true) {
         // Download the compressed image
         const link = document.createElement('a');
         link.download = `${memeName.replace(/\s/g, '') || 'meme'}.png`; // delete spaces
@@ -210,7 +210,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
         document.body.removeChild(link);
       } else {
         // Upload the compressed image
-        handleSaveMeme(compressedDataUrl, memeName, privacy);
+        handleSaveMeme(compressedDataUrl, memeName, memeDescription, memePrivacy);
       }
     };
   };
@@ -241,8 +241,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
         )
         }
       </Grid>
-      <Grid item ref={stageContainerRef} style={{ height: 'calc(100vh - 20vh)', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
+      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 20vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>  <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
           <Layer>
             {image && <Image image={image} width={stageSize.width} height={stageSize.height} />}
           </Layer>
@@ -255,7 +254,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
               isSelected={index === selectedTextFieldIndex}
               textProps={textProps}
               onSelect={() => handleTextFieldSelect(index, textProps)}
-              onDeselect={() => handleTextFieldDeselect()}
+              onDeselect={() => handleTextFieldDeselect(index)}
             />
           ))}
         </Stage>

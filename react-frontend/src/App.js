@@ -19,6 +19,7 @@ import checkServerAvailability from './api/server';
 import { saveMeme } from './api/meme';
 import { resetMemeCache } from './slices/serverSlice';
 import { getDrafts } from './api/draft';
+import { getTemplates } from './api/template';
 
 
 const router = createBrowserRouter(
@@ -39,6 +40,7 @@ function App() {
   const cachedMeme = useSelector((state) => state.server.cachedMemes);
   const serverReachable = useSelector((state) => state.server.serverReachable);
   const draftsLoaded = useSelector((state) => state.draft.draftsLoaded);
+  const templatesLoaded = useSelector((state) => state.template.templatesLoaded);
 
   // check server availability every 10 seconds
   useEffect(() => {
@@ -69,6 +71,12 @@ function App() {
     }
   }, [token, draftsLoaded])
 
+  // fetch templates from database on page load
+  useEffect(() => {
+    if(token && !templatesLoaded) {
+      dispatch(getTemplates(token));
+    }
+  }, [token, templatesLoaded])
 
   return (
     <RouterProvider router={router} />

@@ -10,6 +10,7 @@ import MyMemes from '../../components/MyMemes';
 import AllMemes from '../../components/AllMemes';
 import TextDictation from '../../components/Accessibility/TextDictation';
 import MyDrafts from '../../components/MyDrafts';
+import APITesting from '../../components/APITesting';
 
 //Redux - States
 import { setUser } from '../../slices/userSlice'; 
@@ -19,6 +20,8 @@ import AllTemplates from '../../components/AllTemplates';
 
 export default function MyAccount() {
     const user = useSelector((state) => state.user.currentUser);
+    console.log("MyAccount.jsx")
+    console.log(user);
     const dispatch = useDispatch();
 
     const [showAllMemes, setShowAllMemes] = React.useState(false);
@@ -35,11 +38,13 @@ export default function MyAccount() {
             <TextDictation/>
             <Grid container spacing={2} direction={"column"} padding={2}>
                 <Grid item >
-                    <h1>Eingeloggt mit der Email {user.email}</h1>
+                    <h1>Logged in with the email {user.email}</h1>
                 </Grid>
                 <Grid item>
                     <h2>Logout</h2>
-                    <Button id = "logOutBtn" variant="contained" color="primary" onClick={handleLogout}/>
+                    <Button id = "logOutBtn" variant="contained" color="primary" onClick={handleLogout}>
+                        Logout
+                    </Button>
                 </Grid>
                 <br />
                 <Grid item>
@@ -56,6 +61,9 @@ export default function MyAccount() {
                 </Grid>
                 <Grid item>
                     <MyDrafts />
+                </Grid>
+                <Grid item >
+                   <APITesting/>
                 </Grid>
             </Grid>
         </div>

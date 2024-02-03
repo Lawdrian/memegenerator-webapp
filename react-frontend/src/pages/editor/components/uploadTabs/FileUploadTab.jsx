@@ -118,7 +118,6 @@ function FileUploadTab({ template, setTemplate }) {
               onChange={handleFileChange}
             />
           </Button>
-          <Button onClick={() => console.log(template)}>Log Template</Button>
       </Grid>
       <Grid item xs={9}>
         <img src={template.content} style={{maxWidth: '50%', maxHeight: '50%'}} />

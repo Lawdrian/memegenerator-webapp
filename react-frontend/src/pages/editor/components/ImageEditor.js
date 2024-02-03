@@ -50,6 +50,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
       setImage(img);
 
       const updateStageSize = () => {
+        if(stageContainerRef.current) { 
         const parentWidth = stageContainerRef.current.offsetWidth;
         const parentHeight = stageContainerRef.current.offsetHeight;
 
@@ -60,6 +61,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
           height: img.naturalHeight * scale * 0.8,
         });
       };
+    }
   
       // dynamically scale the image to fit the container
       updateStageSize();

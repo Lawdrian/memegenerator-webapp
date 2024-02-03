@@ -247,7 +247,7 @@ app.post('/meme', verifyToken, async (req, res) => {
       )
     })
 
-    res.status(201).json({Status:"ok", Message: "Meme saved to database"})
+    res.status(201).json({Status:"ok", Message: "Meme saved to database", memes: data})
   } catch (err) {
     console.log(err);
     res.status(500).send({Status:"error", Message: "Error saving meme to database"});

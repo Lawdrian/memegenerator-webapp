@@ -81,7 +81,7 @@ app.post('/template', verifyToken, async (req, res) => {
         name: name, 
         description: description,
         createdBy: user._id,
-        format: "image", 
+        format: format,
         content: content
       });
     res.status(201).json({Status:"ok", Message: "Template saved to database"})
@@ -403,7 +403,6 @@ app.post('/draft', verifyToken, async (req, res) => {
       name: name, 
       format: format, 
       createdBy: user._id,
-      privacy: privacy,
       usedTemplate: usedTemplate._id
     }
   )

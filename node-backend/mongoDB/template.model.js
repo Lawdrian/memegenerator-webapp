@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 template: {
 	_id, 
 	name, // name from template
+    description, // description from template
 	createdBy, // User object
 	format, // data format ('image', 'gif', 'video')
 	content, // base64 encoded meme
@@ -17,6 +18,7 @@ template: {
 const TemplateSchema = new Schema(    
     {
         name: {type: String, default: "myTemplate"}, // name of the template
+        description: {type: String, default: "A good template for a meme"}, // description of the template
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',

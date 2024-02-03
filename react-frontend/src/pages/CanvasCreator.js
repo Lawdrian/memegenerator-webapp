@@ -93,7 +93,7 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      saveTemplate({content: dataUrl, format: "image", name: canvasName}, token);
+      dispatch(saveTemplate({content: dataUrl, format: "image", name: canvasName}, token));
       console.log("Template uploaded successfully");
     }
     catch (error) {

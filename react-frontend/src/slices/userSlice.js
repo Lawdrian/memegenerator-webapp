@@ -9,7 +9,6 @@ const userSlice = createSlice({
     reducers: {
         setUser: (state, action) => {
             const { user, token } = action.payload || {}; // Standardwerte für den Fall, dass action.payload null ist
-
             state.currentUser = user;
             state.token = token;
         },

@@ -43,6 +43,7 @@ export const saveTemplate = (template, token) => async (dispatch) => {
     },
     body: JSON.stringify({
       name: template.name,
+      description: template.description,
       content: template.content,
       format: template.format,
     })

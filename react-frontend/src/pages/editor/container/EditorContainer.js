@@ -11,10 +11,11 @@ import { cacheMeme } from '../../../slices/serverSlice';
 
 export const defaultMemeProps = {
   name: 'myMeme',
+  description: 'A funny meme',
   content: '',
   format: '',
   usedTemplateId: '',
-  private: false
+  privacy: "public"
 }
 
 
@@ -51,14 +52,15 @@ const EditorContainer = () => {
     }, [draftId])
 
 
-    const handleSaveMeme = (content, name, privacy) => {
+    const handleSaveMeme = (content, name, description, privacy) => {
       const meme = {
         ...defaultMemeProps,
-        content: content,
         name: name,
+        description: description,
         format: selectedTemplate.format,
         templateId: selectedTemplate._id,
-        private: privacy
+        privacy: privacy,
+        content: content,
       }
       if(serverReachable) {
         console.log("Sending meme to server")

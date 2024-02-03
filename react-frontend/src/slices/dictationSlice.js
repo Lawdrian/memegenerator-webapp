@@ -4,6 +4,8 @@ const dictationSlice = createSlice({
     name: 'dictation',
     initialState: {
         command: "Default", 
+        textfeld: "Default",
+        title: "Default",
     },
     reducers: {
         setDictation: (state, action) => {

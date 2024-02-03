@@ -46,3 +46,19 @@ export function saveTemplate(template, token) {
     )
     .catch((error) => console.error('Error saving template to database:', error));
 }
+
+
+export async function getTempRefMemes(template) {
+  const response = await fetch(`http://localhost:3001/template-info/${template._id}`, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  console.log(data.data)
+  return data.data || [];
+}
+

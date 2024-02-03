@@ -12,6 +12,7 @@ import TextDictation from '../../components/Accessibility/TextDictation';
 //Redux - States
 import { setUser } from '../../slices/userSlice'; 
 import { useSelector, useDispatch } from 'react-redux';
+import AllTemplates from '../../components/AllTemplates';
 
 
 export default function MyAccount() {
@@ -20,7 +21,7 @@ export default function MyAccount() {
 
     const [showAllMemes, setShowAllMemes] = React.useState(false);
     const [showMyMemes, setShowMyMemes] = React.useState(false);
-
+    const [showAllTemplates, setshowAllTemplates] = React.useState(false);
 
     const handleLogout = () => {
         dispatch(setUser(null));
@@ -36,7 +37,7 @@ export default function MyAccount() {
                     <h2>Ausloggen</h2>
                 </Grid>
                 <Grid>
-                    <Button variant="contained" color="primary" onClick={handleLogout}>
+                    <Button id = "logOutBtn" variant="contained" color="primary" onClick={handleLogout}>
                         Ausloggen
                     </Button>
                 </Grid>
@@ -48,6 +49,10 @@ export default function MyAccount() {
                 <Grid>
                     <Button onClick={() => setShowAllMemes(prevState => !prevState)}>Show all Memes</Button>
                     {showAllMemes && <AllMemes />}
+                </Grid>
+                <Grid>
+                    <Button onClick={() => setshowAllTemplates(prevState => !prevState)}>Show all Templates</Button>
+                    {showAllTemplates && <AllTemplates />}
                 </Grid>
             </Grid>
         </div>

@@ -98,6 +98,35 @@ app.get("/template", async (req, res) => {
     res.status(500).send({status: "error", message: "Error retrieving templates"});
   }
 })
+// GET-Request to retrieve the referenced memes of the templates
+app.get('/template-info/:id', async (req, res) => {
+  try {
+    const templateId = req.params.id;
+    const memes = await Meme.find({ usedTemplate: templateId });
+
+    const memeDetails = memes.map(meme => {
+      return {
+        memeId: meme._id, //ID
+        createdAt: meme.createdAt, //Date
+        upVotes: meme.upVotes ? meme.upVotes.map(vote => vote.createdAt) : [], //Vote with Date
+        downVotes: meme.downVotes ? meme.downVotes.map(vote => vote.createdAt) : [], //Vote with Date
+      };
+    });
+
+
+    res.send({
+      status: "ok",
+      data: {
+        memeDetails,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ status: 'error', message: 'Error retrieving templates' });
+  }
+});
+
+
 
 ///////////////////////SIGNUP_SIGNIN///////////////////////////
 app.post('/registration', async (req, res) => {
@@ -143,6 +172,7 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 app.post('/api-login', async (req, res) => {
     const { googleId } = req.body;
   
@@ -186,7 +216,7 @@ app.post('/create-meme', verifyToken, async (req, res) => {
     return res.status(401).json({ error: 'User not found' });
   }
   if(!content || !name || !format || !templateId){
-    console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "private: ", private)
+    // console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "private: ", private)
     return res.status(400).json({ error: 'Missing data' });
   }
   Meme.create(
@@ -221,7 +251,6 @@ app.get('/get-all-memes', async (req, res) => {
   console.log("GET ALL MEMES");
   const memes = await Meme.find({private: false}) 
   .populate('comments.user', 'email') // resolve the reference and only the 'email' property of the user is returned
-  console.log(memes[0].name)
   res.json({ success: 'Success', memes: memes });
 })
 

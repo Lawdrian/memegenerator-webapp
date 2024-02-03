@@ -1,3 +1,5 @@
+const token = localStorage.getItem("token");
+
 export function saveMeme(meme, token) {
   fetch("http://localhost:3001/create-meme", {
     method: "POST",
@@ -34,7 +36,7 @@ export function getAllMemes(callBack, token) {
   })
   .then((res) => res.json())
   .then((data) => {
-      callBack(data.memes || []);
+    callBack(data.memes || []);
   });
 }
 

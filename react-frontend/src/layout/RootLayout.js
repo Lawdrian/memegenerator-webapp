@@ -4,6 +4,10 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
 //Components
 import TextToSpeech from '../components/Accessibility/TextToSpeech';
+import TextDictation from '../components/Accessibility/TextDictation';
+
+//Image to Text
+import ImageToText from '../components/Accessibility/ImageToText';
 
 const theme = createTheme({
     palette: {
@@ -25,11 +29,14 @@ export default function RootLayout() {
         <ThemeProvider theme={theme}>
             <AppBar position="static">
                 <Toolbar>
-                    <EmojiEmotionsIcon style={{ marginRight: 10 }} />
+                    <EmojiEmotionsIcon style={{ marginRight: 10 }} a />
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         Meme Generator
                     </Typography>
+                    
                     <TextToSpeech />
+                    <TextDictation />
+
                     <Button color="inherit" component={NavLink} to="/" exact>
                         Home
                     </Button>

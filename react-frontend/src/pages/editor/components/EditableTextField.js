@@ -134,7 +134,6 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
         // update text node with the textarea value
         textNode.text(textareaRef.current.value);
         textNode.show();
-        
         // remove the textarea from the DOM
         textareaRef.current.parentNode.removeChild(textareaRef.current);
         textareaRef.current = null;
@@ -232,6 +231,7 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
               ref={ node => {
                 setTextNode(node)
               }}
+
             />
           {(textNode && isSelected) && (
             <Transformer

@@ -4,8 +4,10 @@
 */
 import { configureStore } from '@reduxjs/toolkit';
 import dictationReducer from './slices/dictationSlice';
-import userReducer from './slices/userSlice'; // Passe den Pfad entsprechend deiner Struktur an
+import userReducer from './slices/userSlice'; 
 import templateReducer from './slices/templateSlice';
+
+const persistedUserState = JSON.parse(localStorage.getItem('user')) || null; 
 
 const store = configureStore({
   reducer: {
@@ -13,6 +15,12 @@ const store = configureStore({
     user: userReducer,
     template: templateReducer,
   },
+  preloadedState: {
+    user: persistedUserState,
+  },
 });
 
+store.subscribe(() => {
+  localStorage.setItem('user', JSON.stringify(store.getState().user));
+});
 export default store;

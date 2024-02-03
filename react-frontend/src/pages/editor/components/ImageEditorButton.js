@@ -1,16 +1,39 @@
-import { Button, useThemeProps } from "@mui/material";
+import { Button } from "@mui/material";
 
-function ImageEditorButton({onClick, children, color}) {
-
+export function ImageEditorButton({onClick, children, color}) {
   return (
-   <Button 
-    color= {color ?? "success"} 
-    variant="contained" 
-    onClick={onClick}
-  >
-    {children}
-  </Button>
+    <Button 
+      color={color ?? "success"} 
+      variant="contained" 
+      onClick={onClick}
+    >
+      {children}
+    </Button>
   );
 }
 
-export default ImageEditorButton;
+export function ImageEditorTextfieldButton({onClick, children, color}) {
+  return (
+    <Button 
+      color={color ?? "success"} 
+      variant="contained" 
+      onClick={onClick}
+      id="addTextFieldbtn"
+    >
+      {children}
+    </Button>
+  );
+}
+
+export function ImageEditorClearButton({onClick, children, color}) {
+  return (
+    <Button 
+      color={color ?? "success"} 
+      variant="contained" 
+      onClick={onClick}
+      id="clearBtn"
+    >
+      {children}
+    </Button>
+  );
+}

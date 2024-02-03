@@ -202,6 +202,7 @@ function NewEditableTextField({stageRef, textProps, onSelect, onDeselect, isSele
                 ref={ node => {
                   setRectNode(node)
                 }}
+
             />
             <Text
               width={initialTextWidth} // Set the width of the text box
@@ -214,6 +215,7 @@ function NewEditableTextField({stageRef, textProps, onSelect, onDeselect, isSele
               ref={ node => {
                 setTextNode(node)
               }}
+
             />
           </Group>
           {(textNode && isSelected) && (

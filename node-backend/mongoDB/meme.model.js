@@ -44,7 +44,8 @@ const MemeSchema = new Schema(
                 },
                 voter: {
                     type: String,
-                }
+                },
+                createdAt: { type: Date, default: Date.now }
             }
         ],
         downVotes: [
@@ -55,7 +56,8 @@ const MemeSchema = new Schema(
                 },
                 voter: {
                     type: String,
-                }
+                },
+                createdAt: {type: Date, default: Date.now}
             }
         ],
         comments : [

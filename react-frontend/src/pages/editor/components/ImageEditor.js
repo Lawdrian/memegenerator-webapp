@@ -6,7 +6,7 @@ import imageCompression from 'browser-image-compression';
 
 import EditableTextField from './EditableTextField';
 import TextPropertiesForm from './TextPropertiesForm';
-import ImageEditorButton from '../components/ImageEditorButton';
+import { ImageEditorButton, ImageEditorTextfieldButton, ImageEditorClearButton } from '../components/ImageEditorButton';
 import ImageEditorFooter from '../components/ImageEditorFooter';
 
 export const defaultTextProps = {
@@ -202,10 +202,10 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
         : (
           <Grid container item spacing={2} style={{ padding: '10px' }}>
             <Grid item>
-            <ImageEditorButton onClick={addTextField}>Add Text Field</ImageEditorButton>
+            <ImageEditorTextfieldButton onClick={addTextField}>Add Text Field</ImageEditorTextfieldButton>
             </Grid>
             <Grid item>
-            <ImageEditorButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorButton>
+            <ImageEditorClearButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorClearButton>
             </Grid>
           </Grid>
         )

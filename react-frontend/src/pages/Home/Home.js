@@ -41,6 +41,9 @@ function Home() {
   };
   // <ShareButton
   //memeLink={`${window.location.href}meme/${meme._id}`}/>
+  const navigateToSingleView = (memeId) => {
+    navigate(`/api/memes/${memeId}`);
+  };
 
   return (
     <div className="home">
@@ -53,7 +56,11 @@ function Home() {
       >
         <div className="meme-list">
           {displayedMemes.map((meme) => (
-            <div key={meme._id || meme.name} className="meme-card">
+            <div
+              key={meme._id || meme.name}
+              className="meme-card"
+              onClick={() => navigateToSingleView(meme._id)}
+            >
               <div className="meme-title">{meme.name || "Next Meme"}</div>
               <div className="meme-image">
                 {meme.content ? (

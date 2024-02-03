@@ -38,6 +38,22 @@ export function getAllMemes(callBack, token) {
   });
 }
 
+export function getSingleMeme(memeId, callBack, token) {
+  fetch(`http://localhost:3001/api/memes/${memeId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token,
+    },
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    callBack(data || null);
+  })
+  .catch((error) => console.error('Error fetching single meme:', error));
+}
+
+
 export function getSelfCreatedMemes(callBack, token) {
   fetch("http://localhost:3001/get-my-meme", {
       method: 'GET',

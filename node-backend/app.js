@@ -228,6 +228,20 @@ app.get('/get-all-memes', async (req, res) => {
   console.log(memes[0].name)
   res.json({ success: 'Success', memes: memes });
 })
+// GET-Request for single meme
+app.get('/api/memes/:id', async (req, res) => {
+  const memeId = req.params.id;
+  try {
+      const meme = await Meme.findById(memeId);
+      if (!meme) {
+          return res.status(404).json({ error: 'Meme not found' });
+      }
+      res.status(200).json(meme);
+  } catch (error) {
+      console.error('Error fetching single meme:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.put('/update-meme-privacy', verifyToken, async (req, res) => {
   console.log("UPDATE MEME PRIVACY");

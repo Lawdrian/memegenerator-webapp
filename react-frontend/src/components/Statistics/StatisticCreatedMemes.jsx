@@ -20,10 +20,14 @@ export default function StatisticCreatedMemes() {
   }, [])
 
   function generateMemeData(){
-
+    if (!allMemes || allMemes?.length === 0) {
+      console.log("no memes")
+      return [];
+    }
+    console.log("memes")
   //Collecting the statistic-data from the mems
   const memeData = [];
-
+  console.log("generateMemeData")
   allMemes.forEach((meme) => {
     const createdAt = new Date(meme.createdAt);
     const month = createdAt.getMonth() + 1; //Month are 0-indexed
@@ -31,14 +35,14 @@ export default function StatisticCreatedMemes() {
     memeData[month] ? memeData[month]++ : (memeData[month] = 1);
     console.log(memeData)
   });
-
+  console.log("memeData", memeData)
   return memeData;
 };
   return (
 
     <Grid>
       <Button onClick={() => showStatistics ? setStatistics(false) : setStatistics(true)}>Show Statistic: Memes created per Month</Button>
-      {showStatistics && (
+      {(showStatistics && allMemes?.length != 0) && (
         <Grid style={{ background: "#00FF00" }}>
           <Typography variant="h4" style={{ color: "green", textAlign: "center", marginBottom: 20 }}>Memes created per Month</Typography>
           <BarChart

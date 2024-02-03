@@ -20,7 +20,7 @@ const store = configureStore({
     draft: draftSlice,
   },
   preloadedState: {
-    user: persistedUserState,
+    preloadedState: persistedUserState ? { user: persistedUserState } : {},
   },
 });
 

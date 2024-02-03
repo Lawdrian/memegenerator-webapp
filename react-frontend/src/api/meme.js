@@ -48,9 +48,17 @@ export function getAllMemes(callBack, token) {
           "Authorization": "Bearer " + token,
       },
   })
-  .then((res) => res.json())
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+    return res.json();
+  })
   .then((data) => {
     callBack(data.memes || []);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
   });
 }
 

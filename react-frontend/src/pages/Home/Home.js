@@ -41,27 +41,37 @@ function Home() {
   };
   // <ShareButton
   //memeLink={`${window.location.href}meme/${meme._id}`}/>
+  const handleShareClick = (memeId) => {
+    const memeLink = `${window.location.origin}/api/memes/${memeId}`;
+    navigator.clipboard.writeText(memeLink).then(
+      () => {
+        alert("Meme link copied to clipboard!");
+      },
+      (err) => {
+        console.error("Could not copy meme link: ", err);
+      }
+    );
+  };
+
   const navigateToSingleView = (memeId) => {
     navigate(`/api/memes/${memeId}`);
   };
 
-  const handleVoteClick = ( memeId,voteType) => {
-  
-
+  const handleVoteClick = (memeId, voteType) => {
     voteMeme(memeId, voteType, token)
       .then((updatedMeme) => {
-        dispatch(updateLikesDislikes({
-          memeId: memeId,
-          upVotes: updatedMeme.upVotes,
-          downVotes: updatedMeme.downVotes,
-        }));
+        dispatch(
+          updateLikesDislikes({
+            memeId: memeId,
+            upVotes: updatedMeme.upVotes,
+            downVotes: updatedMeme.downVotes,
+          })
+        );
       })
       .catch((error) => {
-        console.error('Error voting for meme:', error);
+        console.error("Error voting for meme:", error);
       });
-};
-
-  
+  };
 
   return (
     <div className="home">
@@ -74,11 +84,12 @@ function Home() {
       >
         <div className="meme-list">
           {displayedMemes.map((meme) => (
-            <div
-              key={meme._id || meme.name}
-              className="meme-card">
+            <div key={meme._id || meme.name} className="meme-card">
               <div className="meme-title">{meme.name || "Next Meme"}</div>
-              <div className="meme-image"  onClick={() => navigateToSingleView(meme._id)}>
+              <div
+                className="meme-image"
+                onClick={() => navigateToSingleView(meme._id)}
+              >
                 {meme.content ? (
                   <img
                     src={meme.content}
@@ -90,12 +101,28 @@ function Home() {
                 )}
               </div>
               <div className="meme-actions">
-                <button className="upvote-button" onClick={() => handleVoteClick( meme._id, 'upVotes')}>
+                <button
+                  className="upvote-button"
+                  onClick={() => handleVoteClick(meme._id, "upVotes")}
+                >
                   Like <span>({meme.upVotes.length})</span>
                 </button>
-                <button className="downvote-button" onClick={() => handleVoteClick( meme._id, 'downVotes')}>
+                <button
+                  className="downvote-button"
+                  onClick={() => handleVoteClick(meme._id, "downVotes")}
+                >
                   Dislike <span>({meme.downVotes.length})</span>
                 </button>
+                <button
+                  className="share-button"
+                  onClick={() => handleShareClick(meme._id)}
+                >
+                  Share
+                </button>
+                <div className="meme-comments-count">
+                  Comments:{" "}
+                  <span>{meme.comments ? meme.comments.length : 0}</span>
+                </div>
               </div>
             </div>
           ))}

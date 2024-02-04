@@ -38,20 +38,26 @@ export function getAllMemes(callBack, token) {
   });
 }
 
-export function getSingleMeme(memeId, callBack, token) {
-  fetch(`http://localhost:3001/api/memes/${memeId}`, {
+export function getSingleMeme(memeId, token) {
+  return fetch(`http://localhost:3001/api/memes/${memeId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token,
     },
   })
-  .then((res) => res.json())
-  .then((data) => {
-    callBack(data || null);
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return res.json();
   })
-  .catch((error) => console.error('Error fetching single meme:', error));
+  .catch((error) => {
+    console.error('Error fetching single meme:', error);
+    throw error; // Rethrow to allow caller to handle
+  });
 }
+
 
 
 export function getSelfCreatedMemes(callBack, token) {
@@ -81,20 +87,26 @@ export function changeMemePrivacy(privacy, memeId, token){
       })
 }
 
-export function handleCommentSubmit(meme, commentContent, token) {
+export async function handleCommentSubmit(meme, commentContent, token) {
   console.log(commentContent);
-  fetch('http://localhost:3001/meme-comment', {
-      headers:{
-          'Authorization': 'Bearer ' + token,
-          'Content-Type': 'application/json'
-      },
-      method: "PUT",
-      body: JSON.stringify({
-          memeId: meme._id,
-          comment: commentContent,
-      })
-  })
-};
+  
+  const response = await fetch('http://localhost:3001/meme-comment', {
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    },
+    method: "PUT",
+    body: JSON.stringify({
+      memeId: meme._id,
+      comment: commentContent,
+    })
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return await response.json();
+}
+
 
 export function handleUpVote(memeId, token){
   fetch('http://localhost:3001/meme-vote', {

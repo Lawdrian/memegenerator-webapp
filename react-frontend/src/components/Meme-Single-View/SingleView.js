@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { getSingleMeme } from '../../api/meme';
+import { useSelector, useDispatch } from 'react-redux';
+import { getSingleMeme, voteMeme } from '../../api/meme';
+import { updateLikesDislikes } from '../../slices/memeSlice';
 import './SingleView.css';
 
 const SingleView = () => {
     const { id } = useParams();
     const allMemes = useSelector((state) => state.meme.memes);
     const token = useSelector((state) => state.user.token);
+    const dispatch = useDispatch();
 
     const [currentMemeIndex, setCurrentMemeIndex] = useState(0);
     const [autoPlayInterval, setAutoPlayInterval] = useState(null);
@@ -28,6 +30,27 @@ const SingleView = () => {
         }
     };
 
+    const handleVoteClick = (voteType) => {
+        voteMeme(id, voteType, token)
+            .then((updatedMeme) => {
+                console.log('Meme updated with votes:', updatedMeme);
+
+                // Dispatch the updateLikesDislikes action to update Redux state
+                dispatch(updateLikesDislikes({
+                    memeId: id,
+                    upVotes: updatedMeme.upVotes,
+                    downVotes: updatedMeme.downVotes,
+                }));
+            })
+            .catch((error) => {
+                console.error('Error voting for meme:', error);
+            });
+    };
+    
+      
+      
+      
+      
     const handleRandomClick = () => {
         // Add logic for handling random button click
         // You can generate a random index and set it as the currentMemeIndex
@@ -74,12 +97,19 @@ const SingleView = () => {
                     )}
                 </div>
                 <div className="single-view-actions">
-                    <button onClick={() => handleArrowClick('left')}>previous</button>
-                    <button onClick={handleRandomClick}>Random</button>
+                    <button className="previous-button" onClick={() => handleArrowClick('left')}>previous</button>
+                    <button className="random-button" onClick={handleRandomClick}>Random</button>
                     <button onClick={handleAutoPlayClick}>
                         {isAutoPlayActive ? 'Stop' : 'Auto Play'}
                     </button>
-                    <button onClick={() => handleArrowClick('right')}>next</button>
+                    <button className="next-button" onClick={() => handleArrowClick('right')}>next</button>
+                    <button className="upvote-button" onClick={() => handleVoteClick('upVotes')}>
+                        Like <span>({currentMeme.upVotes.length})</span>
+                    </button>
+                    <button className="downvote-button" onClick={() => handleVoteClick('downVotes')}>
+                        Dislike <span>({currentMeme.downVotes.length})</span>
+                    </button>
+                    
                     {/* Additional details and functionalities for SingleView */}
                 </div>
             </div>

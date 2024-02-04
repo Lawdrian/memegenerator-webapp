@@ -123,3 +123,22 @@ export function handleDownVote(memeId, token){
       })
   });
 }
+
+export function voteMeme(memeId, voteType, token) {
+  return fetch('http://localhost:3001/meme-vote', {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      memeId: memeId,
+      vote: voteType,
+    }),
+  })
+  .then((res) => res.json())
+  .then((data) => {
+    return data;
+  })
+  .catch((error) => console.error('Error voting for meme:', error));
+}

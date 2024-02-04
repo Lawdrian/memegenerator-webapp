@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { setMemes } from "../../slices/memeSlice";
-import { getAllMemes } from "../../api/meme";
+import { setMemes, updateLikesDislikes } from "../../slices/memeSlice";
+import { getAllMemes, voteMeme } from "../../api/meme";
 import "./Home.css";
 
 function Home() {
@@ -45,6 +45,24 @@ function Home() {
     navigate(`/api/memes/${memeId}`);
   };
 
+  const handleVoteClick = ( memeId,voteType) => {
+  
+
+    voteMeme(memeId, voteType, token)
+      .then((updatedMeme) => {
+        dispatch(updateLikesDislikes({
+          memeId: memeId,
+          upVotes: updatedMeme.upVotes,
+          downVotes: updatedMeme.downVotes,
+        }));
+      })
+      .catch((error) => {
+        console.error('Error voting for meme:', error);
+      });
+};
+
+  
+
   return (
     <div className="home">
       <h1>Memes</h1>
@@ -58,11 +76,9 @@ function Home() {
           {displayedMemes.map((meme) => (
             <div
               key={meme._id || meme.name}
-              className="meme-card"
-              onClick={() => navigateToSingleView(meme._id)}
-            >
+              className="meme-card">
               <div className="meme-title">{meme.name || "Next Meme"}</div>
-              <div className="meme-image">
+              <div className="meme-image"  onClick={() => navigateToSingleView(meme._id)}>
                 {meme.content ? (
                   <img
                     src={meme.content}
@@ -72,6 +88,14 @@ function Home() {
                 ) : (
                   <div className="empty-meme">No Image</div>
                 )}
+              </div>
+              <div className="meme-actions">
+                <button className="upvote-button" onClick={() => handleVoteClick( meme._id, 'upVotes')}>
+                  Like <span>({meme.upVotes.length})</span>
+                </button>
+                <button className="downvote-button" onClick={() => handleVoteClick( meme._id, 'downVotes')}>
+                  Dislike <span>({meme.downVotes.length})</span>
+                </button>
               </div>
             </div>
           ))}

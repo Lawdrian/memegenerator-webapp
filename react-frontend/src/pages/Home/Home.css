@@ -10,7 +10,7 @@
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid darkgray; 
-  margin-bottom: 30px;
+  margin-bottom: 60px;
   padding: 15px;
   max-width: 500px;
   width: 100%;
@@ -37,14 +37,20 @@
   max-height: 400px; 
 }
 
-.meme-actions {
-  display: flex; /* or 'grid' depending on your layout needs */
-  flex-direction: column; /* Stack elements vertically */
-  justify-content: space-between; /* Distribute space around items */
-  /* Increase minimum height if necessary */
-  min-height: 150px; /* Adjust based on needs */
-  width: 100%; /* Ensure it takes full width */
+
+
+.meme-actions .like-button,
+.meme-actions .dislike-button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 5px; /* Adjust the padding to change the button size */
+  border-radius: 5px;
+  cursor: pointer;
+  width: 70px; /* Adjust the width if needed */
+  margin-bottom: 8px; /* Add margin between buttons */
 }
+
 
 .comment {
   background-color: #f0f0f0; /* Hintergrundfarbe für Kommentare */

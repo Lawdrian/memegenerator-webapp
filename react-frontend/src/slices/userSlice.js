@@ -12,11 +12,9 @@ const userSlice = createSlice({
             state.currentUser = user;
             state.token = token;
         },
-        setProfile: (state, action) => {
-            state.profile = action.payload;
-        },
+
     },
 });
 
-export const { setUser, setProfile } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 export default userSlice.reducer;

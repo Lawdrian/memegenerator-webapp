@@ -13,10 +13,8 @@ import { setDictation } from '../../slices/dictationSlice';
 export default function SpeechRecognitionTest() {
   const [currentText, setCurrentText] = useState([null]);
   const [showTextDictation, setTextDictation] = useState(false);
-  const dictation = useSelector((state) => state.dictation.command);
 
   const dispatch = useDispatch();
-
 
   const {
     transcript,
@@ -32,6 +30,7 @@ export default function SpeechRecognitionTest() {
   }, [transcript, listening]);
 
   function handleCommand(spokenText) {
+
     setCurrentText(null); //Muss auf null gesetzt werden, sonst wird bei wiederholten WOrt keien Änderung erkannt und kein Speech durchgeführt
     if (spokenText.includes('stop')) {
       setCurrentText("Stopp");
@@ -39,24 +38,24 @@ export default function SpeechRecognitionTest() {
     }
 
     //WEITERLEITUNGEN
-    if (spokenText.includes('Home')) {
-      window.history.pushState({}, null, "/");
+    else if (spokenText.includes('Home')) {
+      window.location.href = "/"; //unsmooth -> lädt neu!
       setCurrentText("Weiterleitung zur Startseite");
     } 
-    if (spokenText.includes('Editor')) {
-      window.history.pushState({}, null, "/Editor");
+    else if (spokenText.includes('Editor')) {
       setCurrentText("Weiterleitung zur Editor");
+      window.location.href = "/editor"; //unsmooth -> lädt neu!
     }
-    if(spokenText.includes('Canvas')){
-      window.history.pushState({}, null, "/Canvas");
+    else if(spokenText.includes('Canvas')){
+      window.location.href = "/Canvas"; //unsmooth -> lädt neu!
       setCurrentText("Weiterleitung zur Canvas");
     }
-    if(spokenText.includes('Account')){
+    else if(spokenText.includes('Account')){
       window.history.pushState({}, null, "/Account");
       setCurrentText("Weiterleitung zur Account");
     }
     //INPUT
-    if (spokenText.includes("Titel")){
+    else if (spokenText.includes("Titel")){
       const index = spokenText.indexOf("Titel");
       const extractedTitel = spokenText.substring(index + "Titel".length).trim();
       $('#memetitel').val(extractedTitel);
@@ -65,33 +64,32 @@ export default function SpeechRecognitionTest() {
     }
 
     //BTN
-    if (spokenText.includes("Textfeld")){
+    else if (spokenText.includes("Textfeld")){
       const addFbtn = $('#addTextFieldbtn');
       addFbtn.trigger("click");
     }
-    if (spokenText.includes("Löschen")){
+    else if (spokenText.includes("Löschen")){
       const clearBtnElement = $('#clearBtn');
       clearBtnElement.trigger("click");
     }
-    if(spokenText.includes("Abmelden")){
+    else if(spokenText.includes("Abmelden")){
       const logoutbtn = $('#logOutBtn');
       logoutbtn.trigger("click");
     }
-    if(spokenText.includes("Anmelden")){
+    else if(spokenText.includes("Anmelden")){
       const logoutbtn = $('#loginBtn');
       logoutbtn.trigger("click");
     }
-    if(spokenText.includes("Vorlesen")){
+    else if(spokenText.includes("Vorlesen")){
       const logoutbtn = $('#vorlesen');
       logoutbtn.trigger("click");
       console.log("vorlesen");
     }
-
     else if (spokenText.length > 4){
       setCurrentText("Befehl nicht erkannt: " + spokenText);
     }
     dispatch(setDictation({ spokenText: spokenText }));
-    console.log(dictation);
+    spokenText = null;
    }
 
 

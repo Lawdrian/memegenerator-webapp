@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getSingleMeme, handleCommentSubmit, voteMeme } from "../../api/meme";
-import { updateLikesDislikes } from "../../slices/memeSlice";
+import { updateLikesDislikes, addComment } from "../../slices/memeSlice";
 import { Button, TextField } from "@mui/material";
 import "./SingleView.css";
 
@@ -10,6 +10,7 @@ const SingleView = () => {
   const { id } = useParams();
   const allMemes = useSelector((state) => state.meme.memes);
   const token = useSelector((state) => state.user.token);
+  const currentUser = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
   const [currentMemeIndex, setCurrentMemeIndex] = useState(0);
@@ -39,10 +40,23 @@ const SingleView = () => {
     if (!comment.trim()) return; // Avoid submitting empty comments
 
     handleCommentSubmit(currentMeme, comment, token)
-      .then(() => {
+      .then((newComment) => {
         console.log("Comment submitted successfully");
+
         setComment(""); // Clear the comment input field
-        // Optionally, refresh comments or update the UI here
+
+        const populatedComment = {
+          ...newComment,
+          user: {
+            _id: currentUser._id, // or however you access the current user's id
+            email: currentUser.email, // make sure this matches how you store/access user data
+          },
+          content: comment,
+        };
+
+         // Dispatch action to add comment to Redux state, including populated user data
+        dispatch(addComment({ memeId: currentMeme._id, comment: populatedComment }));
+       
       })
       .catch((error) => {
         console.error("Error submitting comment:", error);

@@ -5,8 +5,9 @@ import { Grid, ImageListItem, ImageList, Typography, Box, Button, TextField, Div
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-import { saveTemplate } from '../api/template';
+import { saveTemplate, getTemplates } from '../api/template';
 
 
 // this functional component renders a movable and transformable konva Image component
@@ -50,6 +51,9 @@ const URLImage = ({ image }) => {
 };
 
 const CanvasCreator = () => {
+  const dispatch = useDispatch();
+  const storeTemplates = useSelector((state) => state.template);
+
   const [canvasName, setCanvasName] = useState("myCanvas");
   const [selectedTemplates, setSelectedTemplates] = useState([]);
   const [stageDimensions, setStageDimensions] = useState({ width: 500, height: 500 });
@@ -58,6 +62,9 @@ const CanvasCreator = () => {
   const token = useSelector((state) => state.user.token);
   const navigate = useNavigate();
 
+  if(!storeTemplates.templatesLoaded) {
+    dispatch(getTemplates())
+  }
 
   const imageTemplates = templates.filter(template => template.format === 'image');
 
@@ -86,7 +93,7 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      saveTemplate({content: dataUrl, format: "image", name: canvasName}, token);
+      dispatch(saveTemplate({content: dataUrl, format: "image", name: canvasName}, token));
       console.log("Template uploaded successfully");
     }
     catch (error) {
@@ -112,7 +119,7 @@ const CanvasCreator = () => {
         </ImageList>
       </Grid>
       <Grid item xs={8}>
-        <Grid container xs={8} style={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
+        <Grid container item xs={8} style={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
            <Grid item>
             <Typography variant='h4'>Create your Canvas</Typography>
           </Grid>

@@ -1,3 +1,5 @@
+import React, {useEffect} from 'react';
+
 import './App.css';
 import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from 'react-router-dom'
 
@@ -13,6 +15,13 @@ import SingleView from './components/Meme-Single-View/SingleView';
 //layouts
 import RootLayout from './layout/RootLayout';
 
+import { useDispatch, useSelector } from 'react-redux';
+import checkServerAvailability from './api/server';
+import { saveMeme } from './api/meme';
+import { resetMemeCache } from './slices/serverSlice';
+import { getDrafts } from './api/draft';
+import { getTemplates } from './api/template';
+
 const MySingleViewComponent = SingleView;
 
 const router = createBrowserRouter(
@@ -20,7 +29,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<RootLayout/>}>
       <Route index element={<Home />} />
       <Route index element={<Account />} />
-      <Route path="editor" element={<EditorContainer />} />
+      <Route path="editor/*" element={<EditorContainer />} />
       <Route path="canvas" element={<CanvasCreator />} />
       <Route path="account" element={<Account/>} />
       <Route path="/api/memes/:id" element={<MySingleViewComponent />} />
@@ -30,6 +39,49 @@ const router = createBrowserRouter(
 )
 
 function App() {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.user.token);
+  const cachedMeme = useSelector((state) => state.server.cachedMemes);
+  const serverReachable = useSelector((state) => state.server.serverReachable);
+  const draftsLoaded = useSelector((state) => state.draft.draftsLoaded);
+  const templatesLoaded = useSelector((state) => state.template.templatesLoaded);
+
+  // check server availability every 10 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      dispatch(checkServerAvailability());
+    }, 10000);
+
+
+    // clear the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if(serverReachable && cachedMeme != [] && cachedMeme !== undefined && cachedMeme.length > 0) {
+      console.log("Uploading cached memes");
+      cachedMeme.forEach(meme => {
+        console.log(meme);
+        saveMeme(meme, token);
+      });
+      dispatch(resetMemeCache());
+    }
+  }, [serverReachable])
+ 
+  // fetch drafts from database on page load
+  useEffect(() => {
+    if(token && !draftsLoaded) {
+      dispatch(getDrafts(token));
+    }
+  }, [token, draftsLoaded])
+
+  // fetch templates from database on page load
+  useEffect(() => {
+    if(token && !templatesLoaded) {
+      dispatch(getTemplates(token));
+    }
+  }, [token, templatesLoaded])
+
   return (
     <RouterProvider router={router} />
   );

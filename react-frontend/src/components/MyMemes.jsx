@@ -13,15 +13,21 @@ export default function MyMemes() {
     const [allImage, setAllImage] = useState([]);
     const [focusMeme, setFocusMeme] = useState(false);
 
+    const [meme, setMeme] = useState(null);
+
     const token = useSelector((state) => state.user.token);
 
     useEffect(() => {
         getSelfCreatedMemes(setAllImage, token);
     }, []);
 
-    const handleMemeUpload = (e) => {
-        const base64 = convertToBase64(e.target.files[0]);
-        setFocusMeme(base64);
+    var image = null;
+
+    const handleMemeUpload = async (e) => {
+        const base64 = await convertToBase64(e.target.files[0]);
+        setMeme(base64);
+        image = base64;
+        console.log(meme)
     }
 
     return (
@@ -29,29 +35,10 @@ export default function MyMemes() {
             <h1 style = {{letterSpacing:"5px", fontWeight:"100", fontSize:"40px"}}> MEINE MEMES</h1>
             <Divider />
             <br />
-            <input
-                accept="image/*"
-                type="file"
-                onChange= {handleMemeUpload}
-            />
-            <Button variant="contained" color="primary" onClick={() => saveMeme(
-                    {
-                        content: focusMeme, 
-                        name: "accountMeme",
-                        format: "image",
-                        templateId: "1", //TODO: replace with actual templateId  
-                        private: true,
-                    },
-                    token
-                )}>
-                Upload Meme
-            </Button>
-            <br/>
-
             <Grid>
-                {allImage.map((data) => {
+                {allImage.map((data, index) => {
                     return (
-                        <Grid style={{margin: 10 }}>
+                        <Grid key={index} style={{margin: 10 }}>
                             <Grid style = {{height:"400px"}}>
                                 <img
                                     className="myMemes"
@@ -79,20 +66,25 @@ export default function MyMemes() {
                 <Grid style = {{background:"#FFFFFFF0"}}>
                     <img
                         className="focusMeme"
-                        src={focusMeme.image}
+                        src={focusMeme.content}
                         alt="Focused Meme"
-                        onClick={() => changeMemePrivacy(focusMeme._id, token)} //TODO: what is the meening of this? What privacy?
                     />
                     <Divider />
                     <Grid container>
                         <Grid item xs={12} style={{ margin: "20px" }}>
                             <Typography variant="h6">SICHTBARKEIT</Typography>
                             <br />
-                            <Button variant="contained" onClick={() => changeMemePrivacy(0, focusMeme._id, token)} style={{ width: "15%" }}>
-                                Privat</Button>
+                            <Button variant="contained" onClick={() => changeMemePrivacy("private", focusMeme._id, token)} style={{ width: "15%" }}>
+                                private
+                            </Button>
                             <br />
-                            <Button variant="contained" onClick={() => changeMemePrivacy(1, focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
-                                Öffentlich</Button>
+                            <Button variant="contained" onClick={() => changeMemePrivacy("public", focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
+                                public
+                            </Button>
+                            <br />
+                            <Button variant="contained" onClick={() => changeMemePrivacy("unlisted", focusMeme._id, token)} style={{ width: "15%", marginTop: "20px" }}>
+                                unlisted
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>

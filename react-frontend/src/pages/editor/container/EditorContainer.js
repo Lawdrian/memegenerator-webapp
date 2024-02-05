@@ -1,83 +1,98 @@
-import React, {useState, useEffect} from 'react';
-import { Grid } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
-
-import ImageEditor from '../components/ImageEditor';
-import image1 from '../assets/cat1.jpg';
-import image2 from '../assets/cat2.jpg';
-import image3 from '../assets/cat3.jpg';
-import image4 from '../assets/cat4.jpg';
-import image5 from '../assets/cat5.jpg';
-import image6 from '../assets/cat6.jpg';
-import image7 from '../assets/cat6.jpg';
-import image8 from '../assets/cat6.jpg';
-import image9 from '../assets/cat6.jpg';
 import Editor from '../components/Editor';
-import { useDispatch } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { getTemplates } from '../../../api/template';
-import { setTemplates } from '../../../slices/templateSlice';
-import { useSelector } from 'react-redux';
 import { saveMeme } from '../../../api/meme';
+import { saveDraft } from '../../../api/draft';
+import { cacheMeme } from '../../../slices/serverSlice';
 
 export const defaultMemeProps = {
   name: 'myMeme',
+  description: 'A funny meme',
   content: '',
   format: '',
   usedTemplateId: '',
-  private: false
+  privacy: "public"
 }
 
 
 const EditorContainer = () => {
- 
-    const storeTemplates = useSelector((state) => state.template.templates);
-    const [selectedTemplate, setSelectedTemplate] = useState(null)
-    const dispatch = useDispatch()
+  const [selectedTemplate, setSelectedTemplate] = useState(null)
+  const [draftProps, setDraftProps] = useState(null)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // get draft id from url
+    const location = useLocation();
+    const draftId = location.pathname.split('/').pop();
+
+    const storeTemplates = useSelector((state) => state.template);
+    const serverReachable = useSelector((state) => state.server.serverReachable);
     const token = useSelector((state) => state.user.token);
-
-
-    useEffect(() => {
-      // initiate template fetch from backend into store
-      loadTemplates()
-    }, [])
-
-    const loadTemplates = async () => {
-      console.log("loadTemplates")
-      const backendTemplates = await getTemplates(token)
-
-      // Map backendTemplates to match the structure of your templates object
-      const templates = backendTemplates.map(template => ({
-        _id: template._id,
-        name: template.name,
-        format: template.format,
-        content: template.content,
-      }));
-      //setTemplates(backendTemplates)
-      dispatch(setTemplates({ templates: backendTemplates }))
-      console.log("Templates loaded into frontend")
+    const drafts = useSelector((state) => state.draft.drafts);
+    if(!storeTemplates.templatesLoaded) {
+      dispatch(getTemplates())
     }
 
-    const handleSaveMeme = (content, name, privacy) => {
+    // find the template that has been used with the draft and set it as selected template
+    useEffect(() => {
+      if(draftId) {
+        const draft = drafts.find(draft => draft._id === draftId)
+        if(draft) {
+          setDraftProps({name: draft.name, textProperties: draft.textProperties})
+          const usedTemplate = storeTemplates.templates.find(template => template._id === draft.usedTemplate)
+          if(usedTemplate) {
+            setSelectedTemplate(usedTemplate)
+          }
+        }
+      }
+    }, [draftId])
+
+
+    const handleSaveMeme = (content, name, description, privacy) => {
       const meme = {
         ...defaultMemeProps,
-        content: content,
         name: name,
+        description: description,
         format: selectedTemplate.format,
         templateId: selectedTemplate._id,
-        private: privacy
+        privacy: privacy,
+        content: content,
       }
-      console.log("handleSaveMeme")
-      console.log(meme)
-      saveMeme(meme, token)
+      if(serverReachable) {
+        console.log("Sending meme to server")
+        saveMeme(meme, token)
+      } else {
+        console.log("Storing meme in redux store")
+        dispatch(cacheMeme(meme))
+      }
+    }
+
+    const handleSaveDraft = (textProperties, name) => {
+      const completeDraft = {
+        textProperties: textProperties,
+        name: name,
+        templateId: selectedTemplate._id,
+        format: selectedTemplate.format,
+      }
+      if(serverReachable) {
+        dispatch(saveDraft(completeDraft, token, navigate))
+      } else {
+        alert("You are offline. You can't save drafts while being offline.")
+      }
     }
 
     return (
       <Editor 
-        templates={storeTemplates} 
+        templates={storeTemplates.templates} 
         selectedTemplate={selectedTemplate} 
         setSelectedTemplate={setSelectedTemplate}
         handleSaveMeme={handleSaveMeme}
+        handleSaveDraft={handleSaveDraft}
+        draftProps={draftProps}
       />
     )
 

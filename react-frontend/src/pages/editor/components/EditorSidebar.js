@@ -1,23 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import { Grid, Select, MenuItem, ImageListItem, ImageList, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import React, {useState} from 'react';
+import { Grid, ImageListItem, ImageList, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 const EditorSidebar = (props) => {
   const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage, renderUploadTemplatePage} = {...props}
   const [selectedFormat, setSelectedFormat] = useState('image');
 
   const handleFormatChange = (event) => {
     setSelectedFormat(event.target.value);
-    console.log(filteredTemplates)
-    console.log(templates)
   };
 
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
   };
-
-  useEffect(() => {
-    console.log("selectedTemplate")
-    console.log(selectedTemplate)
-  }, [selectedTemplate])
 
   const filteredTemplates = templates.filter(template => template.format === selectedFormat);
 

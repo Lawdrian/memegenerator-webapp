@@ -3,10 +3,10 @@ import { Stage, Layer, Image } from 'react-konva';
 import { Grid } from '@mui/material';
 import { useCallback } from 'react';
 import imageCompression from 'browser-image-compression';
-
+import { throttle } from 'lodash';
 import EditableTextField from './EditableTextField';
 import TextPropertiesForm from './TextPropertiesForm';
-import ImageEditorButton from '../components/ImageEditorButton';
+import { ImageEditorButton, ImageEditorTextfieldButton, ImageEditorClearButton } from '../components/ImageEditorButton';
 import ImageEditorFooter from '../components/ImageEditorFooter';
 
 export const defaultTextProps = {
@@ -18,15 +18,18 @@ export const defaultTextProps = {
   fontWeight: 'normal',
   textDecoration: 'none',
   align: 'center',
+  position: { x: 50, y: 80 },
+  rotation: 0,
+  text: 'Some text',
 };
 
-function ImageEditor({ imageUrl, handleSaveMeme }) {
+function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) {
   const [textFields, setTextFields] = useState([]);
   const [image, setImage] = useState(null);
 
   // state variables for for text properties form
   const [selectedTextFieldIndex, setSelectedTextFieldIndex] = useState(null);
-  const [selectedTextFieldProps, setSelectedTextFieldProps] = useState(null);
+  //const [selectedTextFieldProps, setSelectedTextFieldProps] = useState(null);
 
   const [stageSize, setStageSize] = useState({width: window.innerWidth, height: window.innerHeight});
 
@@ -39,10 +42,6 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
   //const stageHeight = 600; // replace with your desired height
   const initialTextWidth = 200;
 
-  useEffect(() => {
-    console.log("imageUrl: " + imageUrl)
-  }, [imageUrl])
-
   // set the image state once the image is loaded and scale the image to fit the container
   useEffect(() => {
     const img = new window.Image();
@@ -51,6 +50,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
       setImage(img);
 
       const updateStageSize = () => {
+        if(stageContainerRef.current) { 
         const parentWidth = stageContainerRef.current.offsetWidth;
         const parentHeight = stageContainerRef.current.offsetHeight;
 
@@ -61,6 +61,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
           height: img.naturalHeight * scale * 0.8,
         });
       };
+    }
   
       // dynamically scale the image to fit the container
       updateStageSize();
@@ -71,36 +72,63 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
 
   }, [imageUrl]);
 
+  useEffect(() => {
+    if(draftProps) {
+      setTextFields(draftProps.textProperties)
+    }
+  }, [draftProps])
+
 
 
   const handleTextFieldSelect = (index, props) => {
     setSelectedTextFieldIndex(index);
-    setSelectedTextFieldProps(props);
+    //setSelectedTextFieldProps(props);
   };
 
   const handleTextFieldDeselect = () => {
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   }
 
   // handlePropChange is called when a property of a textfield is changed in the TextPropertiesForm
   const handlePropChange = useCallback((name, value) => {
     const newProps = {
-      ...selectedTextFieldProps,
+      ...textFields[selectedTextFieldIndex],
       [name]: value,
     };
-    setSelectedTextFieldProps(newProps);
+    //setSelectedTextFieldProps(newProps);
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === selectedTextFieldIndex ? newProps : textField
       )
     );
   },
-  [selectedTextFieldProps, selectedTextFieldIndex]
+  [textFields, selectedTextFieldIndex]
   );
+
+  // update the textField porperties state once a property inside the EditableTextField component changes
+  const handleEditableTextFieldChange = throttle((property, value, key) => {
+    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
+    setTextFields(prevTextFields =>
+      prevTextFields.map((textField, index) =>
+        index === key ? {...textField, [property]: value} : textField
+      )
+    );
+  }, 300, { leading: false})
+
+  const handleTextChange = throttle((text, key) => {
+    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
+    setTextFields(prevTextFields =>
+      prevTextFields.map((textField, index) =>
+        index === key ? {...textField, text: text} : textField
+      )
+    );
+  }, 300, { leading: false})
 
   const addTextField = () => {
     setTextFields(prevTextFields => [...prevTextFields, {...defaultTextProps}]);
+    //setSelectedTextFieldIndex(textFields.length-1);
+    //setSelectedTextFieldProps({...defaultTextProps});
   };
 
   const removeTextField = (index) => {
@@ -111,13 +139,13 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
 
     setTextFields(prevTextFields => prevTextFields.filter((_, i) => i !== index));
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   };
 
   const clearTextFields = () => {
     setTextFields([]);
     setSelectedTextFieldIndex(null);
-    setSelectedTextFieldProps(null);
+    //setSelectedTextFieldProps(null);
   };
 
   /*
@@ -140,7 +168,7 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
   */
 
   // download the image with the given resolution
-  const handleMemeCreation = async (targetFileSize, memeName, local, privacy) => {
+  const handleMemeCreation = async (targetFileSize, memeName, memeDescription, memePrivacy, download) => {
     
     const transformers = stageRef.current.find('Transformer');
     transformers.forEach(transformer => transformer.hide());
@@ -173,8 +201,8 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
     reader.readAsDataURL(compressedFile);
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
-  
-      if(local == true) {
+      console.log(compressedDataUrl)
+      if(download == true) {
         // Download the compressed image
         const link = document.createElement('a');
         link.download = `${memeName.replace(/\s/g, '') || 'meme'}.png`; // delete spaces
@@ -184,54 +212,57 @@ function ImageEditor({ imageUrl, handleSaveMeme }) {
         document.body.removeChild(link);
       } else {
         // Upload the compressed image
-        handleSaveMeme(compressedDataUrl, memeName, privacy);
+        handleSaveMeme(compressedDataUrl, memeName, memeDescription, memePrivacy);
       }
     };
   };
 
+  const handleDraftCreation = (draftName) => {
+    handleSaveDraft(textFields, draftName);
+  }
+
   return (
     <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '100vh', overflow: 'hidden', }}>
       <Grid item style={{ height: '10vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
-        {selectedTextFieldProps ? (
+        {textFields[selectedTextFieldIndex] ? (
           <TextPropertiesForm
             removeTextField={() => removeTextField(selectedTextFieldIndex)}
-            textProps={selectedTextFieldProps}
+            textProps={textFields[selectedTextFieldIndex] ?? null}
             onPropChange={(event) => handlePropChange(event.target.name, event.target.value)}
           />
         )
         : (
           <Grid container item spacing={2} style={{ padding: '10px' }}>
             <Grid item>
-            <ImageEditorButton onClick={addTextField}>Add Text Field</ImageEditorButton>
+            <ImageEditorTextfieldButton onClick={addTextField}>Add Text Field</ImageEditorTextfieldButton>
             </Grid>
             <Grid item>
-            <ImageEditorButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorButton>
+            <ImageEditorClearButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorClearButton>
             </Grid>
           </Grid>
         )
         }
       </Grid>
-      <Grid item ref={stageContainerRef} style={{ height: 'calc(100vh - 20vh)', padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
+      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 20vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>  <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
           <Layer>
             {image && <Image image={image} width={stageSize.width} height={stageSize.height} />}
           </Layer>
           {textFields.map((textProps, index) => (
             <EditableTextField 
               initialTextWidth={initialTextWidth}
-              initialPosition={{ x: 50, y: 80 }}
+              onPropertyChange={(property, value) => handleEditableTextFieldChange(property, value, index)}
               stageRef={stageRef}
               key={index}
               isSelected={index === selectedTextFieldIndex}
               textProps={textProps}
               onSelect={() => handleTextFieldSelect(index, textProps)}
-              onDeselect={() => handleTextFieldDeselect()}
+              onDeselect={() => handleTextFieldDeselect(index)}
             />
           ))}
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} />
+        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
       </Grid>
     </Grid>
   );

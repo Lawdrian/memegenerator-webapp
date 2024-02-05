@@ -136,7 +136,7 @@ export default function SignInSignUp() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-
+            
             {/* ------------SIGN-IN------------ */}
             <Grid container style = {{marginTop: "-20px", height: "94vh"}}>
                 <CssBaseline />
@@ -200,6 +200,7 @@ export default function SignInSignUp() {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                id= "loginBtn"
                             >
                                 ANMELDEN
                             </Button>

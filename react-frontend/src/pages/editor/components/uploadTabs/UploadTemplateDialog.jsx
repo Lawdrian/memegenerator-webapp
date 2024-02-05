@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { AppBar, Box, Button, Dialog, Divider, Grid, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { useSelector } from 'react-redux';
 import ImageUrlTab from './ImageUrlTab';
 import FileUploadTab from './FileUploadTab';
 import CameraUploadTab from './CameraUploadTab';
@@ -12,11 +12,14 @@ import { saveTemplate } from '../../../../api/template';
 
 export const emptyUploadTemplate = {
   name: 'newtemplate',
+  description: 'A good template',
   format: '',
   content: '',
 };
 
 const UploadTemplateDialog = ({ open, setOpen }) => {
+    const dispatch = useDispatch();
+
     const [selectedTab, setSelectedTab] = useState(0);
     const [template, setTemplate] = useState(emptyUploadTemplate); 
     const theme = useTheme();
@@ -36,7 +39,7 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
         console.log("token", token)
         console.log("template")
         console.log(statetemplates)
-        saveTemplate(template, token);
+        dispatch(saveTemplate(template, token));
         console.log("Template uploaded successfully");
       }
       catch (error) {
@@ -72,19 +75,28 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
             </Grid>
             <Grid item xs={1}>
             <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
-              <Typography>Template Name:</Typography>
+              <Typography>Name:</Typography>
               <TextField 
-                sx={{ width: '200px' }} 
+                sx={{ width: '150px' }} 
                 id="text" 
                 type="text" 
                 value={template.name} 
                 onChange={(event) => setTemplate({ ...template, name: event.target.value})} 
               />
               <Divider orientation="vertical" flexItem />
+              <Typography>Description:</Typography>
+              <TextField 
+                sx={{ width: '250px' }} 
+                id="text" 
+                type="text" 
+                value={template.description} 
+                onChange={(event) => setTemplate({ ...template, description: event.target.value})} 
+              />
+              <Divider orientation="vertical" flexItem />
               <Button
                   variant="contained"
                   color="success"
-                  disabled={!template}
+                  disabled={!template.content}
                   onClick={handleTemplateUpload}
                 >
                   Upload

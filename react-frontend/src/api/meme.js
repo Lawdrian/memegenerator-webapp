@@ -1,5 +1,8 @@
+const token = localStorage.getItem("token");
+
 export function saveMeme(meme, token) {
-  fetch("http://localhost:3001/create-meme", {
+
+  fetch("http://localhost:3001/meme", {
     method: "POST",
     crossDomain: true,
     headers: {
@@ -9,32 +12,53 @@ export function saveMeme(meme, token) {
       "Authorization": "Bearer " + token, // set token as header
     },
     body: JSON.stringify({                // converts base64-decoded String in JSON
-      content: meme.content,
+      data: [{
       name: meme.name,
+      description: meme.description,
       format: meme.format,
       templateId: meme.templateId,
-      private: meme.private                     
+      privacy: meme.privacy,
+      content: meme.content 
+    }]                 
     })
   })
-    .then((res) => res.json())
-    .then((data) =>
-      console.log(data),
-      alert("meme Uploaded Successfully")
-    )
-    .catch((error) => console.error('Error uploading image:', error));
+  .then((res) => {
+    console.log("response")
+    console.log(res)
+    if (res.status === 201) {
+      alert("Meme saved successfully")      
+      return res.json(); // Resolve with the JSON data if the status is 201
+    } else if (res.status === 401) {
+      alert("Unauthorized")
+    } else {
+      alert("Error during Meme save")
+    }
+  })
+  .catch((error) => {
+    console.error('Error uploading image:', error)
+    alert("Error during Meme save")
+  })
 }
 
 export function getAllMemes(callBack, token) {
-  fetch("http://localhost:3001/get-all-memes", {
+  fetch("http://localhost:3001/meme", {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
           "Authorization": "Bearer " + token,
       },
   })
-  .then((res) => res.json())
+  .then((res) => {
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+    return res.json();
+  })
   .then((data) => {
-      callBack(data.memes || []);
+    callBack(data.memes || []);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
   });
 }
 
@@ -83,7 +107,7 @@ export function changeMemePrivacy(privacy, memeId, token){
           "Content-Type": "application/json",
           "Authorization": "Bearer " + token,
       },
-      body: JSON.stringify({private: privacy, memeId: memeId})
+      body: JSON.stringify({privacy: privacy, memeId: memeId})
       })
 }
 

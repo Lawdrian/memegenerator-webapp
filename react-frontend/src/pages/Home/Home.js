@@ -12,35 +12,30 @@ function Home() {
   const token = useSelector((state) => state.user.token);
   const navigate = useNavigate();
 
-  const [displayedMemes, setDisplayedMemes] = useState([]);
+  const [displayCount, setDisplayCount] = useState(40);
   const [hasMore, setHasMore] = useState(true);
   const memesPerLoad = 40;
 
   useEffect(() => {
-    getAllMemes((memes) => {
-      dispatch(setMemes({ memes }));
-      setDisplayedMemes(memes.slice(0, memesPerLoad));
-    }, token);
-  }, [dispatch, token]);
+    // Initially load memes from the backend if needed
+    if(allMemes.length === 0) {
+      getAllMemes(token).then((memes) => {
+        dispatch(setMemes({ memes }));
+      });
+    }
+  }, [dispatch, token, allMemes.length]);
 
   const fetchMoreData = () => {
-    if (displayedMemes.length >= allMemes.length) {
+    if (displayCount >= allMemes.length) {
       setHasMore(false);
     } else {
-      setTimeout(() => {
-        setDisplayedMemes(
-          displayedMemes.concat(
-            allMemes.slice(
-              displayedMemes.length,
-              displayedMemes.length + memesPerLoad
-            )
-          )
-        );
-      }, 1500);
+      setDisplayCount(displayCount + memesPerLoad);
     }
   };
-  // <ShareButton
-  //memeLink={`${window.location.href}meme/${meme._id}`}/>
+
+  // This computes the memes to be displayed based on displayCount
+  const displayedMemes = allMemes.slice(0, displayCount);
+  
   const handleShareClick = (memeId) => {
     const memeLink = `${window.location.origin}/api/memes/${memeId}`;
     navigator.clipboard.writeText(memeLink).then(

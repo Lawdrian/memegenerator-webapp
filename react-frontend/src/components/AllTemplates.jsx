@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Grid, Button, TextField } from "@mui/material";
 import { getAlltemplates, handleCommentSubmit, handleDownVote, handleUpVote } from "../api/template.js";
 import "./myMemes.css";
-import TemplateView from "./Statistics/TemplateView.jsx";
+import TemplateStatistics from "./Statistics/TemplateStatistics.jsx";
 
 //API
 
@@ -37,7 +37,7 @@ export default function AllTemplates() {
                         <Grid item xs={12} md={4}>
                             <Grid style={{ display: "flex" }}>
                                <img src={template.content} alt="DAS BILD IST ECHT GEIL FINDET IHR NICHT?" style={{ width: "auto", height: "300px" }} />
-                                {template.showStatistics && <TemplateView template={template} />}
+                                {template.showStatistics && <TemplateStatistics template={template} />}
                             </Grid>
                         </Grid>
                         <Grid item xs={12} md={9}>

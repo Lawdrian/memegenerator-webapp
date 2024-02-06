@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Stage, Layer, Image } from 'react-konva';
+import { Stage, Layer, Image, Rect } from 'react-konva';
 import { Grid } from '@mui/material';
 import { useCallback } from 'react';
 import imageCompression from 'browser-image-compression';
@@ -243,9 +243,11 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
         )
         }
       </Grid>
-      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 20vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>  <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
+      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 20vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>  
+      <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
           <Layer>
             {image && <Image image={image} width={stageSize.width} height={stageSize.height} />}
+            {image && <Rect width={stageSize.width} height={stageSize.height} stroke='black' strokeWidth={5} />}
           </Layer>
           {textFields.map((textProps, index) => (
             <EditableTextField 

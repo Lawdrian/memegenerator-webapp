@@ -103,7 +103,7 @@ const CanvasCreator = () => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={4} style={{overflow: 'auto'}}>
+      <Grid item xs={3} style={{overflow: 'auto'}}>
         <ImageList cols={2} gap={15} rowHeight={'auto'} style={{ maxHeight:'80vh', padding:'1rem'}}>
           {imageTemplates.map((template, index) => (
                 <ImageListItem key={index}>
@@ -118,7 +118,7 @@ const CanvasCreator = () => {
           ))}
         </ImageList>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={9}>
         <Grid container item xs={8} style={{ display: 'flex', flexDirection: 'column', height: '90vh' }}>
            <Grid item>
             <Typography variant='h4'>Create your Canvas</Typography>

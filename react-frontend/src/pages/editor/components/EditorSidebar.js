@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Grid, ImageListItem, ImageList, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 const EditorSidebar = (props) => {
-  const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage, renderUploadTemplatePage} = {...props}
+  const {templates, selectedTemplate, setSelectedTemplate, renderCreateCanvasPage, renderUploadTemplatePage, renderTemplateStatisticPage} = {...props}
   const [selectedFormat, setSelectedFormat] = useState('image');
 
   const handleFormatChange = (event) => {
@@ -37,7 +37,7 @@ const EditorSidebar = (props) => {
           </ToggleButton>
         </ToggleButtonGroup>
       </Grid>
-      <Grid item xs={9} style={{overflow: 'auto'}}>
+      <Grid item xs={9} style={{overflow: 'auto', maxHeight: '50vh'}}>
         <ImageList cols={2} gap={15} rowHeight={'auto'} style={{padding:'1rem'}}>
           {filteredTemplates.map((template, index) => (
                 <ImageListItem key={index}>
@@ -54,7 +54,10 @@ const EditorSidebar = (props) => {
       </Grid>
       <Grid  container item direction='column' xs={2} spacing={2} style={{ alignItems: 'center', paddingTop: '2rem'}}>
         <Grid item>
-          <Button variant="contained" color="primary" onClick={renderCreateCanvasPage}>Create Canvas</Button>
+          <Button variant="contained" color="primary" disabled={!selectedTemplate} onClick={renderTemplateStatisticPage}>Show Template Statistic</Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" color="secondary" onClick={renderCreateCanvasPage}>Create Canvas</Button>
         </Grid>
         <Grid item>
           <Button variant="contained" color="secondary" onClick={renderUploadTemplatePage}>Upload Template</Button>

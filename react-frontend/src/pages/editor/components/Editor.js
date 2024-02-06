@@ -5,28 +5,33 @@ import EditorSidebar from "./EditorSidebar";
 import UploadTemplateDialog from './uploadTabs/UploadTemplateDialog';
 import { useNavigate } from 'react-router-dom';
 
-import CanvasCreator from '../../CanvasCreator';
+import TemplateStatistics from '../../../components/Statistics/TemplateStatistics';
 
 const Editor = (props) => {
     const {templates, selectedTemplate, setSelectedTemplate, handleSaveMeme, handleSaveDraft, draftProps} = {...props}
     const [uploadTemplatePage, setUploadTemplatePage] = useState(false)
+    const [templateStatisticPage, setTemplateStatisticPage] = useState(false)
     const navigate = useNavigate();
 
     const renderCanvasPage = () => {
       navigate('../canvas')
     }
 
-    const renderUploadTemplatePage = () => {
-      setUploadTemplatePage(true);
-    }
-
     return (
-      <Grid container style={{maxHeight: '100vh', overflow: 'auto', }}>
+      <Grid container style={{maxHeight: '100vh', overflow: 'hidden', }}>
         <UploadTemplateDialog open={uploadTemplatePage} setOpen={setUploadTemplatePage}/>
-        <Grid item xs={4}>
-          <EditorSidebar templates={templates} selectedTemplate={selectedTemplate} setSelectedTemplate={setSelectedTemplate} renderCreateCanvasPage={renderCanvasPage} renderUploadTemplatePage={renderUploadTemplatePage}/>
+        <TemplateStatistics template={selectedTemplate} open={templateStatisticPage} setOpen={setTemplateStatisticPage}/>
+        <Grid item xs={3}>
+          <EditorSidebar 
+            templates={templates} 
+            selectedTemplate={selectedTemplate} 
+            setSelectedTemplate={setSelectedTemplate} 
+            renderCreateCanvasPage={renderCanvasPage} 
+            renderUploadTemplatePage={() => setUploadTemplatePage(true)}
+            renderTemplateStatisticPage={() => setTemplateStatisticPage(true)}
+            />
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={9}>
           <ImageEditor imageUrl={selectedTemplate?.content} handleSaveMeme={handleSaveMeme} handleSaveDraft={handleSaveDraft} draftProps={draftProps}/>
         </Grid>
       </Grid>

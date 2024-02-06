@@ -224,14 +224,12 @@ app.post('/meme', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'No data' });
     }
     // iterate over each meme and save it to the database
-    console.log(data)
-    console.log(typeof data)
     data.map(async (meme) => {
       const { content, name, description, format, templateId, privacy } = meme; 
       
       const usedTemplate = await Template.findOne({ _id: templateId });
       if(!content || !format || !templateId){
-        console.log("content: ", content, "name: ", name, "format: ", format, "templateId: ", templateId, "privacy: ", privacy)
+        console.log("content: ", content.type, "name: ", name, "format: ", format, "templateId: ", templateId, "privacy: ", privacy)
         return res.status(400).json({ error: 'Missing data' });
       }
       Meme.create(
@@ -423,14 +421,14 @@ app.post('/draft', verifyToken, async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: 'User not found' });
   }
-  if(!textProperties || !name || !format || !templateId){
+  if(!textProperties || !format || !templateId){
     console.log("textProperties: ", textProperties, "name: ", name, "format: ", format, "templateId: ", templateId)
     return res.status(400).json({ error: 'Missing data' });
   }
   Draft.create(
     { 
       textProperties: textProperties, 
-      name: name, 
+      name: name ?? "myDraft", 
       format: format, 
       createdBy: user._id,
       usedTemplate: usedTemplate._id

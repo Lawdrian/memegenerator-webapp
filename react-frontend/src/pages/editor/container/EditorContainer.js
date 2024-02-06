@@ -28,7 +28,7 @@ const EditorContainer = () => {
     // get draft id from url
     const location = useLocation();
     const draftId = location.pathname.split('/').pop();
-
+    
     const storeTemplates = useSelector((state) => state.template);
     const serverReachable = useSelector((state) => state.server.serverReachable);
     const token = useSelector((state) => state.user.token);

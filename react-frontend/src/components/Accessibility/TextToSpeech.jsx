@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Grid, Popover, Paper } from '@mui/material';
 
 export default function TextToSpeech() {
@@ -7,7 +7,14 @@ export default function TextToSpeech() {
     const [rate, setRate] = useState(0.65);
     const [hover, setHover] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [voices, setVoices] = useState([]);
     let speech;
+
+    useEffect(() => {
+        window.speechSynthesis.onvoiceschanged = () => {
+            setVoices(window.speechSynthesis.getVoices());
+        };
+    }, []);
 
     function handleTextToSpeech() {
         if ('speechSynthesis' in window) {
@@ -29,6 +36,8 @@ export default function TextToSpeech() {
         newSpeech.volume = volume;
         newSpeech.rate = rate;
         newSpeech.pitch = 1;
+        newSpeech.lang = 'en-US';
+        newSpeech.voice = voices[3]; // Use the voices state here
 
         newSpeech.onend = () => {
             setSpeaking(false);
@@ -67,7 +76,7 @@ export default function TextToSpeech() {
             onClick={handleTextToSpeech} 
             ref = {(button) => setAnchorEl(button)}
             style = {{zIndex:1}}
-            id = "vorlesen"
+            id = "readContentBtn"
             > 
                 {speaking ? 'Stop Reading' : 'Read Content'}
             </Button>

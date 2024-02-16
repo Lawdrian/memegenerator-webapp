@@ -9,14 +9,12 @@ export default function TemplateStatistics({ template, open, setOpen}) {
   
   useEffect(() => {
     getTemplateStatisticData();
-    console.log(statisticData)
   }, [template]);
 
   const getTemplateStatisticData = async () => {
     if(!template) return;
     try {
       const data = await getTempRefMemes(template);
-      console.log(data);
       setStatisticData(data.memeDetails || []);
     } catch (error) {
       console.error(error);
@@ -38,8 +36,6 @@ export default function TemplateStatistics({ template, open, setOpen}) {
         });
       };
     });
-
-    console.log("Like: "+ dataSet);
     return dataSet;
   };
 
@@ -56,8 +52,6 @@ export default function TemplateStatistics({ template, open, setOpen}) {
         }
       });
     });
-
-    console.log(dataSet);
     return dataSet;
   };
 
@@ -83,16 +77,7 @@ export default function TemplateStatistics({ template, open, setOpen}) {
           <Typography variant="h4" style={{textAlign: "center", marginBottom: 20 }}>
             {currentYear} Statistics for the Template {template?.name}
           </Typography>
-          <Typography variant="h6" style={{textAlign: "center"}}>
-            Likes/Dislikes over the time for the RefMemes
-          </Typography>
-          <BarChart
-            xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
-            yAxis={[{ type: 'number' }]}
-            series={[{ data: templateDataLikes(), color: "green" }, { data: templateDataDislikes(), color: "red" }]}
-            width={500}
-            height={250}
-          />
+
           <Typography variant="h6" style={{textAlign: "center"}}>
             Created Memes from this template
           </Typography>
@@ -100,6 +85,16 @@ export default function TemplateStatistics({ template, open, setOpen}) {
             xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
             yAxis={[{ type: 'number' }]}
             series={[{ data: templateCountUsed(), color: "black" }]}
+            width={500}
+            height={250}
+          />
+          <Typography variant="h6" style={{textAlign: "center"}}>
+            Likes/Dislikes of memes created from this template
+          </Typography>
+          <BarChart
+            xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
+            yAxis={[{ type: 'number' }]}
+            series={[{ data: templateDataLikes(), color: "green" }, { data: templateDataDislikes(), color: "red" }]}
             width={500}
             height={250}
           />

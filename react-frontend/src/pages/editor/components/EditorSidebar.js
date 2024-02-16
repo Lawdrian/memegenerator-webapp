@@ -16,7 +16,7 @@ const EditorSidebar = (props) => {
 
 
   return (
-    <Grid container direction="column" justifyContent="flex-start" style={{height: '100vh', overflow: 'auto'}}>
+    <Grid container direction="column" justifyContent="flex-start" style={{maxHeight: '90vh', overflow: 'clip'}}>
       <Grid item xs={1}>
         <ToggleButtonGroup
           value={selectedFormat}

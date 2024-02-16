@@ -33,7 +33,7 @@ export default function RootLayout() {
         <ThemeProvider theme={theme}>
             <AppBar position="static">
                 <Toolbar>
-                    <EmojiEmotionsIcon style={{ marginRight: 10 }} a />
+                    <EmojiEmotionsIcon style={{ marginRight: 10 }} />
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         Meme Generator
                     </Typography>
@@ -45,7 +45,7 @@ export default function RootLayout() {
                         <CloudOffIcon style={{ marginRight: 10 }}/>              
                     )
                     }
-                    <Button color="inherit" component={NavLink} to="/" exact>
+                    <Button color="inherit" component={NavLink} to="/">
                         Home
                     </Button>
                     <Button color="inherit" component={NavLink} to="/editor">

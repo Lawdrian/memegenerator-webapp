@@ -8,7 +8,6 @@ import TemplateStatistics from "./Statistics/TemplateStatistics.jsx";
 //API
 
 export default function AllTemplates() {
-    const [showStatistics, setShowStatistik] = useState(false);
     const [allTemplate, setAllTemplate] = useState([]);
     const token = useSelector((state) => state.user.token);
     const template = useSelector((state) => state.template);
@@ -18,15 +17,6 @@ export default function AllTemplates() {
          setAllTemplate(template.templates);
     }, [template]);
 
-    const handleStatistikClick = (templateId) => {
-        const updatedtemplates = allTemplate.map((template) => {
-            if (template._id === templateId) {
-                return { ...template, showStatistics: !template.showStatistics };
-            }
-            return template;
-        });
-          setAllTemplate(updatedtemplates);
-    };
 
 
     return (
@@ -37,7 +27,6 @@ export default function AllTemplates() {
                         <Grid item xs={12} md={4}>
                             <Grid style={{ display: "flex" }}>
                                <img src={template.content} alt="DAS BILD IST ECHT GEIL FINDET IHR NICHT?" style={{ width: "auto", height: "300px" }} />
-                                {template.showStatistics && <TemplateStatistics template={template} />}
                             </Grid>
                         </Grid>
                         <Grid item xs={12} md={9}>
@@ -51,11 +40,6 @@ export default function AllTemplates() {
                                 </>
                             )}
                         </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Button onClick={() => handleStatistikClick(template._id)} variant="contained" color="info" style={{ margin: 5 }}>
-                            Statistik
-                        </Button>
                     </Grid>
                 </Grid>
             ))}

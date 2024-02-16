@@ -34,11 +34,11 @@ export const getTemplates = () => async (dispatch) =>{
 export const saveTemplate = (template, token) => async (dispatch) => {
   fetch("http://localhost:3001/template", {
     method: "POST",
-    crossDomain: true,
+    //crossDomain: true,
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",        
-      "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
+      //"Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
       "Authorization": "Bearer " + token, // set authorization token in header
     },
     body: JSON.stringify({

@@ -6,8 +6,9 @@ import imageCompression from 'browser-image-compression';
 import { throttle } from 'lodash';
 import EditableTextField from './EditableTextField';
 import TextPropertiesForm from './TextPropertiesForm';
-import { ImageEditorButton, ImageEditorTextfieldButton, ImageEditorClearButton } from '../components/ImageEditorButton';
 import ImageEditorFooter from '../components/ImageEditorFooter';
+import { useSelector } from 'react-redux';
+import { ImageEditorButton } from './ImageEditorButton';
 
 export const defaultTextProps = {
   fontSize: 40,
@@ -26,6 +27,7 @@ export const defaultTextProps = {
 function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) {
   const [textFields, setTextFields] = useState([]);
   const [image, setImage] = useState(null);
+  const dictation = useSelector((state) => state.dictation);
 
   // state variables for for text properties form
   const [selectedTextFieldIndex, setSelectedTextFieldIndex] = useState(null);
@@ -77,6 +79,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
       setTextFields(draftProps.textProperties)
     }
   }, [draftProps])
+
 
 
 
@@ -188,12 +191,11 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
       maxWidthOrHeight: 1920, // this will also reduce the image dimensions
       useWebWorker: true
     };
-    console.log('compressing image');
     const compressedFile = await imageCompression(imageFile, options);
-    console.log('done compressing');
-
+    // display an error message if the file size is too big after compression
     if(compressedFile.size / 1048576 > targetFileSize){
       console.error('Cannot compress file this much');
+      alert('Cannot compress file this much');
     }
 
     // Convert compressed file to data URL
@@ -221,8 +223,32 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
     handleSaveDraft(textFields, draftName);
   }
 
+  useEffect(() => {
+    if(dictation.caption.value !== "") {
+      setTextFields(textFields.map((item, index) => {
+        if (index !== dictation.caption.index) {
+          // This isn't the item we care about - keep it as-is
+          return item;
+        }
+        // Otherwise, this is the one we want - return an updated value
+        return {
+          ...item,
+          text: dictation.caption.value
+        };
+      }))
+    }
+  }, [dictation.caption]);
+
+  useEffect(() => {
+    console.log(selectedTextFieldIndex)
+    console.log("dictation.selectCaption: ", dictation.selectCaption)
+    if(dictation.selectCaption !== null) {
+      setSelectedTextFieldIndex(dictation.selectCaption);
+    }
+  }, [dictation.selectCaption]);
+
   return (
-    <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '100vh', overflow: 'hidden', }}>
+    <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '90vh', overflow: 'clip'}}>
       <Grid item style={{ height: '10vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
         {textFields[selectedTextFieldIndex] ? (
           <TextPropertiesForm
@@ -234,16 +260,16 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
         : (
           <Grid container item spacing={2} style={{ padding: '10px' }}>
             <Grid item>
-            <ImageEditorTextfieldButton onClick={addTextField}>Add Text Field</ImageEditorTextfieldButton>
+            <ImageEditorButton id="addTextFieldBtn" onClick={addTextField}>Add Caption</ImageEditorButton>
             </Grid>
             <Grid item>
-            <ImageEditorClearButton onClick={clearTextFields} color={"error"}>Clear</ImageEditorClearButton>
+            <ImageEditorButton id="clearBtn" onClick={clearTextFields} color={"error"}>Clear</ImageEditorButton>
             </Grid>
           </Grid>
         )
         }
       </Grid>
-      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 20vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>  
+      <Grid item ref={stageContainerRef} style={{ width: '100%', display: 'block', height: 'calc(100vh - 30vh)', padding: '20px', justifyContent: 'center', alignItems: 'center', overflow: 'clip' }}>  
       <Stage width={stageSize.width} height={stageSize.height} ref={stageRef}>
           <Layer>
             {image && <Image image={image} width={stageSize.width} height={stageSize.height} />}
@@ -264,7 +290,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
         </Stage>
       </Grid>
       <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, local, privacy) => handleMemeCreation(fileSize, memeName, local, privacy)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
+        <ImageEditorFooter handleMemeCreation={(fileSize, memeName, description, privacy, local) => handleMemeCreation(fileSize, memeName, description, privacy, local)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
       </Grid>
     </Grid>
   );

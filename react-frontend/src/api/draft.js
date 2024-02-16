@@ -5,11 +5,11 @@ export const saveDraft = (draft, token, navigate) => async (dispatch) => {
   try {
     const response = await fetch("http://localhost:3001/draft", {
       method: "POST",
-      crossDomain: true,
+      //crossDomain: true,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
+        //"Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
         "Authorization": "Bearer " + token, // set authorization token in header
       },
       body: JSON.stringify({

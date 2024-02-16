@@ -169,14 +169,14 @@ export default function SignInSignUp() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Anmeldung
+                            Sign in
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
+                                id="loginEmail"
                                 label="Email Address"
                                 name="email"
                                 autoComplete="email"
@@ -189,7 +189,7 @@ export default function SignInSignUp() {
                                 name="password"
                                 label="Password"
                                 type="password"
-                                id="password"
+                                id="loginPassword"
                                 autoComplete="current-password"
                             />
                             <FormControlLabel
@@ -232,7 +232,7 @@ export default function SignInSignUp() {
                                 <LockOutlinedIcon />
                             </Avatar>
                             <Typography component="h1" variant="h5">
-                                Registration
+                                Sign up
                             </Typography>
                             <Box component="form" noValidate onSubmit={handleRegistrationSubmit} sx={{ mt: 3 }}>
                                 <Grid container spacing={2}>
@@ -240,7 +240,7 @@ export default function SignInSignUp() {
                                         <TextField
                                             required
                                             fullWidth
-                                            id="email"
+                                            id="registrationEmail"
                                             label="Email Address"
                                             name="email"
                                             autoComplete="email"
@@ -253,7 +253,7 @@ export default function SignInSignUp() {
                                             name="password"
                                             label="Password"
                                             type="password"
-                                            id="password"
+                                            id="registrationPassword"
                                             autoComplete="new-password"
                                         />
                                     </Grid>
@@ -264,7 +264,7 @@ export default function SignInSignUp() {
                                     variant="contained"
                                     sx={{ mt: 3, mb: 2 }}
                                 >
-                                    REGISTRIEREN
+                                    Sign up
                                 </Button>
                             </Box>
                             <Copyright sx={{ mt: 5 }} />

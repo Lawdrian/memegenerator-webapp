@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Layer, Text, Transformer } from 'react-konva';
 import Konva from 'konva';
 
-function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelected, initialTextWidth, onPropertyChange}) {
+function EditableTextField({key, stageRef, textProps, onSelect, onDeselect, isSelected, initialTextWidth, onPropertyChange}) {
   const [textNode, setTextNode] = useState(null);
   const [trNode, setTrNode] = useState(null);
   const textareaRef = useRef(null);

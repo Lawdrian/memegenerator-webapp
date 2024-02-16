@@ -156,8 +156,8 @@ function TextPropertiesForm({ textProps, onPropChange, removeTextField }) {
 
       <Divider orientation="vertical" flexItem />
 
-      <ImageEditorButton onClick={removeTextField} color="error">
-        Delete Textfield
+      <ImageEditorButton id="deleteTextFieldBtn" onClick={removeTextField} color="error">
+        Delete Caption
       </ImageEditorButton>
     </Box>
   );

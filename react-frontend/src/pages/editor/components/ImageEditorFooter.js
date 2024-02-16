@@ -3,26 +3,34 @@ import { Box, Typography, TextField, Divider, InputAdornment, Radio, FormControl
 import $ from 'jquery';
 
 import {ImageEditorButton} from './ImageEditorButton';
+import { useSelector } from 'react-redux';
 
 const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
 
+    const dictation = useSelector((state) => state.dictation);
+
     const [fileSize, setFileSize] = useState(1);
-    const [memeName, setMemeName] = useState($('#memetitel').val()); // initial value from html element with id memetitel
+    const [memeName, setMemeName] = useState('myMeme'); // initial value from html element with id memetitel
     const [memeDescription, setMemeDescription] = useState("A funny meme");
     const [memePrivacy, setMemePrivacy] = useState("public");
 
+    // this useEffect is used to update the meme name state with the spoken text from the dictation
     useEffect(() => {
-      const intervalId = setInterval(() => {
-        const memetitelElement = $('#memetitel');
-        const value = memetitelElement.val();
-        setMemeName(value);
-        console.log("Wert von #memetitel:", value);
-      }, 1000); // Alle 1000 Millisekunden (1 Sekunde) überprüfen
-    
-      // aufräumen -> das Interval stopp, wenn Komponente entladen 
-      return () => clearInterval(intervalId);
-    }, []);
+      console.log("dictation.name: ", dictation.name);
+      console.log(dictation)
+      if(dictation.name !== "") {
+        setMemeName(dictation.name);
+      }
+    }, [dictation.name]);
 
+    // this useEffect is used to update the meme description state with the spoken text from the dictation
+    useEffect(() => {
+      console.log("dictation.description: ", dictation.description);
+      if(dictation.description !== "") {
+        setMemeDescription(dictation.description);
+      }
+    }, [dictation]);
+    
     return(
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
       <Typography>File Size:</Typography>
@@ -67,8 +75,8 @@ const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
           <FormControlLabel value="private" control={<Radio />} label="private" />
         </RadioGroup>
       </FormControl>
-      <ImageEditorButton onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, false)}>save</ImageEditorButton>
-      <ImageEditorButton color='info' onClick={() => handleDraftCreation(memeName)}>save draft</ImageEditorButton>
+      <ImageEditorButton id="saveMemeBtn" onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, false)}>save</ImageEditorButton>
+      <ImageEditorButton id="saveDraftBtn" color='info' onClick={() => handleDraftCreation(memeName)}>save draft</ImageEditorButton>
       <ImageEditorButton id="downloadBtn" onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, true)}>download</ImageEditorButton>
     </Box>
     )

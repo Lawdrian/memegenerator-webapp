@@ -18,7 +18,7 @@ const Editor = (props) => {
     }
 
     return (
-      <Grid container style={{maxHeight: '100vh', overflow: 'hidden', }}>
+      <Grid container style={{maxHeight: '90vh', overflow: 'auto', }}>
         <UploadTemplateDialog open={uploadTemplatePage} setOpen={setUploadTemplatePage}/>
         <TemplateStatistics template={selectedTemplate} open={templateStatisticPage} setOpen={setTemplateStatisticPage}/>
         <Grid item xs={3}>

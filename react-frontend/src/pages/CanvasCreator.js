@@ -55,11 +55,13 @@ const CanvasCreator = () => {
   const storeTemplates = useSelector((state) => state.template);
 
   const [canvasName, setCanvasName] = useState("myCanvas");
+  const [canvasDescription, setCanvasDescription] = useState("a good looking Canvas");
   const [selectedTemplates, setSelectedTemplates] = useState([]);
   const [stageDimensions, setStageDimensions] = useState({ width: 500, height: 500 });
   const stageRef = useRef(null);
   const templates = useSelector((state) => state.template.templates);
   const token = useSelector((state) => state.user.token);
+  const dictation = useSelector((state) => state.dictation);
   const navigate = useNavigate();
 
   if(!storeTemplates.templatesLoaded) {
@@ -67,6 +69,22 @@ const CanvasCreator = () => {
   }
 
   const imageTemplates = templates.filter(template => template.format === 'image');
+
+  // this useEffect is used to update the meme name state with the spoken text from the dictation
+  useEffect(() => {
+    console.log("dictation.name: ", dictation.name);
+    if(dictation.name !== "") {
+      setCanvasName(dictation.name); 
+    }
+  }, [dictation.name]);
+
+  // this useEffect is used to update the meme description state with the spoken text from the dictation
+  useEffect(() => {
+    console.log("dictation.description: ", dictation.description);
+    if(dictation.description !== "") {
+      setCanvasDescription(dictation.description);
+    }
+  }, [dictation.description]);
 
 
   // Function to handle template selection
@@ -93,8 +111,9 @@ const CanvasCreator = () => {
     try {
       console.log("template")
       console.log(selectedTemplates)
-      dispatch(saveTemplate({content: dataUrl, format: "image", name: canvasName}, token));
+      dispatch(saveTemplate({content: dataUrl, format: "image", name: canvasName, description: canvasDescription}, token));
       console.log("Template uploaded successfully");
+      navigate('../editor')
     }
     catch (error) {
       console.log(error);
@@ -154,13 +173,22 @@ const CanvasCreator = () => {
           </Grid>
           <Grid item style={{ marginTop: 'auto' }}>
           <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
-              <Typography>Canvas Name:</Typography>
+              <Typography>Name:</Typography>
               <TextField 
-                sx={{ width: '200px' }} 
+                sx={{ width: '150px' }} 
                 id="text" 
                 type="text" 
                 value={canvasName} 
                 onChange={(event) => setCanvasName(event.target.value)} 
+              />
+              <Divider orientation="vertical" flexItem />
+              <Typography>Description:</Typography>
+              <TextField 
+                sx={{ width: '250px' }} 
+                id="text" 
+                type="text" 
+                value={canvasDescription} 
+                onChange={(event) => setCanvasDescription(event.target.value)} 
               />
               <Divider orientation="vertical" flexItem />
               <Button

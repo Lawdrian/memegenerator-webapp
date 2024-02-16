@@ -22,17 +22,16 @@ import { resetMemeCache } from './slices/serverSlice';
 import { getDrafts } from './api/draft';
 import { getTemplates } from './api/template';
 
-const MySingleViewComponent = SingleView;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout/>}>
-      <Route index element={<Home />} />
+      <Route index element={<Home />} />      
       <Route index element={<Account />} />
       <Route path="editor/*" element={<EditorContainer />} />
       <Route path="canvas" element={<CanvasCreator />} />
       <Route path="account" element={<Account/>} />
-      <Route path="/api/memes/:id" element={<MySingleViewComponent />} />
+      <Route path="meme/:id" element={<SingleView />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

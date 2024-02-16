@@ -62,27 +62,6 @@ export function getAllMemes(callBack, token) {
   });
 }
 
-export function getSingleMeme(memeId, token) {
-  return fetch(`http://localhost:3001/api/memes/${memeId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token,
-    },
-  })
-  .then((res) => {
-    if (!res.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return res.json();
-  })
-  .catch((error) => {
-    console.error('Error fetching single meme:', error);
-    throw error; // Rethrow to allow caller to handle
-  });
-}
-
-
 
 export function getSelfCreatedMemes(callBack, token) {
   fetch("http://localhost:3001/get-my-meme", {
@@ -132,49 +111,42 @@ export async function handleCommentSubmit(meme, commentContent, token) {
 }
 
 
-export function handleUpVote(memeId, token){
-  fetch('http://localhost:3001/meme-vote', {
+export function handleUpVote(memeId, token) {
+  return fetch('http://localhost:3001/meme-vote', {
+      method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,
           'Content-Type': 'application/json'
       }, 
-      method: 'PUT',
       body: JSON.stringify({
           memeId: memeId,
           vote: "upVotes",
       })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to upvote meme');
+    }
+    return response.json(); 
   });
 }
 
-export function handleDownVote(memeId, token){
-  fetch('http://localhost:3001/meme-vote', {
+export function handleDownVote(memeId, token) {
+  return fetch('http://localhost:3001/meme-vote', {
+      method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,
           'Content-Type': 'application/json'
       }, 
-      method: 'PUT',
       body: JSON.stringify({
           memeId: memeId,
           vote: "downVotes",
       })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to downvote meme');
+    }
+    return response.json(); 
   });
-}
-
-export function voteMeme(memeId, voteType, token) {
-  return fetch('http://localhost:3001/meme-vote', {
-    method: 'PUT',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      memeId: memeId,
-      vote: voteType,
-    }),
-  })
-  .then((res) => res.json())
-  .then((data) => {
-    return data;
-  })
-  .catch((error) => console.error('Error voting for meme:', error));
 }

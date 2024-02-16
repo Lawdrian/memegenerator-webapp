@@ -44,19 +44,19 @@
   background-color: #3498db;
   color: #fff;
   border: none;
-  padding: 5px; /* Adjust the padding to change the button size */
+  padding: 5px; 
   border-radius: 5px;
   cursor: pointer;
-  width: 70px; /* Adjust the width if needed */
-  margin-bottom: 8px; /* Add margin between buttons */
+  width: 70px; 
+  margin-bottom: 8px; 
 }
 
 
 .comment {
-  background-color: #f0f0f0; /* Hintergrundfarbe für Kommentare */
+  background-color: #f0f0f0; 
   padding: 8px;
   margin: 8px;
-  border-radius: 10px; /* Abgerundete Ecken für Kommentare */
+  border-radius: 10px; 
 }
 
 .meme-title {
@@ -64,6 +64,12 @@
   font-weight: bold;
   margin: 16px;
   text-align: center; 
+}
+
+.meme-description {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #666;
 }
 
 .empty-meme {

@@ -26,22 +26,38 @@ const memeSlice = createSlice({
         },
         updateLikesDislikes: (state, action) => {
             const { memeId, upVotes, downVotes } = action.payload;
-            const meme = state.memes.find(meme => meme._id === memeId);
-            if (meme) {
-                meme.upVotes = upVotes;
-                meme.downVotes = downVotes;
+            const index = state.memes.findIndex(meme => meme._id === memeId);
+            if (index !== -1) {
+              // Create a new array with updates instead of mutating the existing state
+              const updatedMemes = [...state.memes];
+              updatedMemes[index] = {
+                ...updatedMemes[index],
+                upVotes: upVotes,
+                downVotes: downVotes,
+              };
+              state.memes = updatedMemes; // Assign the updated memes array to the state
             }
-        },
-        addComment: (state, action) => {
+          },
+          addComment: (state, action) => {
             const { memeId, comment } = action.payload;
-            const meme = state.memes.find(meme => meme._id === memeId);
-            if (meme) {
-                meme.comments.push(comment);
+            const index = state.memes.findIndex(meme => meme._id === memeId);
+            if (index !== -1) {
+                // make copy of the meme and add the new comment
+                const updatedMeme = {
+                    ...state.memes[index],
+                    comments: [...state.memes[index].comments, comment],
+                };
+            
+                state.memes = [
+                    ...state.memes.slice(0, index),
+                    updatedMeme,
+                    ...state.memes.slice(index + 1),
+                ];
             }
         },
     },
 });
 
-export const { setMemes, updateLikesDislikes, addComment } = memeSlice.actions;
+export const { setMemes, appendMemes, updateLikesDislikes, addComment } = memeSlice.actions;
 export default memeSlice.reducer;
 

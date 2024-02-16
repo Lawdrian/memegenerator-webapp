@@ -1,22 +1,33 @@
+
 .single-view {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   padding: 20px;
 }
 
+.single-view-content {
+  display: flex;
+  max-width: 1000px; 
+}
+
+.single-view-comments-container {
+  flex: 1;
+  max-width: 300px; 
+  overflow-y: auto;
+  margin-right: 80px; 
+  max-height: 540px; 
+}
+
 .single-view-card {
+  flex: 2;
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid darkgray;
-  margin-top: 100px; /* Adjust margin as needed */
   padding: 15px;
   max-width: 500px;
   position: relative;
-  width: 100%;
-  text-align: center;
-  height: 540px; /* Adjust max-height as needed */
+  height: 600px;
 }
 
 .single-view-image {
@@ -27,19 +38,66 @@
 }
 
 .single-view-image img {
-  width: 100%;
+  max-width: 100%;
   height: auto;
-  max-height: 400px;
 }
+
+.single-view-info {
+  margin-top: 10px;
+  
+}
+
+.single-view-title,
+.single-view-description {
+  margin: 10px 0;
+  text-align: center;
+}
+
 .single-view-actions {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
-  justify-content: space-between;
   padding: 10px;
-  padding-bottom: 10px;
+  margin-bottom: 20px;
   background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
 }
 
+.singleView-share-button {
+  
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-right: 10px;
+  margin-left: auto;
+}
+
+.single-view-navigation {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.single-view-navigation .nav-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.single-view-navigation .previous-button {
+  margin-left: -105px;
+}
+
+.single-view-navigation .next-button {
+  margin-right: -50px; 
+}

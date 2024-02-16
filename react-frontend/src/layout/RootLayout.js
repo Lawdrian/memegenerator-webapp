@@ -33,7 +33,7 @@ export default function RootLayout() {
         <ThemeProvider theme={theme}>
             <AppBar position="static">
                 <Toolbar>
-                    <EmojiEmotionsIcon style={{ marginRight: 10 }} a />
+                    <EmojiEmotionsIcon style={{ marginRight: 10 }}  />
                     <Typography variant="h6" style={{ flexGrow: 1 }}>
                         Meme Generator
                     </Typography>

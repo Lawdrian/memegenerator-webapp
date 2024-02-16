@@ -1,4 +1,3 @@
-
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -7,7 +6,7 @@ var logger = require('morgan');
 const cors = require('cors'); //cross-Origin resource sharing
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
+const { createZipArchive } = require('./utils');
 //MongoDB Models
 const UserModel = require('./mongoDB/user.model.js');
 const User = mongoose.model("User"); 
@@ -213,7 +212,7 @@ app.post('/meme', verifyToken, async (req, res) => {
     console.log("CREATE MEME");
     const { decodedJwt } = res.locals;
     const user = await User.findOne({ _id: decodedJwt.userId });
-    
+    const { zip } = req.query;
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
     }
@@ -244,9 +243,26 @@ app.post('/meme', verifyToken, async (req, res) => {
         }
       )
     })
+    // return the memes as a zip file instead of a JSON array
+    console.log("ZIP: ", typeof zip)
+    if (zip == "true") {
+      createZipArchive(data, (error, archive) => {
+        if (error) {
+          console.error('Error:', error);
+          res.status(500).send('Zip file creation failed');
+        } else {
+          res.setHeader('Content-Type', 'application/zip');
+          res.setHeader('Content-Disposition', 'attachment; filename="memes.zip"');
 
-    res.status(201).json({Status:"ok", Message: "Meme saved to database", memes: data})
-  } catch (err) {
+          // pipe the archive to the response
+          res.status(201);
+          archive.pipe(res);
+        }
+      });
+    } else {
+      res.status(201).json({Status:"ok", Message: "Meme saved to database", memes: data})
+    } 
+  }catch (err) {
     console.log(err);
     res.status(500).send({Status:"error", Message: "Error saving meme to database"});
   }
@@ -272,7 +288,7 @@ app.get('/meme/:id?', async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { user, format, usedTemplate, ordering, max } = req.query;
+    const { user, format, usedTemplate, ordering, max, zip } = req.query;
     
     if (id) {
       console.log("id" + id); // logs the id parameter from the URL
@@ -285,6 +301,9 @@ app.get('/meme/:id?', async (req, res) => {
       // find a meme by its id, that is either public or unlisted
       memes = await Meme.find({ _id: id, privacy: { $in: ["public", "unlisted"] } })
         .populate('comments.user', 'email');
+      if (memes.length === 0) {
+        return res.status(404).json({ error: 'Meme not found' });
+      }
     } else {
       let query = {privacy: { $in: ["public", "unlisted"] }};
       if(user) {
@@ -302,8 +321,24 @@ app.get('/meme/:id?', async (req, res) => {
       .limit(max ? parseInt(max) : 0) // limit the number of memes
       .populate('comments.user', 'email');
     }
-    console.log("memes", memes);
-    res.json({ success: 'Success', memes: memes });
+    // return the memes as a zip file instead of a JSON array
+    if (zip == "true") {
+      createZipArchive(memes, (error, archive) => {
+        if (error) {
+          console.error('Error:', error);
+          res.status(500).send('Zip file creation failed');
+        } else {
+          res.setHeader('Content-Type', 'application/zip');
+          res.setHeader('Content-Disposition', 'attachment; filename="memes.zip"');
+        
+          console.log("zipfile!!!")
+          // pipe the archive to the response
+          archive.pipe(res);
+        }
+      });
+    } else {
+      res.json({ success: 'Success', memes: memes });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while processing your request.' });

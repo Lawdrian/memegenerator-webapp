@@ -18,7 +18,7 @@ const APITesting = () => {
     getAllMemes(setMemes, token)
   }, [])
 
-  const createMemeBatch = async () => {
+  const createMemeBatch = async (zip) => {
     setCreateMemesResponse([])
 
     if(memes.length >= 3) {
@@ -49,56 +49,75 @@ const APITesting = () => {
         },
       ]              
       
-      fetch("http://localhost:3001/meme", {
-      method: "POST",
-      crossDomain: true,
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",        
-        "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
-        "Authorization": "Bearer " + token, // set token as header
-      },
-      body: JSON.stringify({                // converts base64-decoded String in JSON
-        data: data   
-      })
+      fetch(`http://localhost:3001/meme?zip=${zip}`, {
+        method: "POST",
+        crossDomain: true,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",        
+          "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
+          "Authorization": "Bearer " + token, // set token as header
+        },
+        body: JSON.stringify({                // converts base64-decoded String in JSON
+          data: data   
+        })
       })
       .then((res) => {
-        console.log("response")
-        console.log(res)
-        if (res.status === 201) {
-          alert("Test: Meme saved successfully")      
-          return res.json(); // Resolve with the JSON data if the status is 201
-        } else if (res.status === 401) {
-          alert("Test: Unauthorized")
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/zip") !== -1) {
+          return res.blob();
         } else {
-          alert("Test: Error during Meme save")
+          return res.json();
         }
       })
       .then((data) => {
-        setCreateMemesResponse(data.memes)
+        if (data instanceof Blob) {
+          const url = window.URL.createObjectURL(data);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'memes.zip';
+          link.click();
+        } else {
+          setCreateMemesResponse(data.memes);
+        }
       })
       .catch((error) => {
         console.error('Test: Error uploading image:', error)
         alert("Test: Error during Meme save")
-      })
+      });
     }
     else {
       alert("Test: Not enough memes: First create some memes manually!")
     }
   }
 
-  const fetchMemeBatch = async () => {
+  const fetchMemeBatch = async (zip) => {
     setFetchMemesRsponse([])
-    fetch("http://localhost:3001/meme?max=3&ordering=asc&format=image", {
+    fetch(`http://localhost:3001/meme?max=3&ordering=asc&format=image&zip=${zip}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             "Authorization": "Bearer " + token,
         },
     })
-    .then((res) => res.json())
+    .then((res) => {
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/zip") !== -1) {
+        return res.blob();
+      } else {
+        return res.json();
+      }
+    })
     .then((data) => {
+      if (data instanceof Blob) {
+        const url = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'memes.zip';
+        link.click();
+      } else {
         setFetchMemesRsponse(data.memes || []);
+      }
     });
   }
 
@@ -109,8 +128,11 @@ const APITesting = () => {
       </Grid>
       <Grid item>
         <h2>Create Memes</h2>
-        <Button variant="contained" color="primary" onClick={createMemeBatch}>
+        <Button variant="contained" color="primary" onClick={() => createMemeBatch(false)}>
             Create Memes Batch
+        </Button>
+        <Button variant="contained" color="primary" onClick={() => createMemeBatch(true)} style={{ marginLeft: '10px' }}>
+            Response as ZIP
         </Button>
         {createMemesResponse.map((meme, index) => (
           <div key={index}>
@@ -125,8 +147,11 @@ const APITesting = () => {
       <Grid item>
         <h2>Fetch Memes</h2>
         <p>Fetch maximum 3 memes with the ordering: oldest first and format: image</p>
-        <Button variant="contained" color="primary" onClick={fetchMemeBatch}>
+        <Button variant="contained" color="primary" onClick={() => fetchMemeBatch(false)}>
             Fetch Memes
+        </Button>
+        <Button variant="contained" color="primary" onClick={() => fetchMemeBatch(true)} style={{ marginLeft: '10px' }}>
+            Response as Zip
         </Button>
         {fetchMemesResponse.map((meme, index) => (
           <div key={index}>

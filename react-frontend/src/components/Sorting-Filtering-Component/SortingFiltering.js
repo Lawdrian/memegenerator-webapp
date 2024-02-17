@@ -1,11 +1,12 @@
-import React from "react";
+import React from 'react';
 
 function SortingFilteringComponent({ onSortChange, onFilterChange }) {
   return (
     <div>
       <div>
-        <label>Sort by:</label>
-        <select onChange={(e) => onSortChange(e.target.value)}>
+        <label htmlFor="sort-by">Sort by:</label>
+        <select id="sort-by" onChange={(e) => onSortChange(e.target.value)}>
+          <option value="">No Sorting</option>
           <option value="mostLikes">Most Likes</option>
           <option value="leastLikes">Least Likes</option>
           <option value="newest">Latest Creation Date</option>
@@ -13,9 +14,10 @@ function SortingFilteringComponent({ onSortChange, onFilterChange }) {
         </select>
       </div>
       <div>
-        <label>Filter by votes/views:</label>
+        <label htmlFor="filter-by">Filter by</label>
         <input
           type="number"
+          id="filter-by"
           onChange={(e) => onFilterChange(e.target.value)}
           placeholder="Enter minimum votes/views"
         />

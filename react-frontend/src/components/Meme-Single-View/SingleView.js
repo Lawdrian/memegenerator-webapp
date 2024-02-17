@@ -2,7 +2,13 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField, Snackbar } from "@mui/material";
-import { updateLikesDislikes, addComment } from "../../slices/memeSlice";
+import {
+  updateLikesDislikes,
+  addComment,
+  setSorting,
+  setFiltering,
+} from "../../slices/memeSlice";
+import SortingFilteringComponent from "../Sorting-Filtering-Component/SortingFiltering";
 import {
   handleUpVote,
   handleDownVote,
@@ -17,14 +23,59 @@ const SingleView = () => {
   const allMemes = useSelector((state) => state.meme.memes);
   const token = useSelector((state) => state.user.token);
   const currentUser = useSelector((state) => state.user.currentUser);
+
   const [autoplay, setAutoplay] = useState(false);
   const [autoplayInterval, setAutoplayInterval] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [comment, setComment] = useState("");
 
+  // State for sorted memes and sorting criteria
+  const [sortedMemes, setSortedMemes] = useState(allMemes);
+  const [selectedSortCriteria, setSelectedSortCriteria] = useState("");
+
   // Find the meme based on the ID
-  const currentMemeIndex = allMemes.findIndex(meme => meme._id === id);
-  const currentMeme = allMemes[currentMemeIndex];
+  //const currentMemeIndex = allMemes.findIndex((meme) => meme._id === id);
+  //const currentMeme = allMemes[currentMemeIndex];
+
+  useEffect(() => {
+    setSortedMemes(allMemes); // Initialize sortedMemes with allMemes
+  }, [allMemes]);
+
+  const handleSortChange = useCallback(
+    (newCriteria) => {
+      setSelectedSortCriteria(newCriteria);
+      dispatch(setSorting(newCriteria)); // Optionally, update sorting in Redux store if needed elsewhere
+      let tempSortedMemes = [...allMemes];
+
+      switch (newCriteria) {
+        case "mostLikes":
+          tempSortedMemes.sort((a, b) => b.upVotes.length - a.upVotes.length);
+          break;
+        case "leastLikes":
+          tempSortedMemes.sort((a, b) => a.upVotes.length - b.upVotes.length);
+          break;
+        case "newest":
+          tempSortedMemes.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          break;
+        case "oldest":
+          tempSortedMemes.sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          );
+          break;
+        default:
+          // No sorting
+          break;
+      }
+
+      setSortedMemes(tempSortedMemes);
+    },
+    [allMemes, dispatch]
+  );
+
+  // Find the current meme based on the ID
+  const currentMeme = allMemes.find((meme) => meme._id === id);
 
   useEffect(() => {
     if (!currentMeme) {
@@ -42,25 +93,27 @@ const SingleView = () => {
     if (autoplay) {
       const interval = setInterval(() => {
         navigateToRandomMeme();
-      }, 5000); // Wechselt alle 5 Sekunden
+      }, 5000);
       setAutoplayInterval(interval);
       return () => clearInterval(interval);
     } else {
       clearInterval(autoplayInterval);
+      setAutoplayInterval(null);
     }
-  }, [autoplay, autoplayInterval, navigateToRandomMeme,allMemes.length]);
+  }, [autoplay, navigateToRandomMeme, allMemes.length]);
 
   const navigateToNextMeme = () => {
-    const nextIndex = (currentMemeIndex + 1) % allMemes.length;
-    navigate(`/meme/${allMemes[nextIndex]._id}`);
+    const currentSortedIndex = sortedMemes.findIndex((meme) => meme._id === id);
+    const nextIndex = (currentSortedIndex + 1) % sortedMemes.length;
+    navigate(`/meme/${sortedMemes[nextIndex]._id}`);
   };
 
   const navigateToPreviousMeme = () => {
-    const prevIndex = (currentMemeIndex - 1 + allMemes.length) % allMemes.length;
-    navigate(`/meme/${allMemes[prevIndex]._id}`);
+    const currentSortedIndex = sortedMemes.findIndex((meme) => meme._id === id);
+    const prevIndex =
+      (currentSortedIndex - 1 + sortedMemes.length) % sortedMemes.length;
+    navigate(`/meme/${sortedMemes[prevIndex]._id}`);
   };
-
-  
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
@@ -68,12 +121,14 @@ const SingleView = () => {
 
   const handleShareClick = () => {
     const memeLink = `${window.location.origin}/meme/${currentMeme._id}`;
-    navigator.clipboard.writeText(memeLink).then(() => {
-      
-      setOpenSnackbar(true);
-    }).catch(err => {
-      console.error('Fehler beim Kopieren des Links:', err);
-    });
+    navigator.clipboard
+      .writeText(memeLink)
+      .then(() => {
+        setOpenSnackbar(true);
+      })
+      .catch((err) => {
+        console.error("Fehler beim Kopieren des Links:", err);
+      });
   };
 
   const handleVoteClick = async (memeId, voteType) => {
@@ -95,37 +150,31 @@ const SingleView = () => {
   };
 
   const handleSubmitComment = async () => {
-    if (!comment.trim()) return; // Vermeidet das Absenden leerer Kommentare
+    if (!comment.trim()) return;
 
     try {
-      // Ruft die API-Funktion auf und wartet auf die Antwort
       const newCommentResponse = await handleCommentSubmit(
         currentMeme,
         comment,
         token
       );
 
-      // Bereitet den Kommentar für den Redux Store vor, einschließlich Benutzerdaten
       const newComment = {
-        ...newCommentResponse, // Nimmt an, dass die API den neuen Kommentar zurückgibt
+        ...newCommentResponse,
         user: {
-          _id: currentUser._id || "defaultUserId", // Stellt eine Fallback-ID bereit
-          email: currentUser.email || "defaultEmail@example.com", // Stellt eine Fallback-E-Mail bereit
+          _id: currentUser._id || "defaultUserId", //  Fallback-ID
+          email: currentUser.email || "defaultEmail@example.com", //  Fallback-E-Mail
         },
         content: comment,
       };
 
-      // Fügt den neuen Kommentar zum Redux Store hinzu
       dispatch(addComment({ memeId: currentMeme._id, comment: newComment }));
 
-      // Löscht das Kommentarfeld
       setComment("");
     } catch (error) {
       console.error("Fehler beim Absenden des Kommentars:", error);
     }
   };
-
-  // Handling navigation to next/previous meme or based on some condition
 
   if (!currentMeme) {
     return <div>Loading...</div>;
@@ -153,6 +202,7 @@ const SingleView = () => {
           ))}
         </div>{" "}
       </div>
+      <SortingFilteringComponent onSortChange={handleSortChange} />
       <div className="single-view-card">
         <h2 className="single-view-title">{currentMeme.name}</h2>
         <p className="single-view-description">{currentMeme.description}</p>
@@ -160,9 +210,19 @@ const SingleView = () => {
           <img src={currentMeme.content} alt={currentMeme.name} />
         </div>
         <div className="single-view-navigation">
-        <button className="nav-button previous-button" onClick={navigateToPreviousMeme}>Previous</button>
-        <button className="nav-button next-button" onClick={navigateToNextMeme}>Next</button>
-      </div>
+          <button
+            className="nav-button previous-button"
+            onClick={navigateToPreviousMeme}
+          >
+            Previous
+          </button>
+          <button
+            className="nav-button next-button"
+            onClick={navigateToNextMeme}
+          >
+            Next
+          </button>
+        </div>
         <div className="single-view-actions">
           {/* Buttons for liking, disliking, and commenting */}
           <button
@@ -177,18 +237,23 @@ const SingleView = () => {
           >
             Dislike <span>({currentMeme.downVotes.length})</span>
           </button>
-          
+
           <button onClick={navigateToRandomMeme}>Random</button>
           <button onClick={() => setAutoplay(!autoplay)}>
-          {autoplay ? "Stop Autoplay" : "Start Autoplay"}
+            {autoplay ? "Stop Autoplay" : "Start Autoplay"}
           </button>
-          <Button className="singleView-share-button" onClick={handleShareClick}>Share</Button>
+          <Button
+            className="singleView-share-button"
+            onClick={handleShareClick}
+          >
+            Share
+          </Button>
           <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        message="Meme link copied to clipboard!"
-      />
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            message="Meme link copied to clipboard!"
+          />
         </div>
       </div>
     </div>

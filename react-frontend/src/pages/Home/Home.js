@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
+import SortingFilteringComponent from "../../components/Sorting-Filtering-Component/SortingFiltering";
 import { setMemes, updateLikesDislikes } from "../../slices/memeSlice";
 import { getAllMemes, handleUpVote, handleDownVote } from "../../api/meme";
 import "./Home.css";
@@ -14,25 +15,50 @@ function Home() {
 
   const [displayedMemes, setDisplayedMemes] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const [sortOrder, setSortOrder] = useState(null);
   //state to manage current page and meme limit
   const [page, setPage] = useState(1);
   const limit = 40;
 
   useEffect(() => {
     const handleFetchedMemes = (fetchedMemes) => {
-      dispatch(setMemes({ memes: fetchedMemes }));
-      setDisplayedMemes(fetchedMemes.slice(0, limit));
+      // Only sort the memes if sortOrder is not null
+      const sortedMemes = sortOrder
+        ? [...fetchedMemes].sort((a, b) => {
+            switch (sortOrder) {
+              case 'mostLikes':
+                return b.upVotes.length - a.upVotes.length;
+              case 'leastLikes':
+                return a.upVotes.length - b.upVotes.length;
+              default:
+                return 0;
+            }
+          })
+        : fetchedMemes;
+  
+      dispatch(setMemes({ memes: sortedMemes }));
+      setDisplayedMemes(sortedMemes.slice(0, limit));
     };
-
+  
     getAllMemes(handleFetchedMemes, token);
-  }, [dispatch, token]);
+  }, [dispatch, token, sortOrder]);
 
    
-
   const fetchMoreData = () => {
     if (page * limit < allMemes.length) {
       setPage(page + 1);
-      setDisplayedMemes(allMemes.slice(0, (page + 1) * limit));
+      // Sort the memes before slicing
+      const sortedMemes = [...allMemes].sort((a, b) => {
+        switch (sortOrder) {
+          case 'mostLikes':
+            return b.upVotes.length - a.upVotes.length;
+          case 'leastLikes':
+            return a.upVotes.length - b.upVotes.length;
+          default:
+            return 0;
+        }
+      });
+      setDisplayedMemes(sortedMemes.slice(0, (page + 1) * limit));
     } else {
       setHasMore(false);
     }
@@ -75,6 +101,7 @@ function Home() {
   return (
     <div className="home">
       <h1>Memes</h1>
+      <SortingFilteringComponent onSortChange={setSortOrder} />
       <InfiniteScroll
         dataLength={displayedMemes.length}
         next={fetchMoreData}

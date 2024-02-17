@@ -30,7 +30,7 @@ const SingleView = () => {
   const [comment, setComment] = useState("");
 
   // State for sorted memes and sorting criteria
-  const [sortedMemes, setSortedMemes] = useState(allMemes);
+  const [sortedMemes, setSortedMemes] = useState([]);
   const [selectedSortCriteria, setSelectedSortCriteria] = useState("");
 
   // Find the meme based on the ID
@@ -38,41 +38,38 @@ const SingleView = () => {
   //const currentMeme = allMemes[currentMemeIndex];
 
   useEffect(() => {
-    setSortedMemes(allMemes); // Initialize sortedMemes with allMemes
-  }, [allMemes]);
-
-  const handleSortChange = useCallback(
-    (newCriteria) => {
-      setSelectedSortCriteria(newCriteria);
-      dispatch(setSorting(newCriteria)); // Optionally, update sorting in Redux store if needed elsewhere
-      let tempSortedMemes = [...allMemes];
-
-      switch (newCriteria) {
+    const sortMemes = (criteria) => {
+      let tempSortedMemes = allMemes.map(meme => ({
+        ...meme,
+        createdAtTimestamp: new Date(meme.createdAt).getTime()
+      }));
+      switch (criteria) {
         case "mostLikes":
-          tempSortedMemes.sort((a, b) => b.upVotes.length - a.upVotes.length);
-          break;
-        case "leastLikes":
           tempSortedMemes.sort((a, b) => a.upVotes.length - b.upVotes.length);
           break;
-        case "newest":
-          tempSortedMemes.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
+        case "leastLikes":
+          tempSortedMemes.sort((a, b) => b.upVotes.length - a.upVotes.length);
           break;
-        case "oldest":
-          tempSortedMemes.sort(
-            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-          );
+          case "newest":
+            tempSortedMemes.sort((a, b) => a.createdAtTimestamp - b.createdAtTimestamp);
+            break;
+          case "oldest":
+            tempSortedMemes.sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp);
           break;
         default:
-          // No sorting
           break;
       }
-
       setSortedMemes(tempSortedMemes);
-    },
-    [allMemes, dispatch]
-  );
+    };
+
+    
+
+    sortMemes(selectedSortCriteria);
+  }, [allMemes, selectedSortCriteria]);
+
+  const handleSortChange = useCallback((newCriteria) => {
+    setSelectedSortCriteria(newCriteria);
+  }, []);
 
   // Find the current meme based on the ID
   const currentMeme = allMemes.find((meme) => meme._id === id);
@@ -103,16 +100,19 @@ const SingleView = () => {
   }, [autoplay, navigateToRandomMeme, allMemes.length]);
 
   const navigateToNextMeme = () => {
-    const currentSortedIndex = sortedMemes.findIndex((meme) => meme._id === id);
-    const nextIndex = (currentSortedIndex + 1) % sortedMemes.length;
-    navigate(`/meme/${sortedMemes[nextIndex]._id}`);
+    const currentIndex = sortedMemes.findIndex((meme) => meme._id === id);
+    const nextIndex = (currentIndex + 1) % sortedMemes.length;
+    if (sortedMemes[nextIndex]) {
+      navigate(`/meme/${sortedMemes[nextIndex]._id}`);
+    }
   };
-
+  
   const navigateToPreviousMeme = () => {
-    const currentSortedIndex = sortedMemes.findIndex((meme) => meme._id === id);
-    const prevIndex =
-      (currentSortedIndex - 1 + sortedMemes.length) % sortedMemes.length;
-    navigate(`/meme/${sortedMemes[prevIndex]._id}`);
+    const currentIndex = sortedMemes.findIndex((meme) => meme._id === id);
+    const prevIndex = (currentIndex - 1 + sortedMemes.length) % sortedMemes.length;
+    if (sortedMemes[prevIndex]) {
+      navigate(`/meme/${sortedMemes[prevIndex]._id}`);
+    }
   };
 
   const handleCloseSnackbar = () => {

@@ -1,14 +1,10 @@
-const token = localStorage.getItem("token");
-
 export function saveMeme(meme, token) {
 
   fetch("http://localhost:3001/meme", {
     method: "POST",
-    crossDomain: true,
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",        
-      "Access-Control-Allow-Origin": "*",  // CORS: Cross-Origin Resource Sharing
       "Authorization": "Bearer " + token, // set token as header
     },
     body: JSON.stringify({                // converts base64-decoded String in JSON

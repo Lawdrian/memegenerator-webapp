@@ -2,10 +2,12 @@ import { Grid, Typography, Dialog } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { getTempRefMemes } from '../../api/template';
+import { useSelector } from 'react-redux';
 
 export default function TemplateStatistics({ template, open, setOpen}) {
   const [statisticData, setStatisticData] = useState([]);
   const currentYear = new Date().getFullYear()
+  const token = useSelector((state) => state.user.token)
   
   useEffect(() => {
     getTemplateStatisticData();
@@ -14,7 +16,7 @@ export default function TemplateStatistics({ template, open, setOpen}) {
   const getTemplateStatisticData = async () => {
     if(!template) return;
     try {
-      const data = await getTempRefMemes(template);
+      const data = await getTempRefMemes(template, token);
       setStatisticData(data.memeDetails || []);
     } catch (error) {
       console.error(error);

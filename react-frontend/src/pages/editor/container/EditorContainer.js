@@ -34,7 +34,7 @@ const EditorContainer = () => {
     const token = useSelector((state) => state.user.token);
     const drafts = useSelector((state) => state.draft.drafts);
     if(!storeTemplates.templatesLoaded) {
-      dispatch(getTemplates())
+      dispatch(getTemplates(token))
     }
 
     // find the template that has been used with the draft and set it as selected template

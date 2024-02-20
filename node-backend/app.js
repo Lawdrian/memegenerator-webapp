@@ -91,7 +91,7 @@ app.post('/template', verifyToken, async (req, res) => {
 });
 
 // GET-Request to retrieve all templates from the database
-app.get("/template", async (req, res) => {
+app.get("/template", verifyToken, async (req, res) => {
   try {
     const data = await Template.find({});
     res.send({status: "ok", data:data});
@@ -101,7 +101,7 @@ app.get("/template", async (req, res) => {
   }
 })
 // GET-Request to retrieve the referenced memes of the templates
-app.get('/template-info/:id', async (req, res) => {
+app.get('/template-info/:id', verifyToken, async (req, res) => {
   try {
     const templateId = req.params.id;
     const memes = await Meme.find({ usedTemplate: templateId });
@@ -300,7 +300,8 @@ app.get('/meme/:id?', async (req, res) => {
       }
       // find a meme by its id, that is either public or unlisted
       memes = await Meme.find({ _id: id, privacy: { $in: ["public", "unlisted"] } })
-        .populate('comments.user', 'email');
+        .populate('comments.user', 'email')
+        .populate('createdBy', 'email');
       if (memes.length === 0) {
         return res.status(404).json({ error: 'Meme not found' });
       }
@@ -319,7 +320,8 @@ app.get('/meme/:id?', async (req, res) => {
       memes = await Meme.find(query)
       .sort({ createdAt: ordering === 'desc' ? -1 : 1 }) // sort by creation date
       .limit(max ? parseInt(max) : 0) // limit the number of memes
-      .populate('comments.user', 'email');
+      .populate('comments.user', 'email')
+      .populate('createdBy', 'email');
     }
     // return the memes as a zip file instead of a JSON array
     if (zip == "true") {

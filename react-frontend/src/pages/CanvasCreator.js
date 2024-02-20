@@ -65,7 +65,7 @@ const CanvasCreator = () => {
   const navigate = useNavigate();
 
   if(!storeTemplates.templatesLoaded) {
-    dispatch(getTemplates())
+    dispatch(getTemplates(token))
   }
 
   const imageTemplates = templates.filter(template => template.format === 'image');

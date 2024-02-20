@@ -10,21 +10,24 @@ export async function fetchImgflipTemplates() {
 }
 
 // I am using Redux Thunk here -> this function needs to be invoked with dispatch(getTemplates())
-export const getTemplates = () => async (dispatch) =>{
+export const getTemplates = (token) => async (dispatch) => {
   
   try {
     const response = await fetch("http://localhost:3001/template", {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+     }
     });
-
     const data = await response.json();
     if(data.data === null) {
       console.error("getTemplates: templates data is empty");
     } else {
       dispatch(setTemplates(data.data || []));
     }
-  }
-  catch(error){
+  } catch(error){
     console.error("getTemplates: ", error);
     dispatch(setServerNotReachable());
   }
@@ -61,9 +64,14 @@ export const saveTemplate = (template, token) => async (dispatch) => {
 }
 
 
-export async function getTempRefMemes(template) {
+export async function getTempRefMemes(template, token) {
   const response = await fetch(`http://localhost:3001/template-info/${template._id}`, {
     method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: "Bearer " + token,
+   }
   });
 
   if (!response.ok) {

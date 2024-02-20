@@ -25,16 +25,16 @@ import { setUser} from '../../slices/userSlice';
 
 
 function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        {'Copyright © '}
+        <Link color="inherit" href="https://mui.com/">
+            Your Website
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+    </Typography>
+  );
 }
 
 
@@ -42,96 +42,98 @@ const defaultTheme = createTheme();
 
 export default function SignInSignUp() {
 
-    const [googleLoginResponse, setGoogleLoginResponse] = useState(null);
+  const [googleLoginResponse, setGoogleLoginResponse] = useState(null);
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  
+  const handleLoginSubmit = (event) => {
+    event.preventDefault();//prevents reload of page
+    const formdata = new FormData(event.currentTarget);
+    console.log("Login gestartet");
+    fetch(`http://localhost:3001/login`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(formdata).toString(),
+    })
+    .then(response => response.json())
+    .then(result => {
+        //TOKEN
+        console.log(result.token);
+        dispatch(setUser({ token: result.token, user: result.user }));
+    })
+    .catch(error => {
+        console.error('Error during login:', error);
+    })
+  };
+
+  const handleRegistrationSubmit = async (event) => {
+    event.preventDefault();                     
+    const data = new FormData(event.currentTarget); //FOrmData Objekt, that contains the data of the submited form
+
+    fetch(`http://localhost:3001/registration`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(data).toString(),
+    })
+    .then(response => response.json())
+    .then(result => {
+      console.log(result)
+    })
+    .catch(error => {
+      console.error('Error during registration:', error);
+    })
+  };
+
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      setGoogleLoginResponse(codeResponse);
+      console.log("Login erfolgreich. Willkommen!", codeResponse);
+    },
+    onError: (error) => console.log('Login Failed:', error)
+  });
     
-    const handleLoginSubmit = (event) => {
-        event.preventDefault();//prevents reload of page
-        const formdata = new FormData(event.currentTarget);
-        console.log("Login gestartet");
-        fetch(`http://localhost:3001/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(formdata).toString(),
+  useEffect(() => {
+    if (googleLoginResponse) {
+      axios
+        .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleLoginResponse.access_token}`, {
+          headers: {
+            Authorization: `Bearer ${googleLoginResponse.access_token}`,
+            Accept: 'application/json'
+          }
         })
-            .then(response => response.json())
-            .then(result => {
-                //TOKEN
-                console.log(result.token);
-                dispatch(setUser({ token: result.token, user: result.user }));
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-            })
-            
-    };
+        .then((res) => {
+          console.log(res);
+          console.log(res.data);
+          const googleIdFromGoogleOAuth = res.data.id;
+          console.log("Google ID:" + googleIdFromGoogleOAuth);
 
-    const handleRegistrationSubmit = async (event) => {
-        event.preventDefault();                     
-        const data = new FormData(event.currentTarget); //FOrmData Objekt, that contains the data of the submited form
-
-        fetch(`http://localhost:3001/registration`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams(data).toString(),
-        })
-            .then(response => response.json())
-            .then(result => {
-                console.log(result)
-            })
-            .catch(error => {
-                console.error('Error during registration:', error);
-            })
-
-    };
-
-
-    const login = useGoogleLogin({
-        onSuccess: (codeResponse) => {
-          setGoogleLoginResponse(codeResponse);
-          console.log("Login erfolgreich. Willkommen!", codeResponse);
-        },
-        onError: (error) => console.log('Login Failed:', error)
-      });
-    
-      useEffect(() => {
-        if (googleLoginResponse) {
-            axios
-                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleLoginResponse.access_token}`, {
-                    headers: {
-                        Authorization: `Bearer ${googleLoginResponse.access_token}`,
-                        Accept: 'application/json'
-                    }
-                })
-                .then((res) => {
-                    console.log(res);
-                    console.log(res.data);
-                    const googleIdFromGoogleOAuth = res.data.id;
-                    console.log("Google ID:" + googleIdFromGoogleOAuth);
-    
-                    fetch('http://localhost:3001/api-login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({ googleId: googleIdFromGoogleOAuth }).toString(),
-                    })
-                        .then(result => {
-                            dispatch(setUser({ token: result.token, user: res.data }));
-                            console.log(result);
-                        })
-                        .catch(error => {
-                            console.error('Error during registration:', error);
-                        });
-                })
-                .catch((err) => console.log(err));
-        }
-    }, [googleLoginResponse]);
+          fetch('http://localhost:3001/api-login', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({ googleId: googleIdFromGoogleOAuth }).toString(),
+          })
+          .then(loginResponse => loginResponse.json())
+          .then(result => {
+              console.log("result")
+              console.log(result)
+              console.log(res.data)
+              dispatch(setUser({ token: result.token, user: res.data }));
+              console.log(result.body);
+          })
+          .catch(error => {
+              console.error('Error during registration:', error);
+          });
+      })
+      .catch((err) => console.log(err));
+    }
+  }, [googleLoginResponse]);
     
 
 

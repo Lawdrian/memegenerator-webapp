@@ -20,7 +20,7 @@ function Home() {
   const [filterText, setFilterText] = useState('');
   //state to manage current page and meme limit
   const [page, setPage] = useState(1);
-  const limit = 40;
+  const limit = 5;
 
   useEffect(() => {
     const handleFetchedMemes = (fetchedMemes) => {
@@ -33,8 +33,13 @@ function Home() {
             return meme.name.toLowerCase().includes(filterText.toLowerCase());
           case 'likes':
             const exactLikes = parseInt(filterText, 10);
-            // Ensure exactLikes is a number and not NaN; if NaN, filter none
+            
             return !isNaN(exactLikes) && meme.upVotes.length === exactLikes;
+          case 'dislikes': 
+            const exactDislikes = parseInt(filterText, 10);
+            return !isNaN(exactDislikes) && meme.downVotes.length === exactDislikes;
+          case 'fileFormat':
+            return meme.format.toLowerCase().includes(filterText.toLowerCase());
           default:
             return true; // No filtering applied
         }
@@ -68,7 +73,7 @@ function Home() {
   const fetchMoreData = () => {
     if (page * limit < allMemes.length) {
       setPage(prevPage => prevPage + 1);
-      // Instead of sorting allMemes directly, first apply the filter, then sort
+      //first apply the filter, then sort
       let filteredMemes = allMemes.filter(meme => {
         switch (filterType) {
           case 'description':
@@ -76,9 +81,13 @@ function Home() {
           case 'title':
             return meme.name.toLowerCase().includes(filterText.toLowerCase());
           case 'likes':
-            const exactLikes = parseInt(filterText, 10);
-            // Ensure exactLikes is a number and not NaN; if NaN, filter none
-            return !isNaN(exactLikes) && meme.upVotes.length === exactLikes;
+            const exactLikes = parseInt(filterText, 10);           
+            return !isNaN(exactLikes) && meme.upVotes.length === exactLikes; 
+          case 'dislikes': 
+            const exactDislikes = parseInt(filterText, 10);
+            return !isNaN(exactDislikes) && meme.downVotes.length === exactDislikes;
+          case 'fileFormat':
+            return meme.format.toLowerCase().includes(filterText.toLowerCase());  
           default:
             return true; // No filtering applied
         }

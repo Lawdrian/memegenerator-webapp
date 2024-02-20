@@ -2,12 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField, Snackbar } from "@mui/material";
-import {
-  updateLikesDislikes,
-  addComment,
-  setSorting,
-  setFiltering,
-} from "../../slices/memeSlice";
+import { updateLikesDislikes, addComment } from "../../slices/memeSlice";
 import SortingFilteringComponent from "../Sorting-Filtering-Component/SortingFiltering";
 import {
   handleUpVote,
@@ -32,42 +27,88 @@ const SingleView = () => {
   const [sortedMemes, setSortedMemes] = useState([]);
   const [selectedSortCriteria, setSelectedSortCriteria] = useState("");
 
-  // Find the meme based on the ID
-  //const currentMemeIndex = allMemes.findIndex((meme) => meme._id === id);
-  //const currentMeme = allMemes[currentMemeIndex];
+  const [filterCriteria, setFilterCriteria] = useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   useEffect(() => {
-    const sortMemes = (criteria) => {
-      let tempSortedMemes = allMemes.map(meme => ({
-        ...meme,
-        createdAtTimestamp: new Date(meme.createdAt).getTime()
-      }));
-      switch (criteria) {
-        case "mostLikes":
-          tempSortedMemes.sort((a, b) => a.upVotes.length - b.upVotes.length);
-          break;
-        case "leastLikes":
-          tempSortedMemes.sort((a, b) => b.upVotes.length - a.upVotes.length);
-          break;
-          case "newest":
-            tempSortedMemes.sort((a, b) => a.createdAtTimestamp - b.createdAtTimestamp);
-            break;
-          case "oldest":
-            tempSortedMemes.sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp);
-          break;
+    // Apply filtering first
+    let filteredMemes = allMemes.filter((meme) => {
+      // Apply filter based on the criteria and value
+      switch (filterCriteria) {
+        case "title":
+          return meme.name.toLowerCase().includes(filterValue.toLowerCase());
+        case "description":
+          return meme.description
+            .toLowerCase()
+            .includes(filterValue.toLowerCase());
+        case "likes":
+          const likesCount = parseInt(filterValue, 10);
+          // Filter by exact number of likes if a number is provided; otherwise, don't filter
+          return !isNaN(likesCount) ? meme.upVotes.length === likesCount : true;
+        case "dislikes":
+          const dislikesCount = parseInt(filterValue, 10);
+          // Filter by exact number of dislikes if a number is provided; otherwise, don't filter
+          return !isNaN(dislikesCount)
+            ? meme.downVotes.length === dislikesCount
+            : true;
+        case "fileFormat":
+          // Assuming all memes are images but checking for the format anyway
+          if (filterValue.toLowerCase() === "image") {
+            return true; // Shows all memes since they are all images
+          } else if (
+            filterValue.toLowerCase() === "video" ||
+            filterValue.toLowerCase() === "gif"
+          ) {
+            return false; // Shows nothing for 'video' or 'gif'
+          }
         default:
-          break;
+          return true; // If no filter criteria is selected, don't filter out any memes
       }
-      setSortedMemes(tempSortedMemes);
-    };
+    });
 
-    
+    // Then apply sorting to the filtered list
+    filteredMemes.sort((a, b) => {
+      switch (selectedSortCriteria) {
+        case "mostLikes":
+          return a.upVotes.length - b.upVotes.length;
+        case "leastLikes":
+          return b.upVotes.length - a.upVotes.length;
+        case "newest":
+          // Assuming createdAtTimestamp is a numeric timestamp for simplicity
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        case "oldest":
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        default:
+          return 0; // No sorting applied
+      }
+    });
 
-    sortMemes(selectedSortCriteria);
-  }, [allMemes, selectedSortCriteria]);
+    // Update state with the filtered and sorted memes
+    setSortedMemes(filteredMemes);
+  }, [allMemes, selectedSortCriteria, filterCriteria, filterValue]);
 
   const handleSortChange = useCallback((newCriteria) => {
     setSelectedSortCriteria(newCriteria);
+    // Reset filter criteria and value when sort changes
+    setFilterCriteria("");
+    setFilterValue("");
+  }, []);
+
+  const handleFilterTypeChange = useCallback((newFilterType) => {
+    setFilterCriteria(newFilterType);
+    // Reset sort criteria when filter changes
+    setSelectedSortCriteria("");
+  }, []);
+
+  // Function to handle changes in filter value (the actual text or number to filter by
+  const handleFilterValueChange = useCallback((newFilterValue) => {
+    setFilterValue(newFilterValue);
+    // Reset sort criteria when filter changes
+    setSelectedSortCriteria("");
   }, []);
 
   // Find the current meme based on the ID
@@ -85,17 +126,17 @@ const SingleView = () => {
     navigate(`/meme/${allMemes[randomIndex]._id}`);
   }, [allMemes, navigate]);
 
-  const autoplayIntervalRef = useRef(null); // Verwendung eines Refs anstelle eines State
+  const autoplayIntervalRef = useRef(null);
 
   useEffect(() => {
     if (autoplay) {
       const interval = setInterval(() => {
         navigateToRandomMeme();
       }, 5000);
-      autoplayIntervalRef.current = interval; // Speichern des Interval-Identifiers im Ref
+      autoplayIntervalRef.current = interval;
       return () => clearInterval(autoplayIntervalRef.current);
     } else {
-      clearInterval(autoplayIntervalRef.current); // Zugriff auf den gespeicherten Wert im Ref
+      clearInterval(autoplayIntervalRef.current);
     }
   }, [autoplay, navigateToRandomMeme, allMemes.length]);
 
@@ -106,10 +147,11 @@ const SingleView = () => {
       navigate(`/meme/${sortedMemes[nextIndex]._id}`);
     }
   };
-  
+
   const navigateToPreviousMeme = () => {
     const currentIndex = sortedMemes.findIndex((meme) => meme._id === id);
-    const prevIndex = (currentIndex - 1 + sortedMemes.length) % sortedMemes.length;
+    const prevIndex =
+      (currentIndex - 1 + sortedMemes.length) % sortedMemes.length;
     if (sortedMemes[prevIndex]) {
       navigate(`/meme/${sortedMemes[prevIndex]._id}`);
     }
@@ -176,15 +218,16 @@ const SingleView = () => {
     }
   };
 
-  if (!currentMeme) {
-    return <div>Loading...</div>;
-  }
+  const isVisible = filterCriteria !== "fileFormat" || filterValue.toLowerCase() === "image";
+
+
+  
 
   return (
     <div className="single-view">
       <div className="single-view-content">
         <div className="single-view-comments-container">
-          {/* Kommentarfeld und Liste der Kommentare */}
+          {/* Comments section */}
           <TextField
             fullWidth
             label="Add a comment"
@@ -202,7 +245,15 @@ const SingleView = () => {
           ))}
         </div>{" "}
       </div>
-      <SortingFilteringComponent onSortChange={handleSortChange} />
+      <SortingFilteringComponent
+        onSortChange={handleSortChange}
+        onFilterTypeChange={handleFilterTypeChange}
+        onFilterTextChange={handleFilterValueChange}
+        selectedSort={selectedSortCriteria} 
+        selectedFilterType={filterCriteria}
+        filterText={filterValue}
+      />
+      {isVisible ? (
       <div className="single-view-card">
         <h2 className="single-view-title">{currentMeme.name}</h2>
         <p className="single-view-description">{currentMeme.description}</p>
@@ -256,6 +307,11 @@ const SingleView = () => {
           />
         </div>
       </div>
+      ) : (
+        <div className="single-view-card">
+          <h2 className="single-view-title">Currently only "image" is supported</h2>
+        </div>
+      )}
     </div>
   );
 };

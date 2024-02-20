@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const swaggerJsdoc = require("swagger-jsdoc")
+const swaggerUi = require("swagger-ui-express");
 const cors = require('cors'); //cross-Origin resource sharing
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -530,6 +532,43 @@ app.delete('/draft/:draftId', verifyToken, async (req, res) => {
   }
 })
 ///////////////////////////////////////////DRAFTS-END//////////////////////////////////////////
+
+////////// api-docs START //////////
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "LogRocket Express API with Swagger",
+      version: "0.1.0",
+      description:
+        "This is a simple CRUD API application made with Express and documented with Swagger",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+      contact: {
+        name: "LogRocket",
+        url: "https://logrocket.com",
+        email: "info@email.com",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:3001",
+      },
+    ],
+  },
+  apis: ["./app.js"],
+};
+
+const specs = swaggerJsdoc(options);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs)
+);
+
+////////// api-docs END //////////
 
 
 

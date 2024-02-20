@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 
 import './App.css';
-import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider, Navigate } from 'react-router-dom'
 
 
 //pages
@@ -23,19 +23,25 @@ import { getDrafts } from './api/draft';
 import { getTemplates } from './api/template';
 
 
+const AuthenticatedRoute = ({ children }) => {
+  const hasToken = useSelector((state) => state.user.token);
+  return hasToken ? children : <Navigate to="/" />;
+}
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout/>}>
       <Route index element={<Home />} />      
       <Route index element={<Account />} />
-      <Route path="editor/*" element={<EditorContainer />} />
-      <Route path="canvas" element={<CanvasCreator />} />
+      <Route path="editor/*" element={<AuthenticatedRoute><EditorContainer /></AuthenticatedRoute>} />
+      <Route path="canvas" element={<AuthenticatedRoute><CanvasCreator /></AuthenticatedRoute>} />
       <Route path="account" element={<Account/>} />
       <Route path="meme/:id" element={<SingleView />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )
 )
+
 
 function App() {
   const dispatch = useDispatch();

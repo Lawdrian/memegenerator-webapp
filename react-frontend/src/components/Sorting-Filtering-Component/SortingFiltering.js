@@ -1,6 +1,6 @@
 import React from 'react';
 
-function SortingFilteringComponent({ onSortChange, onFilterChange }) {
+function SortingFilteringComponent({ onSortChange, onFilterTextChange, onFilterTypeChange, filterType }) {
   return (
     <div>
       <div>
@@ -14,12 +14,16 @@ function SortingFilteringComponent({ onSortChange, onFilterChange }) {
         </select>
       </div>
       <div>
-        <label htmlFor="filter-by">Filter by</label>
+        <label htmlFor="filter-type">Filter by:</label>
+        <select id="filter-type" onChange={(e) => onFilterTypeChange(e.target.value)}>
+          <option value="description">Description</option>
+          <option value="title">Title</option>
+          <option value="likes">Number of Likes</option>
+          </select>
         <input
-          type="number"
-          id="filter-by"
-          onChange={(e) => onFilterChange(e.target.value)}
-          placeholder="Enter minimum votes/views"
+          type="text"
+          onChange={(e) => onFilterTextChange(e.target.value)}
+          placeholder="Enter filter text"
         />
       </div>
     </div>

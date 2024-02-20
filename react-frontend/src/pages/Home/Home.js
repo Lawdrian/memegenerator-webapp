@@ -16,16 +16,33 @@ function Home() {
   const [displayedMemes, setDisplayedMemes] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [sortOrder, setSortOrder] = useState(null);
-  const [filterOption, setFilterOption] = useState("");
+  const [filterType, setFilterType] = useState('description');
+  const [filterText, setFilterText] = useState('');
   //state to manage current page and meme limit
   const [page, setPage] = useState(1);
   const limit = 40;
 
   useEffect(() => {
-    const handleFetchedMemes = (fetchedMemes) => {      
-      // Only sort the memes if sortOrder is not null
-      const sortedMemes = sortOrder
-        ? [...fetchedMemes].sort((a, b) => {
+    const handleFetchedMemes = (fetchedMemes) => {
+      // first filter
+      let filteredMemes = fetchedMemes.filter(meme => {
+        switch (filterType) {
+          case 'description':
+            return meme.description.toLowerCase().includes(filterText.toLowerCase());
+          case 'title':
+            return meme.name.toLowerCase().includes(filterText.toLowerCase());
+          case 'likes':
+            const exactLikes = parseInt(filterText, 10);
+            // Ensure exactLikes is a number and not NaN; if NaN, filter none
+            return !isNaN(exactLikes) && meme.upVotes.length === exactLikes;
+          default:
+            return true; // No filtering applied
+        }
+      });
+
+      // Then sort, only sort the memes if sortOrder is not null
+      const sortedFilteredMemes = sortOrder
+        ? [...filteredMemes].sort((a, b) => {
             switch (sortOrder) {
               case "mostLikes":
                 return b.upVotes.length - a.upVotes.length;
@@ -36,40 +53,64 @@ function Home() {
                 case "oldest":
                   return new Date(a.createdAt) - new Date(b.createdAt);
               default:
-                return 0;
+                return filteredMemes;
             }
           })
-        : fetchedMemes;
+        : filteredMemes;
 
-      dispatch(setMemes({ memes: sortedMemes }));
-      setDisplayedMemes(sortedMemes.slice(0, limit));
+      dispatch(setMemes({ memes: sortedFilteredMemes }));
+      setDisplayedMemes(sortedFilteredMemes.slice(0, limit));
     };
 
     getAllMemes(handleFetchedMemes, token);
-  }, [dispatch, token, sortOrder]);
+  }, [dispatch, token, sortOrder, filterType, filterText, limit]);
 
   const fetchMoreData = () => {
     if (page * limit < allMemes.length) {
-      setPage(page + 1);
-      // Sort the memes before slicing
-      const sortedMemes = [...allMemes].sort((a, b) => {
-        switch (sortOrder) {
-          case "mostLikes":
-            return b.upVotes.length - a.upVotes.length;
-          case "leastLikes":
-            return a.upVotes.length - b.upVotes.length;
-            case "newest":
-              return new Date(b.createdAt) - new Date(a.createdAt);
-            case "oldest":
-              return new Date(a.createdAt) - new Date(b.createdAt);
+      setPage(prevPage => prevPage + 1);
+      // Instead of sorting allMemes directly, first apply the filter, then sort
+      let filteredMemes = allMemes.filter(meme => {
+        switch (filterType) {
+          case 'description':
+            return meme.description.toLowerCase().includes(filterText.toLowerCase());
+          case 'title':
+            return meme.name.toLowerCase().includes(filterText.toLowerCase());
+          case 'likes':
+            const exactLikes = parseInt(filterText, 10);
+            // Ensure exactLikes is a number and not NaN; if NaN, filter none
+            return !isNaN(exactLikes) && meme.upVotes.length === exactLikes;
           default:
-            return 0;
+            return true; // No filtering applied
         }
       });
-      setDisplayedMemes(sortedMemes.slice(0, (page + 1) * limit));
+  
+      // Then, sort the filtered memes according to the sortOrder
+      const sortedFilteredMemes = sortOrder
+        ? [...filteredMemes].sort((a, b) => {
+            switch (sortOrder) {
+              case "mostLikes":
+                return b.upVotes.length - a.upVotes.length;
+              case "leastLikes":
+                return a.upVotes.length - b.upVotes.length;
+              case "newest":
+                return new Date(b.createdAt) - new Date(a.createdAt);
+              case "oldest":
+                return new Date(a.createdAt) - new Date(b.createdAt);
+              default:
+                return 0; // No sorting applied, just return filtered memes
+            }
+          })
+        : filteredMemes; // If no sortOrder is specified, just use the filtered list
+  
+      // Now update the displayed memes with the sorted and filtered list
+      setDisplayedMemes(prevMemes => [...prevMemes, ...sortedFilteredMemes.slice(page * limit, (page + 1) * limit)]);
     } else {
       setHasMore(false);
     }
+  };
+
+  const handleFilterTypeChange = (newFilterType) => {
+    setFilterType(newFilterType)
   };
 
   const handleVoteClick = async (memeId, voteType) => {
@@ -109,7 +150,8 @@ function Home() {
   return (
     <div className="home">
       <h1>Memes</h1>
-      <SortingFilteringComponent onSortChange={setSortOrder} />
+      <SortingFilteringComponent onSortChange={setSortOrder} onFilterTypeChange={setFilterType}
+        onFilterTextChange={setFilterText} />
       <InfiniteScroll
         dataLength={displayedMemes.length}
         next={fetchMoreData}

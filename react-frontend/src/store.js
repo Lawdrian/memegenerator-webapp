@@ -4,9 +4,10 @@ import userReducer from './slices/userSlice';
 import templateReducer from './slices/templateSlice';
 import serverSlice from './slices/serverSlice';
 import draftSlice from './slices/draftSlice';
+import memeReducer from './slices/memeSlice';
 
 const persistedUserState = JSON.parse(localStorage.getItem('user')) || {};
-import memeReducer from './slices/memeSlice';
+
 
 const store = configureStore({
   reducer: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Grid, Popover, Icon } from '@mui/material';
 import readContent from './Icon_readContent.png';
 
@@ -10,12 +10,6 @@ export default function TextToSpeech() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [voices, setVoices] = useState([]);
     let speech;
-
-    useEffect(() => {
-        window.speechSynthesis.onvoiceschanged = () => {
-            setVoices(window.speechSynthesis.getVoices());
-        };
-    }, []);
 
     useEffect(() => {
         window.speechSynthesis.onvoiceschanged = () => {
@@ -43,8 +37,6 @@ export default function TextToSpeech() {
         newSpeech.volume = volume;
         newSpeech.rate = rate;
         newSpeech.pitch = 1;
-        newSpeech.lang = 'en-US';
-        newSpeech.voice = voices[3]; // Use the voices state here
         newSpeech.lang = 'en-US';
         newSpeech.voice = voices[3]; // Use the voices state here
 
@@ -133,7 +125,7 @@ export default function TextToSpeech() {
             >
                 <Grid container spacing={2} onMouseLeave={() => { setHover(false) }}>
                     <Grid item>
-                        <p style={{ textAlign: "center" }}>Geschwindigkeit</p>
+                        <p style={{ textAlign: "center" }}>Speed</p>
                         <Button
                             onClick={() => { handleRate(true) }}
                             disabled={rate == 1}

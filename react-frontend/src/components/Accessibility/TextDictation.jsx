@@ -5,6 +5,7 @@ import $ from 'jquery';
 import { useNavigate } from 'react-router-dom';
 
 import SpeakText from './SpeakText';
+import { resetDictation, selectCaption, setCaption, setDescription, setName } from '../../slices/dictationSlice';
 
 import speechToText from './Icon_speechToText.svg';
 import Icon from '@mui/material/Icon';
@@ -163,8 +164,9 @@ export default function SpeechRecognitionTest() {
   }
 
   return (
-    <Grid style={{ flexGrow: 1 }}>
-     <Button variant = "contained" color="warning" onClick={() => { showTextDictation ? handleClose() : setTextDictation(true) }}>Text Dictation</Button>
+    <Grid container direction="column" alignItems="center">
+      <Icon style={{ filter: 'invert(100%)', backgroundImage: `url(${speechToText})`, backgroundSize: 'cover', width: 25, height: 25 }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }} />
+      <Button color="inherit" style={{ fontSize: "12px" }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>Dictation</Button>
       {showTextDictation &&
         (<Popover
           open={showTextDictation}

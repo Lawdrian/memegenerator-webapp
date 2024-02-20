@@ -10,9 +10,7 @@ import speechToText from './Icon_speechToText.svg';
 import Icon from '@mui/material/Icon';
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { setName, setDictation, setCaption, selectCaption, setDescription, resetDictation } from '../../slices/dictationSlice';
-
-import './accessibilityContent.css';
+import { setDictation } from '../../slices/dictationSlice';
 
 export default function SpeechRecognitionTest() {
   const [currentText, setCurrentText] = useState([null]);

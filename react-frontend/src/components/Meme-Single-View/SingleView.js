@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField, Snackbar } from "@mui/material";
@@ -25,7 +25,6 @@ const SingleView = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
 
   const [autoplay, setAutoplay] = useState(false);
-  const [autoplayInterval, setAutoplayInterval] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [comment, setComment] = useState("");
 
@@ -86,16 +85,17 @@ const SingleView = () => {
     navigate(`/meme/${allMemes[randomIndex]._id}`);
   }, [allMemes, navigate]);
 
+  const autoplayIntervalRef = useRef(null); // Verwendung eines Refs anstelle eines State
+
   useEffect(() => {
     if (autoplay) {
       const interval = setInterval(() => {
         navigateToRandomMeme();
       }, 5000);
-      setAutoplayInterval(interval);
-      return () => clearInterval(interval);
+      autoplayIntervalRef.current = interval; // Speichern des Interval-Identifiers im Ref
+      return () => clearInterval(autoplayIntervalRef.current);
     } else {
-      clearInterval(autoplayInterval);
-      setAutoplayInterval(null);
+      clearInterval(autoplayIntervalRef.current); // Zugriff auf den gespeicherten Wert im Ref
     }
   }, [autoplay, navigateToRandomMeme, allMemes.length]);
 

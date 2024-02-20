@@ -43,10 +43,10 @@ const EditorSidebar = (props) => {
                 <ImageListItem key={index}>
                 <img 
                   src={template.content} 
-                  alt={template.name} 
                   onClick={() => handleTemplateClick(template)} 
                   loading="lazy"
                   style={template === selectedTemplate ? { boxShadow: '0 0 10px 2px dodgerblue' } : {}}
+                  alt={`name: ${template.name}, description: ${template.description}`}
                 />
               </ImageListItem>
           ))}

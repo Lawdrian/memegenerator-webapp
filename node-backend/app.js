@@ -186,7 +186,7 @@ app.post('/api-login', async (req, res) => {
       console.log('Received API-Login ID:', googleId);
   
       const user = await User.findOne({ googleId });
-      const token = jwt.sign({ googleId }, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
 
       if (!user) {
         const newUser = await GoogleUser.create({ googleId }); 
@@ -277,6 +277,7 @@ app.post('/meme', verifyToken, async (req, res) => {
 app.get('/get-my-meme', verifyToken, async (req, res) => {
   console.log("GET MY MEMES");
   const { decodedJwt } = res.locals;
+  console.log(decodedJwt)
   
   const user = await User.findOne({ _id: decodedJwt.userId });
   if (!user) {

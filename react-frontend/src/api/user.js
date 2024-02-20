@@ -1,0 +1,88 @@
+import axios from 'axios';
+import { setUser } from '../slices/userSlice'
+
+export const registration = (data) => {
+  fetch(`http://localhost:3001/registration`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(data).toString(),
+  })
+  .then(response => {
+    if (!response.ok) {
+        alert('Registration failed');
+    } else {
+        alert('Registration successful');
+    }
+    return response.json();
+  })
+  .then(result => {
+    console.log(result)
+  })
+  .catch(error => {
+    console.error('Error during registration:', error);
+  })
+}
+
+export const login = (data) => async (dispatch) => {
+  fetch(`http://localhost:3001/login`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams(data).toString(),
+  })
+  .then(response => {
+    if (!response.ok) {
+      alert('Wrong password or email');
+    } 
+    return response.json();
+  })
+  .then(result => {
+      //TOKEN
+      console.log(result.token);
+      dispatch(setUser({ token: result.token, user: result.user }));
+  })
+  .catch(error => {
+      console.error('Error during login:', error);
+  })
+  }
+
+
+
+export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
+  axios
+    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${googleLoginResponse.access_token}`, {
+      headers: {
+        Authorization: `Bearer ${googleLoginResponse.access_token}`,
+        Accept: 'application/json'
+      }
+    })
+    .then((res) => {
+      console.log(res);
+      console.log(res.data);
+      const googleIdFromGoogleOAuth = res.data.id;
+      console.log("Google ID:" + googleIdFromGoogleOAuth);
+
+      fetch('http://localhost:3001/api-login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({ googleId: googleIdFromGoogleOAuth }).toString(),
+      })
+      .then(loginResponse => loginResponse.json())
+      .then(result => {
+          console.log("result")
+          console.log(result)
+          console.log(res.data)
+          dispatch(setUser({ token: result.token, user: res.data }));
+          console.log(result.body);
+      })
+      .catch(error => {
+          console.error('Error during registration:', error);
+      });
+  })
+  .catch((err) => console.log(err));
+}

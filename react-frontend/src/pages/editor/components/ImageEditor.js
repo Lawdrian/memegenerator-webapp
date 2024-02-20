@@ -31,7 +31,6 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
 
   // state variables for for text properties form
   const [selectedTextFieldIndex, setSelectedTextFieldIndex] = useState(null);
-  //const [selectedTextFieldProps, setSelectedTextFieldProps] = useState(null);
 
   const [stageSize, setStageSize] = useState({width: window.innerWidth, height: window.innerHeight});
 
@@ -39,9 +38,6 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
   const stageRef = useRef(null);
   const stageContainerRef = useRef(null);
 
-  //change later to dynamically adjust to container size
-  //const stageWidth = 800; // replace with your desired width
-  //const stageHeight = 600; // replace with your desired height
   const initialTextWidth = 200;
 
   // set the image state once the image is loaded and scale the image to fit the container
@@ -80,17 +76,12 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
     }
   }, [draftProps])
 
-
-
-
   const handleTextFieldSelect = (index, props) => {
     setSelectedTextFieldIndex(index);
-    //setSelectedTextFieldProps(props);
   };
 
   const handleTextFieldDeselect = () => {
     setSelectedTextFieldIndex(null);
-    //setSelectedTextFieldProps(null);
   }
 
   // handlePropChange is called when a property of a textfield is changed in the TextPropertiesForm
@@ -99,7 +90,6 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
       ...textFields[selectedTextFieldIndex],
       [name]: value,
     };
-    //setSelectedTextFieldProps(newProps);
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === selectedTextFieldIndex ? newProps : textField
@@ -111,7 +101,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
 
   // update the textField porperties state once a property inside the EditableTextField component changes
   const handleEditableTextFieldChange = throttle((property, value, key) => {
-    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
+    console.log("text changed", property, value, key);
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === key ? {...textField, [property]: value} : textField
@@ -120,7 +110,6 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
   }, 300, { leading: false})
 
   const handleTextChange = throttle((text, key) => {
-    //setSelectedTextFieldProps({...selectedTextFieldProps, position: position});
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === key ? {...textField, text: text} : textField
@@ -130,55 +119,35 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
 
   const addTextField = () => {
     setTextFields(prevTextFields => [...prevTextFields, {...defaultTextProps}]);
-    //setSelectedTextFieldIndex(textFields.length-1);
-    //setSelectedTextFieldProps({...defaultTextProps});
   };
 
   const removeTextField = (index) => {
-    //const textarea = document.querySelector('textarea');
-    //if (textarea) {
-     // document.body.removeChild(textarea);
-     // }
-
     setTextFields(prevTextFields => prevTextFields.filter((_, i) => i !== index));
     setSelectedTextFieldIndex(null);
-    //setSelectedTextFieldProps(null);
   };
 
   const clearTextFields = () => {
     setTextFields([]);
     setSelectedTextFieldIndex(null);
-    //setSelectedTextFieldProps(null);
   };
-
-  /*
-  const handleDownload = async () => {
-    
-    const transformers = stageRef.current.find('Transformer');
-    transformers.forEach(transformer => transformer.hide());
-  
-    const dataUrl = stageRef.current.toDataURL({mimeType: 'image/png', quality: 1});
-  
-    transformers.forEach(transformer => transformer.show());
-
-    const link = document.createElement('a');
-    link.download = 'canvas.png';
-    link.href = dataUrl;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-  */
 
   // download the image with the given resolution
   const handleMemeCreation = async (targetFileSize, memeName, memeDescription, memePrivacy, download) => {
     
+    // Hide all transformers, rect and make text nodes visible for the image creation
     const transformers = stageRef.current.find('Transformer');
+    const rects = stageRef.current.find('Rect');
+    rects.forEach(rect => rect.hide());
     transformers.forEach(transformer => transformer.hide());
+    const textNodes = stageRef.current.find('Text');
+    const textNodeStatus = textNodes.map(textNode => textNode.visible());
+    textNodes.forEach(textNode => textNode.show());
   
     const dataUrl = stageRef.current.toDataURL({mimeType: 'image/png', quality: 1});
   
     transformers.forEach(transformer => transformer.show());
+    textNodes.forEach((textNode, index) => textNode.visible(textNodeStatus[index]));
+    rects.forEach(rect => rect.show());
   
     // Convert data URL to file
     const imageFile = await fetch(dataUrl)

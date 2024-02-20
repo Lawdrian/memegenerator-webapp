@@ -79,10 +79,7 @@ function App() {
   }, [token, templatesLoaded])
 
   return (
-    <div>
     <RouterProvider router={router} />
-    <input onClick={() => {console.log(token)}} value={"hallo"} type="submit"/>
-    </div>
   );
 }
 

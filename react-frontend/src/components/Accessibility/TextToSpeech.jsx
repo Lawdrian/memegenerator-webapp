@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Grid, Popover, Paper } from '@mui/material';
+import { Button, Grid, Popover, Icon } from '@mui/material';
+import readContent from './Icon_readContent.png';
 
 export default function TextToSpeech() {
     const [speaking, setSpeaking] = useState(false);
@@ -59,22 +60,40 @@ export default function TextToSpeech() {
         window.speechSynthesis.speak(speech);
     }
     return (
-        <Grid style={{ flexGrow: 1 }}>
-            <Grid style = {{display:"flex", flexDirection:"column", width: "200px"}}>
-            <Button 
-            color="warning" 
-            variant="contained" 
-            onClick={handleTextToSpeech} 
-            ref = {(button) => setAnchorEl(button)}
-            style = {{zIndex:1}}
-            id = "vorlesen"
-            > 
-                {speaking ? 'Stop Reading' : 'Read Content'}
-            </Button>
-            {speaking && <p style = {{height:"10px", width: "100%", margin:1, padding:0, textAlign:"center"}} onMouseEnter={() => {setHover(true)}}> Einstellungen </p>}
+        <Grid container direction="column" alignItems="center">
+            <Grid container direction="column" alignItems="center">
+                <Icon onClick={handleTextToSpeech} style={{ filter: 'invert(100%)', backgroundImage: `url(${readContent})`, backgroundSize: 'cover', width: 25, height: 25 }} />
+                <Button
+                    color="inherit"
+                    onClick={handleTextToSpeech}
+                    style={{ zIndex: 1, fontSize: "12px" }}
+                    id="vorlesen"
+
+                >
+                    {speaking ? 'Stop Reading' : 'Read Content'}
+                </Button>
+                {speaking && (
+                    <Grid>
+                        <span
+                            style={{
+                                height: "10px",
+                                width: "100%",
+                                margin: "1px",
+                                padding: "0",
+                                textAlign: "center"
+                            }}
+                            ref={(button) => setAnchorEl(button)}
+
+                            onMouseEnter={() => { setHover(true) }}
+                        >
+                            Einstellungen
+                        </span>
+                    </Grid>
+                )}
+
             </Grid>
 
-            
+
 
             <Popover
                 open={speaking && hover}
@@ -88,16 +107,16 @@ export default function TextToSpeech() {
                     horizontal: 'center',
                 }}
                 close={!hover}
-                PaperProps={{ 
+                PaperProps={{
                     style: {
-                      backgroundColor: "rgba(255, 255, 255, 0.5)",
-                      backdropFilter: 'blur(10px)',
+                        backgroundColor: "rgba(255, 255, 255, 0.5)",
+                        backdropFilter: 'blur(10px)',
                     },
-                  }}
-                  >
-                <Grid container spacing = {2}  onMouseLeave={() => {setHover(false)}}>
+                }}
+            >
+                <Grid container spacing={2} onMouseLeave={() => { setHover(false) }}>
                     <Grid item>
-                        <p style = {{textAlign:"center"}}>Geschwindigkeit</p>
+                        <p style={{ textAlign: "center" }}>Geschwindigkeit</p>
                         <Button
                             onClick={() => { handleRate(true) }}
                             disabled={rate == 1}
@@ -112,7 +131,7 @@ export default function TextToSpeech() {
                         >- </Button>
                     </Grid>
                     <Grid item>
-                        <p  style = {{textAlign:"center"}}>Volume</p>
+                        <p style={{ textAlign: "center" }}>Volume</p>
                         <Button
                             onClick={() => { handleVolume(true) }}
                             disabled={volume == 1}
@@ -135,10 +154,3 @@ export default function TextToSpeech() {
     );
 }
 
-
-//PROBLEM
-/*
-Der Button ist niht bedienbar, wenn der Popover offen ist.
-darum öffnet sich der popover durch ein.
-Zuästzlich ist der backdropfilter nur bei paperprops möglich, nicht sonst oder bei der aktuellen Version <Paper style={{ backdropFilter: 'blur(10px)' }}></Paper>
-*/

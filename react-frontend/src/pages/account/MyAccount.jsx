@@ -17,7 +17,6 @@ import { setUser } from '../../slices/userSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import AllTemplates from '../../components/AllTemplates';
 
-
 export default function MyAccount() {
     const user = useSelector((state) => state.user.currentUser);
     console.log("MyAccount.jsx")

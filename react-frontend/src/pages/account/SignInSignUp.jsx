@@ -66,6 +66,7 @@ export default function SignInSignUp() {
             .catch(error => {
                 console.error('Error during login:', error);
             })
+            
     };
 
     const handleRegistrationSubmit = async (event) => {

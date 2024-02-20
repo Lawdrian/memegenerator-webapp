@@ -5,11 +5,11 @@ import CloudOffIcon from '@mui/icons-material/CloudOff';
 import { useSelector } from "react-redux";
 
 //Components
-import TextToSpeech from '../components/Accessibility/TextToSpeech';
-import TextDictation from '../components/Accessibility/TextDictation';
-
+import AccessibilityContent from "../components/Accessibility/AccessibilityContent";
 //Image to Text
 import ImageToText from '../components/Accessibility/ImageToText';
+
+import ReadImageDescrption from '../components/Accessibility/ReadImageDescription';
 
 const theme = createTheme({
     palette: {
@@ -34,12 +34,11 @@ export default function RootLayout() {
             <AppBar position="static">
                 <Toolbar>
                     <EmojiEmotionsIcon style={{ marginRight: 10 }} a />
-                    <Typography variant="h6" style={{ flexGrow: 1 }}>
+                    <Typography variant="h6" style={{ width: "30%" }}>
                         Meme Generator
                     </Typography>
-                    
-                    <TextToSpeech />
-                    <TextDictation />
+                    <AccessibilityContent />
+
 
                     {!serverReachable && (
                         <CloudOffIcon style={{ marginRight: 10 }}/>              
@@ -51,7 +50,7 @@ export default function RootLayout() {
                     <Button color="inherit" component={NavLink} to="/editor">
                         Editor
                     </Button>
-                    <Button color="inherit" component={NavLink} to="/canvas">
+                    <Button color="inherit" component={NavLink} to="/canvas" style={{ marginRight: 10 }}>
                         Canvas
                     </Button>
                     <Button color="inherit" component={NavLink} to="/account">

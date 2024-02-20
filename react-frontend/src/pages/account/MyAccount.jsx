@@ -35,13 +35,11 @@ export default function MyAccount() {
 
     return (
         <div>
-            <TextDictation/>
-            <Grid container spacing={2} direction={"column"} padding={2}>
+            <Grid container direction={"column"} padding={2}>
                 <Grid item >
-                    <h1>Logged in with the email {user.email}</h1>
+                    <h2>Account: {user.email}</h2>
                 </Grid>
                 <Grid item>
-                    <h2>Logout</h2>
                     <Button id = "logOutBtn" variant="contained" color="primary" onClick={handleLogout}>
                         Logout
                     </Button>

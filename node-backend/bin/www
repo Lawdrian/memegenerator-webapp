@@ -7,6 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('basic-auth-app:server');
 var http = require('http');
+// imports are required for swagger
+const swaggerJsdoc = require("swagger-jsdoc")
+const swaggerUi = require("swagger-ui-express");
 
 /**
  * Get port from environment and store in Express.

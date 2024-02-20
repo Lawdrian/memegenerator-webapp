@@ -18,6 +18,7 @@ export default function ReadImageDescription() {
     useEffect(() => {
         const handleMouseMove = (event) => {
             const hovered = document.elementFromPoint(event.clientX, event.clientY);
+            console.log(hovered)
             if (hovered && hovered.tagName === 'IMG') {
                 setHoveredElement(hovered);
             } else {
@@ -29,21 +30,26 @@ export default function ReadImageDescription() {
             document.addEventListener('mousemove', handleMouseMove);
         } else {
             document.removeEventListener('mousemove', handleMouseMove);
-        }
+            //For Abort Image Reader -> Initiliaze utterance that says nothing but overwrites the old one (overwrite the sequence)!
+            const utterance = new SpeechSynthesisUtterance("");
+            utterance.volume = 1;
+            utterance.rate = 0.65;
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);        }
     }, [imageReader]);
 
 
 
 
     return (
-        <Grid container direction="column" alignItems="center">
-            <Icon onClick={enableReadImage} style={{ filter: 'invert(100%)', backgroundImage: `url(${readImage})`, backgroundSize: 'cover', width: 25, height: 25 }} />
-            <Button
+        <Grid title = {imageReader ? "Abort Image Reader" : "Image Reader"}  container direction="column" alignItems="center" onClick={enableReadImage} >
+            <Icon  style={{ filter: imageReader ? 'invert(0%)' : 'invert(100%)', backgroundImage: `url(${readImage})`, backgroundSize: 'cover', width: 25, height: 25 }} />
+            {/* <Button
                 style={{ color: "inherit", fontSize: "12px" }}
                 onClick={enableReadImage}
             >
                 {imageReader ? "Abort Image Reader" : "Image Reader"}
-            </Button>
+            </Button> */}
             {hoveredElement && imageReader && (
                 <SpeakText text={hoveredElement.alt} />
             )}

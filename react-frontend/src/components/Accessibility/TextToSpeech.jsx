@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Grid, Popover, Icon } from '@mui/material';
+import { Button, Grid, Popover, Icon, Typography } from '@mui/material';
 import readContent from './Icon_readContent.png';
 
 export default function TextToSpeech() {
@@ -71,8 +71,8 @@ export default function TextToSpeech() {
     return (
         <Grid container direction="column" alignItems="center">
             <Grid container direction="column" alignItems="center">
-                <Icon onClick={handleTextToSpeech} style={{ filter: 'invert(100%)', backgroundImage: `url(${readContent})`, backgroundSize: 'cover', width: 25, height: 25 }} />
-                <Button
+                <Icon title = {speaking ? 'Stop Reading' : 'Read Content'} onClick={handleTextToSpeech} style={{ filter: speaking ? 'invert(0%)' : 'invert(100%)', backgroundImage: `url(${readContent})`, backgroundSize: 'cover', width: 25, height: 25 }} />
+                {/* <Button
                     color="inherit"
                     onClick={handleTextToSpeech}
                     style={{ zIndex: 1, fontSize: "12px" }}
@@ -80,23 +80,17 @@ export default function TextToSpeech() {
 
                 >
                     {speaking ? 'Stop Reading' : 'Read Content'}
-                </Button>
+                </Button> */}
                 {speaking && (
                     <Grid>
-                        <span
-                            style={{
-                                height: "10px",
-                                width: "100%",
-                                margin: "1px",
-                                padding: "0",
-                                textAlign: "center"
-                            }}
+                        <Typography variant="caption" gutterBottom
+
                             ref={(button) => setAnchorEl(button)}
 
                             onMouseEnter={() => { setHover(true) }}
                         >
                             Einstellungen
-                        </span>
+                        </Typography>
                     </Grid>
                 )}
 

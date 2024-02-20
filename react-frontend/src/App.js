@@ -25,13 +25,13 @@ import { getTemplates } from './api/template';
 
 const AuthenticatedRoute = ({ children }) => {
   const hasToken = useSelector((state) => state.user.token);
-  return hasToken ? children : <Navigate to="/" />;
+  return hasToken ? children : <Navigate to="/account" />;
 }
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout/>}>
-      <Route index element={<Home />} />      
+      <Route index element={<AuthenticatedRoute><Home /></AuthenticatedRoute>} />      
       <Route index element={<Account />} />
       <Route path="editor/*" element={<AuthenticatedRoute><EditorContainer /></AuthenticatedRoute>} />
       <Route path="canvas" element={<AuthenticatedRoute><CanvasCreator /></AuthenticatedRoute>} />

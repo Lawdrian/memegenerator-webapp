@@ -164,9 +164,9 @@ export default function SpeechRecognitionTest() {
   }
 
   return (
-    <Grid container direction="column" alignItems="center">
-      <Icon style={{ filter: 'invert(100%)', backgroundImage: `url(${speechToText})`, backgroundSize: 'cover', width: 25, height: 25 }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }} />
-      <Button color="inherit" style={{ fontSize: "12px" }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>Dictation</Button>
+    <Grid title = "Dictation" container direction="column" alignItems="center" onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>
+      <Icon title = "Dictation" style={{ filter: showTextDictation ? 'invert(0%)': 'invert(100%)', backgroundImage: `url(${speechToText})`, backgroundSize: 'cover', width: 25, height: 25 }}  />
+      {/* <Button color="inherit" style={{ fontSize: "12px" }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>Dictation</Button> */}
       {showTextDictation &&
         (<Popover
           open={showTextDictation}

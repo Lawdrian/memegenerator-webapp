@@ -1,6 +1,7 @@
 
 .accessibility-icon{
     padding-top: 5px;
+    margin-right: 100px;
 }
 .accessibility-icon:hover{
     background-color: rgba(0, 0, 0, 0.1); /* Hervorhebungsfarbe beim Hover */

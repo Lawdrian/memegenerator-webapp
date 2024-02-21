@@ -1,6 +1,6 @@
 export function saveMeme(meme, token) {
 
-  fetch("http://localhost:3001/meme", {
+  return fetch("http://localhost:3001/meme", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +22,7 @@ export function saveMeme(meme, token) {
     console.log("response")
     console.log(res)
     if (res.status === 201) {
-      alert("Meme saved successfully")      
+      alert("Meme saved successfully")   
       return res.json(); // Resolve with the JSON data if the status is 201
     } else if (res.status === 401) {
       alert("Unauthorized")
@@ -60,7 +60,7 @@ export function getAllMemes(callBack, token) {
 
 
 export function getSelfCreatedMemes(callBack, token) {
-  fetch("http://localhost:3001/get-my-meme", {
+  fetch("http://localhost:3001/meme/mine", {
       method: 'GET',
       headers: {
           "Authorization": "Bearer " + token, 
@@ -76,7 +76,7 @@ export function getSelfCreatedMemes(callBack, token) {
 
 export function changeMemePrivacy(privacy, memeId, token){
   console.log(memeId)
-  fetch("http://localhost:3001/update-meme-privacy", {
+  fetch("http://localhost:3001/meme/privacy", {
       method:"PUT",
       headers:{
           "Content-Type": "application/json",
@@ -89,7 +89,7 @@ export function changeMemePrivacy(privacy, memeId, token){
 export async function handleCommentSubmit(meme, commentContent, token) {
   console.log(commentContent);
   
-  const response = await fetch('http://localhost:3001/meme-comment', {
+  const response = await fetch('http://localhost:3001/meme/comment', {
     headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
@@ -108,7 +108,7 @@ export async function handleCommentSubmit(meme, commentContent, token) {
 
 
 export function handleUpVote(memeId, token) {
-  return fetch('http://localhost:3001/meme-vote', {
+  return fetch('http://localhost:3001/meme/vote', {
       method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,
@@ -128,7 +128,7 @@ export function handleUpVote(memeId, token) {
 }
 
 export function handleDownVote(memeId, token) {
-  return fetch('http://localhost:3001/meme-vote', {
+  return fetch('http://localhost:3001/meme/vote', {
       method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,

@@ -140,7 +140,7 @@ export default function SignInSignUp() {
                 sx={{ mt: 3, mb: 2 }}
                 id="loginBtn"
               >
-                ANMELDEN
+                LOGIN
               </Button>
               <Grid container>
                 <Grid item xs>

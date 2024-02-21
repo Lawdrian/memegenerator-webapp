@@ -1,3 +1,57 @@
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     Draft:
+ *       type: object
+ *       required:
+ *         - createdBy
+ *         - format
+ *         - textProperties
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the draft
+ *         name:
+ *           type: string
+ *           description: The name of your draft
+ *         description:
+ *           type: string
+ *           description: The description of your draft
+ *         createdBy:
+ *           type: string
+ *           description: The draft creator
+ *         format:
+ *           type: string
+ *           description: Draft format ('image', 'gif', 'video')
+ *         textProperties:
+ *           type: array
+ *           items:
+ *             type: string
+ *         createdAt:
+ *           type: string
+ *           format: date
+ *           description: The date the draft was created
+ *         updatedAt:
+ *           type: string
+ *           format: date
+ *           description: The date the draft was last updated
+ *       example:
+ *         _id: 65beb09bdb3ca678ad8bcae2
+ *         name: "bestDraft"
+ *         description: "This is the best draft ever!"
+ *         createdBy: "65beb006db3ca678ad8bcabc"
+ *         format: "image" 
+ *         textProperties: []
+ *         createdAt: 2024-02-03T21:31:07.168+00:00	
+ *         updatedAt: 2024-02-03T21:31:07.168+00:00
+ */
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 

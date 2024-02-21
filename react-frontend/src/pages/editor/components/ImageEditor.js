@@ -218,7 +218,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
 
   return (
     <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '90vh', overflow: 'clip'}}>
-      <Grid item style={{ height: '10vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
+      <Grid item style={{ height: '5vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
         {textFields[selectedTextFieldIndex] ? (
           <TextPropertiesForm
             removeTextField={() => removeTextField(selectedTextFieldIndex)}
@@ -258,7 +258,7 @@ function ImageEditor({ imageUrl, handleSaveMeme, handleSaveDraft, draftProps }) 
           ))}
         </Stage>
       </Grid>
-      <Grid item style={{ height: '10vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+      <Grid item style={{ height: '15vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
         <ImageEditorFooter handleMemeCreation={(fileSize, memeName, description, privacy, local) => handleMemeCreation(fileSize, memeName, description, privacy, local)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
       </Grid>
     </Grid>

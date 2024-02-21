@@ -2,7 +2,11 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, TextField, Snackbar } from "@mui/material";
-import { updateLikesDislikes, addComment } from "../../slices/memeSlice";
+import {
+  updateLikesDislikes,
+  addComment,
+  fetchAllMemes,
+} from "../../slices/memeSlice";
 import SortingFilteringComponent from "../Sorting-Filtering-Component/SortingFiltering";
 import {
   handleUpVote,
@@ -18,6 +22,7 @@ const SingleView = () => {
   const allMemes = useSelector((state) => state.meme.memes);
   const token = useSelector((state) => state.user.token);
   const currentUser = useSelector((state) => state.user.currentUser);
+  const memesLoaded = useSelector((state) => state.meme.memesLoaded);
 
   const [autoplay, setAutoplay] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -29,6 +34,19 @@ const SingleView = () => {
 
   const [filterCriteria, setFilterCriteria] = useState("");
   const [filterValue, setFilterValue] = useState("");
+
+
+  useEffect(() => {
+    if (!memesLoaded) {
+      dispatch(fetchAllMemes(token));
+    }
+  }, [dispatch, memesLoaded, token]);
+
+  // find the current meme from the Redux store
+  const currentMeme = useSelector((state) =>
+    state.meme.memes.find((meme) => meme._id === id)
+  );
+
 
   useEffect(() => {
     // Apply filtering first
@@ -110,16 +128,6 @@ const SingleView = () => {
     // Reset sort criteria when filter changes
     setSelectedSortCriteria("");
   }, []);
-
-  // Find the current meme based on the ID
-  const currentMeme = allMemes.find((meme) => meme._id === id);
-
-  useEffect(() => {
-    if (!currentMeme) {
-      // Redirect or show an error if the meme is not found
-      navigate("/");
-    }
-  }, [currentMeme, navigate]);
 
   const navigateToRandomMeme = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * allMemes.length);
@@ -218,10 +226,8 @@ const SingleView = () => {
     }
   };
 
-  const isVisible = filterCriteria !== "fileFormat" || filterValue.toLowerCase() === "image";
-
-
-  
+  const isVisible =
+    filterCriteria !== "fileFormat" || filterValue.toLowerCase() === "image";
 
   return (
     <div className="single-view">
@@ -236,7 +242,7 @@ const SingleView = () => {
             onChange={(e) => setComment(e.target.value)}
           />
           <Button onClick={handleSubmitComment}>Submit Comment</Button>
-          {currentMeme.comments?.map((comment, index) => (
+          {currentMeme?.comments?.map((comment, index) => (
             <div key={index} className="single-view-comment">
               <p>
                 <strong>{comment.user?.email}</strong>: {comment.content}
@@ -249,67 +255,69 @@ const SingleView = () => {
         onSortChange={handleSortChange}
         onFilterTypeChange={handleFilterTypeChange}
         onFilterTextChange={handleFilterValueChange}
-        selectedSort={selectedSortCriteria} 
+        selectedSort={selectedSortCriteria}
         selectedFilterType={filterCriteria}
         filterText={filterValue}
       />
-      {isVisible ? (
-      <div className="single-view-card">
-        <h2 className="single-view-title">{currentMeme.name}</h2>
-        <p className="single-view-description">{currentMeme.description}</p>
-        <div className="single-view-image">
-          <img src={currentMeme.content} alt={currentMeme.name} />
-        </div>
-        <div className="single-view-navigation">
-          <button
-            className="nav-button previous-button"
-            onClick={navigateToPreviousMeme}
-          >
-            Previous
-          </button>
-          <button
-            className="nav-button next-button"
-            onClick={navigateToNextMeme}
-          >
-            Next
-          </button>
-        </div>
-        <div className="single-view-actions">
-          {/* Buttons for liking, disliking, and commenting */}
-          <button
-            className="upvote-button"
-            onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
-          >
-            Like <span>({currentMeme.upVotes.length})</span>
-          </button>
-          <button
-            className="downvote-button"
-            onClick={() => handleVoteClick(currentMeme._id, "downVotes")}
-          >
-            Dislike <span>({currentMeme.downVotes.length})</span>
-          </button>
+      {currentMeme && isVisible ? (
+        <div className="single-view-card">
+          <h2 className="single-view-title">{currentMeme.name}</h2>
+          <p className="single-view-description">{currentMeme.description}</p>
+          <div className="single-view-image">
+            <img src={currentMeme.content} alt={currentMeme.name} />
+          </div>
+          <div className="single-view-navigation">
+            <button
+              className="nav-button previous-button"
+              onClick={navigateToPreviousMeme}
+            >
+              Previous
+            </button>
+            <button
+              className="nav-button next-button"
+              onClick={navigateToNextMeme}
+            >
+              Next
+            </button>
+          </div>
+          <div className="single-view-actions">
+            {/* Buttons for liking, disliking, and commenting */}
+            <button
+              className="upvote-button"
+              onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
+            >
+              Like <span>({currentMeme.upVotes.length})</span>
+            </button>
+            <button
+              className="downvote-button"
+              onClick={() => handleVoteClick(currentMeme._id, "downVotes")}
+            >
+              Dislike <span>({currentMeme.downVotes.length})</span>
+            </button>
 
-          <button onClick={navigateToRandomMeme}>Random</button>
-          <button onClick={() => setAutoplay(!autoplay)}>
-            {autoplay ? "Stop Autoplay" : "Start Autoplay"}
-          </button>
-          <Button
-            className="singleView-share-button"
-            onClick={handleShareClick}
-          >
-            Share
-          </Button>
-          <Snackbar
-            open={openSnackbar}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            message="Meme link copied to clipboard!"
-          />
+            <button onClick={navigateToRandomMeme}>Random</button>
+            <button onClick={() => setAutoplay(!autoplay)}>
+              {autoplay ? "Stop Autoplay" : "Start Autoplay"}
+            </button>
+            <Button
+              className="singleView-share-button"
+              onClick={handleShareClick}
+            >
+              Share
+            </Button>
+            <Snackbar
+              open={openSnackbar}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              message="Meme link copied to clipboard!"
+            />
+          </div>
         </div>
-      </div>
       ) : (
         <div className="single-view-card">
-          <h2 className="single-view-title">Currently only "image" is supported</h2>
+          <h2 className="single-view-title">
+            Currently only "image" is supported
+          </h2>
         </div>
       )}
     </div>

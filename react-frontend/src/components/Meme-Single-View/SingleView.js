@@ -35,22 +35,29 @@ const SingleView = () => {
   const [filterCriteria, setFilterCriteria] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
+  const currentUserID = currentUser?._id;
 
   useEffect(() => {
     if (!memesLoaded) {
-      dispatch(fetchAllMemes(token));
+      dispatch(fetchAllMemes({ token: token, currentUserID: currentUserID }));
     }
-  }, [dispatch, memesLoaded, token]);
-
+  }, [dispatch, memesLoaded, token, currentUserID]);
+  
   // find the current meme from the Redux store
   const currentMeme = useSelector((state) =>
     state.meme.memes.find((meme) => meme._id === id)
   );
 
-
   useEffect(() => {
+    // Filter memes first based on visibility criteria
+    let visibleMemes = allMemes.filter((meme) => {
+      return (
+        meme.privacy === "public" ||
+        (meme.privacy === "unlisted" && meme.createdBy._id && meme.createdBy._id === currentUserID)
+      );
+    });
     // Apply filtering first
-    let filteredMemes = allMemes.filter((meme) => {
+    let filteredMemes = visibleMemes.filter((meme) => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
         case "title":
@@ -62,7 +69,9 @@ const SingleView = () => {
         case "likes":
           const likesCount = parseInt(filterValue, 10);
           // Filter by exact number of likes if a number is provided; otherwise, don't filter
-          return !isNaN(likesCount) ? meme?.upVotes.length === likesCount : true;
+          return !isNaN(likesCount)
+            ? meme?.upVotes.length === likesCount
+            : true;
         case "dislikes":
           const dislikesCount = parseInt(filterValue, 10);
           // Filter by exact number of dislikes if a number is provided; otherwise, don't filter

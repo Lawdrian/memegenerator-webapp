@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Asynchronous thunk for fetching all memes
 export const fetchAllMemes = createAsyncThunk(
   'meme/fetchAll',
-  async (token, { rejectWithValue }) => {
+  async ({ token, currentUserID }, { rejectWithValue }) => {
     try {
       const response = await fetch("http://localhost:3001/meme", {
         method: 'GET',
@@ -13,8 +13,15 @@ export const fetchAllMemes = createAsyncThunk(
         },
       });
       if (!response.ok) throw new Error('Failed to fetch memes');
-      const data = await response.json();
-      return data.memes; 
+      const { memes } = await response.json();
+
+     
+      const filteredMemes = memes.filter(meme =>
+        meme.privacy === 'public' ||
+        (meme.privacy === 'unlisted' && meme.createdBy._id === currentUserID)
+      );
+
+      return filteredMemes;
     } catch (error) {
       return rejectWithValue(error.message);
     }

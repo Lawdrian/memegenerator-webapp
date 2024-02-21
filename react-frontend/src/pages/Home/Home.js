@@ -12,6 +12,7 @@ function Home() {
   const token = useSelector((state) => state.user.token);
   const navigate = useNavigate();
   const allMemes = useSelector((state) => state.meme.memes);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   const [displayedMemes, setDisplayedMemes] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -21,11 +22,19 @@ function Home() {
   //state to manage current page and meme limit
   const [page, setPage] = useState(1);
   const limit = 5;
+  const currentUserID = currentUser?._id;
 
   useEffect(() => {
     const handleFetchedMemes = (fetchedMemes) => {
+      console.log("Current User ID:", currentUserID);
+      console.log("Fetched Memes:", fetchedMemes);
+      const visibleMemes = fetchedMemes.filter(meme => 
+        meme.privacy === 'public' ||
+        (meme.privacy === "unlisted" && meme.createdBy._id && meme.createdBy._id === currentUserID)
+      );
+      console.log("Visible Memes:", visibleMemes);
       // first filter
-      let filteredMemes = fetchedMemes.filter(meme => {
+      let filteredMemes = visibleMemes.filter(meme => {
         switch (filterType) {
           case 'description':
             return meme.description.toLowerCase().includes(filterText.toLowerCase());
@@ -73,8 +82,13 @@ function Home() {
   const fetchMoreData = () => {
     if (page * limit < allMemes.length) {
       setPage(prevPage => prevPage + 1);
+      const nextSetOfMemes = allMemes.filter(meme => 
+        meme.privacy === 'public' ||
+        (meme.privacy === "unlisted" && meme.createdBy._id && meme.createdBy._id === currentUserID)
+      );
+    
       //first apply the filter, then sort
-      let filteredMemes = allMemes.filter(meme => {
+      let filteredMemes = nextSetOfMemes.filter(meme => {
         switch (filterType) {
           case 'description':
             return meme.description.toLowerCase().includes(filterText.toLowerCase());

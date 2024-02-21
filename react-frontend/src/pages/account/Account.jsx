@@ -3,7 +3,7 @@ import SignInSignUp from './SignInSignUp';
 import MyAccount from "./MyAccount";
 
 import { useSelector } from 'react-redux';
-import StatisticCreatedMemes from '../../components/Statistics/StatisticCreatedMemes';
+import GeneralStatistics from '../../components/Statistics/StatisticCreatedMemes';
 
 export default function Account() {
   const [setProfile] = useState(null);
@@ -16,7 +16,7 @@ export default function Account() {
 
   return (
     <div>
-      <StatisticCreatedMemes />
+      <GeneralStatistics />
       {user ? (
         <MyAccount />
       ) : (

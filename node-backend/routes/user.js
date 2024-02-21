@@ -13,7 +13,26 @@ const GoogleUser = mongoose.model("GoogleUser");
 
 
 
-///////////////////////SIGNUP_SIGNIN///////////////////////////
+/**
+ * @swagger
+ * /user/registration:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: The user was successfully created
+ *       409:
+ *         description: Email already exists
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post('/registration', async (req, res) => {
   try {
     const { email, password } = req.body; //exrtact registraion-data out of request-body 
@@ -33,6 +52,27 @@ router.post('/registration', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Log in a user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Authentication successful
+ *       401:
+ *         description: Email not found or password incorrect
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post('/login', async (req, res) => {
   console.log("LOGIN");
   try {
@@ -41,7 +81,7 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email }); 
 
     if (!user) {    // Check if the user exists
-      return res.status(401).json({ error: 'Email not found ' });
+      return res.status(401).json({ error: 'Email not found' });
     }
     // Verify entered password with the hashed-passwodr of the db
     const verified = await argon2.verify(user.password, password); 
@@ -58,6 +98,28 @@ router.post('/login', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /user/api-login:
+ *   post:
+ *     summary: Log in a user via API
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               googleId:
+ *                 type: string
+ *                 example: 1234567890
+ *     responses:
+ *       200:
+ *         description: User successfully created in the database and logged in or Success API-authentification - logged in
+ *       500:
+ *         description: Internal Server Error
+ */
 router.post('/api-login', async (req, res) => {
     const { googleId } = req.body;
   
@@ -83,7 +145,5 @@ router.post('/api-login', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  
-///////////////////////SIGNUP_SIGNIN END///////////////////////////
 
 module.exports = router;

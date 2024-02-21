@@ -5,7 +5,6 @@
  *      Meme:
  *        type: object
  *        required:
- *          - name
  *          - createdBy
  *          - format
  *          - content

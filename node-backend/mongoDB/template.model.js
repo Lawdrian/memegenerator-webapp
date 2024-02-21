@@ -1,3 +1,37 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Template:
+ *       type: object
+ *       required:
+ *         - createdBy
+ *         - format
+ *         - content
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: The name of the template
+ *         description:
+ *           type: string
+ *           description: The description of the template
+ *         createdBy:
+ *           type: string
+ *           description: The ID of the user who created the template
+ *         format:
+ *           type: string
+ *           description: The format of the template (image, gif, video)
+ *         content:
+ *           type: string
+ *           description: The content of the template in base64 string
+ *       example:
+ *         name: My Template
+ *         description: A good template for a meme
+ *         createdBy: 60d0fe4f532529001f4e52d5
+ *         format: image
+ *         content: iVBORw0KGg...
+ */
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 

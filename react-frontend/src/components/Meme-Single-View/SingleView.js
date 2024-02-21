@@ -317,12 +317,18 @@ const SingleView = () => {
           >
             Statistics
           </Button>
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-              message="Meme link copied to clipboard!"
-            />
+          <Button
+            className="singleView-share-button"
+            onClick={() => setOpenStatistics(!openStatistics)}
+          >
+            Statistics
+          </Button>
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            message="Meme link copied to clipboard!"
+          />
           </div>
         </div>
       ) : (
@@ -331,7 +337,8 @@ const SingleView = () => {
             Currently only "image" is supported
           </h2>
         </div>
-      )}
+      )
+      }
     </div>
   );
 };

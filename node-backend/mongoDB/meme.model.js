@@ -1,3 +1,84 @@
+/**
+ * @swagger
+ *  components:
+ *    schemas:
+ *      Meme:
+ *        type: object
+ *        required:
+ *          - name
+ *          - createdBy
+ *          - format
+ *          - content
+ *          - usedTemplate
+ *        properties:
+ *          name:
+ *            type: string
+ *            description: The name of the meme.
+ *          description:
+ *            type: string
+ *            description: The description of the meme.
+ *          createdBy:
+ *            type: string
+ *            description: The ID of the user who created the meme.
+ *          format:
+ *            type: string
+ *            description: The format of the meme (image, gif, video).
+ *          content:
+ *            type: string
+ *            description: The base64 encoded content of the meme.
+ *          usedTemplate:
+ *            type: string
+ *            description: The ID of the template used to create the meme.
+ *          privacy:
+ *            type: string
+ *            description: The privacy setting of the meme (public, unlisted, private).
+ *          upVotes:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                voteCount:
+ *                  type: integer
+ *                  description: The count of upvotes.
+ *                voter:
+ *                  type: string
+ *                  description: The ID of the voter.
+ *                createdAt:
+ *                  type: string
+ *                  format: date-time
+ *                  description: The time the vote was cast.
+ *          downVotes:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                voteCount:
+ *                  type: integer
+ *                  description: The count of downvotes.
+ *                voter:
+ *                  type: string
+ *                  description: The ID of the voter.
+ *                createdAt:
+ *                  type: string
+ *                  format: date-time
+ *                  description: The time the vote was cast.
+ *          comments:
+ *            type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                user:
+ *                  type: string
+ *                  description: The ID of the user who commented.
+ *                content:
+ *                  type: string
+ *                  description: The content of the comment.
+ *                timeStamp:
+ *                  type: string
+ *                  format: date-time
+ *                  description: The time the comment was posted.
+ */
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 

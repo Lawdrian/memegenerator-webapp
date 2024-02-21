@@ -8,6 +8,32 @@ const User = mongoose.model("User")
 const Meme = mongoose.model("Meme");
 const Template = mongoose.model("Template");
 
+/**
+ * @swagger
+ * /meme:
+ *   post:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Create a new meme
+ *     description: Create a new meme by providing an array of meme objects
+ *     parameters:
+ *       - in: body
+ *         name: meme
+ *         description: The meme to create
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Meme'
+ *     responses:
+ *       201:
+ *         description: Meme created successfully
+ *       400:
+ *         description: No data or missing data
+ *       401:
+ *         description: User not found
+ *       500:
+ *         description: Error creating memes or saving meme to database
+ */
 router.post('/', verifyToken, async (req, res) => {
 
   try {
@@ -79,7 +105,20 @@ router.post('/', verifyToken, async (req, res) => {
   
 })
 
-// GET-Request for self-created memes
+/**
+ * @swagger
+ * /meme/mine:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get self-created memes
+ *     description: Returns a list of memes created by the authenticated user
+ *     responses:
+ *       200:
+ *         description: Success
+ *       401:
+ *         description: User not found
+ */
 router.get('/mine', verifyToken, async (req, res) => {
   console.log("GET MY MEMES");
   const { decodedJwt } = res.locals;
@@ -94,7 +133,42 @@ router.get('/mine', verifyToken, async (req, res) => {
   res.status(200).json({Status:"ok", memes: memes})
 })
 
-// GET-Request for all memes
+/**
+ * @swagger
+ * /meme/:
+ *   get:
+ *     summary: Get all memes
+ *     description: Returns a list of all memes
+ *     responses:
+ *       200:
+ *         description: Success
+ *       500:
+ *         description: An error occurred while processing your request
+ */
+
+/**
+ * @swagger
+ * /meme/{id}:
+ *   get:
+ *     summary: Get a specific meme by id
+ *     description: Returns a specific meme by id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Meme id
+ *     responses:
+ *       200:
+ *         description: Success
+ *       400:
+ *         description: Invalid id
+ *       404:
+ *         description: Meme not found
+ *       500:
+ *         description: An error occurred while processing your request
+ */
 router.get('/:id?', async (req, res) => {
   console.log("GET ALL MEMES");
 
@@ -159,7 +233,31 @@ router.get('/:id?', async (req, res) => {
   }
 });
   
-
+/**
+ * @swagger
+ * /meme/privacy:
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update meme privacy
+ *     description: Update the privacy of a meme
+ *     parameters:
+ *       - in: body
+ *         name: privacy
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The new privacy setting
+ *     responses:
+ *       200:
+ *         description: Success
+ *       401:
+ *         description: User not found
+ *       404:
+ *         description: Meme not found
+ *       500:
+ *         description: Email not in token
+ */
 router.put('/privacy', verifyToken, async (req, res) => {
   console.log("UPDATE MEME PRIVACY");
   const {privacy,  memeId } = req.body;
@@ -181,6 +279,27 @@ router.put('/privacy', verifyToken, async (req, res) => {
     res.status(200).json(updateMeme);
 })
 
+/**
+ * @swagger
+ * /meme/vote:
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Vote for a meme
+ *     description: Vote for a meme
+ *     parameters:
+ *       - in: body
+ *         name: vote
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The vote (upvote or downvote)
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Meme not found
+ */
 router.put('/vote', verifyToken, async(req,res) => {
   console.log("++++VOTE++++");
   const { memeId, vote } = req.body;
@@ -234,6 +353,27 @@ router.put('/vote', verifyToken, async(req,res) => {
     res.status(200).json(updateMeme);
 })
 
+/**
+ * @swagger
+ * /meme/comment:
+ *   put:
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Comment on a meme
+ *     description: Comment on a meme
+ *     parameters:
+ *       - in: body
+ *         name: comment
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The comment
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Error creating Comment
+ */
 router.put('/comment', verifyToken, async(req,res) =>{
   console.log("+++Make Comment+++");
   const {memeId, comment} = req.body;

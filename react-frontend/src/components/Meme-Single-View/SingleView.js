@@ -311,18 +311,12 @@ const SingleView = () => {
             >
               Share
             </Button>
-          <Button
-            className="singleView-share-button"
-            onClick={() => setOpenStatistics(!openStatistics)}
-          >
-            Statistics
-          </Button>
-          <Button
-            className="singleView-share-button"
-            onClick={() => setOpenStatistics(!openStatistics)}
-          >
-            Statistics
-          </Button>
+            <Button
+              className="singleView-share-button"
+              onClick={() => setOpenStatistics(!openStatistics)}
+            >
+              Statistics
+            </Button>
           <Snackbar
             open={openSnackbar}
             autoHideDuration={6000}

@@ -65,7 +65,7 @@ export const saveTemplate = (template, token) => async (dispatch) => {
 
 
 export async function getTempRefMemes(template, token) {
-  const response = await fetch(`http://localhost:3001/template-info/${template._id}`, {
+  const response = await fetch(`http://localhost:3001/template/info/${template._id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

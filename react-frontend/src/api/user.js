@@ -2,7 +2,7 @@ import axios from 'axios';
 import { setUser } from '../slices/userSlice'
 
 export const registration = (data) => {
-  fetch(`http://localhost:3001/registration`, {
+  fetch(`http://localhost:3001/user/registration`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,7 +26,7 @@ export const registration = (data) => {
 }
 
 export const login = (data) => async (dispatch) => {
-  fetch(`http://localhost:3001/login`, {
+  fetch(`http://localhost:3001/user/login`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -65,7 +65,7 @@ export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
       const googleIdFromGoogleOAuth = res.data.id;
       console.log("Google ID:" + googleIdFromGoogleOAuth);
 
-      fetch('http://localhost:3001/api-login', {
+      fetch('http://localhost:3001/user/api-login', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',

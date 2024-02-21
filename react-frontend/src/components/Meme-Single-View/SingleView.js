@@ -54,20 +54,20 @@ const SingleView = () => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
         case "title":
-          return meme.name.toLowerCase().includes(filterValue.toLowerCase());
+          return meme?.name.toLowerCase().includes(filterValue.toLowerCase());
         case "description":
-          return meme.description
+          return meme?.description
             .toLowerCase()
             .includes(filterValue.toLowerCase());
         case "likes":
           const likesCount = parseInt(filterValue, 10);
           // Filter by exact number of likes if a number is provided; otherwise, don't filter
-          return !isNaN(likesCount) ? meme.upVotes.length === likesCount : true;
+          return !isNaN(likesCount) ? meme?.upVotes.length === likesCount : true;
         case "dislikes":
           const dislikesCount = parseInt(filterValue, 10);
           // Filter by exact number of dislikes if a number is provided; otherwise, don't filter
           return !isNaN(dislikesCount)
-            ? meme.downVotes.length === dislikesCount
+            ? meme?.downVotes.length === dislikesCount
             : true;
         case "fileFormat":
           // Assuming all memes are images but checking for the format anyway
@@ -88,17 +88,17 @@ const SingleView = () => {
     filteredMemes.sort((a, b) => {
       switch (selectedSortCriteria) {
         case "mostLikes":
-          return a.upVotes.length - b.upVotes.length;
+          return a?.upVotes.length - b?.upVotes.length;
         case "leastLikes":
-          return b.upVotes.length - a.upVotes.length;
+          return b?.upVotes.length - a?.upVotes.length;
         case "newest":
           // Assuming createdAtTimestamp is a numeric timestamp for simplicity
           return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
           );
         case "oldest":
           return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            new Date(a?.createdAt).getTime() - new Date(b?.createdAt).getTime()
           );
         default:
           return 0; // No sorting applied
@@ -261,10 +261,10 @@ const SingleView = () => {
       />
       {currentMeme && isVisible ? (
         <div className="single-view-card">
-          <h2 className="single-view-title">{currentMeme.name}</h2>
-          <p className="single-view-description">{currentMeme.description}</p>
+          <h2 className="single-view-title">{currentMeme?.name}</h2>
+          <p className="single-view-description">{currentMeme?.description}</p>
           <div className="single-view-image">
-            <img src={currentMeme.content} alt={currentMeme.name} />
+            <img src={currentMeme?.content} alt={currentMeme?.name} />
           </div>
           <div className="single-view-navigation">
             <button
@@ -286,13 +286,13 @@ const SingleView = () => {
               className="upvote-button"
               onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
             >
-              Like <span>({currentMeme.upVotes.length})</span>
+              Like <span>({currentMeme?.upVotes.length})</span>
             </button>
             <button
               className="downvote-button"
-              onClick={() => handleVoteClick(currentMeme._id, "downVotes")}
+              onClick={() => handleVoteClick(currentMeme?._id, "downVotes")}
             >
-              Dislike <span>({currentMeme.downVotes.length})</span>
+              Dislike <span>({currentMeme?.downVotes.length})</span>
             </button>
 
             <button onClick={navigateToRandomMeme}>Random</button>

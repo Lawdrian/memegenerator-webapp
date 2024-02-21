@@ -5,7 +5,7 @@ import $ from 'jquery';
 import {ImageEditorButton} from './ImageEditorButton';
 import { useSelector } from 'react-redux';
 
-const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
+const ImageEditorFooter = ({templateSelected, handleMemeCreation, handleDraftCreation}) => {
 
     const dictation = useSelector((state) => state.dictation);
 
@@ -30,7 +30,7 @@ const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
         setMemeDescription(dictation.description);
       }
     }, [dictation]);
-    
+    console.log("templateSelected: ", templateSelected)
     return(
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
       <Typography>File Size:</Typography>
@@ -75,9 +75,9 @@ const ImageEditorFooter = ({handleMemeCreation, handleDraftCreation}) => {
           <FormControlLabel value="private" control={<Radio />} label="private" />
         </RadioGroup>
       </FormControl>
-      <ImageEditorButton id="saveMemeBtn" onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, false)}>save</ImageEditorButton>
-      <ImageEditorButton id="saveDraftBtn" color='info' onClick={() => handleDraftCreation(memeName)}>save draft</ImageEditorButton>
-      <ImageEditorButton id="downloadBtn" onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, true)}>download</ImageEditorButton>
+      <ImageEditorButton id="saveMemeBtn" disabled={!templateSelected} onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, false)}>save</ImageEditorButton>
+      <ImageEditorButton id="saveDraftBtn" disabled={!templateSelected} color='info' onClick={() => handleDraftCreation(memeName)}>save draft</ImageEditorButton>
+      <ImageEditorButton id="downloadBtn" disabled={!templateSelected} onClick={() => handleMemeCreation(fileSize, memeName, memeDescription, memePrivacy, true)}>download</ImageEditorButton>
     </Box>
     )
 }

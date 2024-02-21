@@ -16,7 +16,7 @@ const Editor = (props) => {
     const renderCanvasPage = () => {
       navigate('../canvas')
     }
-
+    console.log("selectedTemplate: ", selectedTemplate ? true : false)
     return (
       <Grid container style={{maxHeight: '90vh', overflow: 'auto', }}>
         <UploadTemplateDialog open={uploadTemplatePage} setOpen={setUploadTemplatePage}/>
@@ -32,7 +32,7 @@ const Editor = (props) => {
             />
         </Grid>
         <Grid item xs={9}>
-          <ImageEditor imageUrl={selectedTemplate?.content} handleSaveMeme={handleSaveMeme} handleSaveDraft={handleSaveDraft} draftProps={draftProps}/>
+          <ImageEditor templateSelected={selectedTemplate ? true : false} imageUrl={selectedTemplate?.content} handleSaveMeme={handleSaveMeme} handleSaveDraft={handleSaveDraft} draftProps={draftProps}/>
         </Grid>
       </Grid>
     )

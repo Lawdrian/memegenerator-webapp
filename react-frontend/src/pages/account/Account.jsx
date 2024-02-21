@@ -16,9 +16,11 @@ export default function Account() {
 
   return (
     <div>
-      <GeneralStatistics />
       {user ? (
-        <MyAccount />
+        <div>
+          <GeneralStatistics />
+          <MyAccount />
+        </div>
       ) : (
         <SignInSignUp updateProfile={updateProfile} />
       )}

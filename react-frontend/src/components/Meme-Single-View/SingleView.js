@@ -10,6 +10,7 @@ import {
   handleCommentSubmit,
 } from "../../api/meme";
 import "./SingleView.css";
+import SingleViewStatistics from "../Statistics/SingleViewMeme";
 
 const SingleView = () => {
   const { id } = useParams();
@@ -30,8 +31,12 @@ const SingleView = () => {
   const [filterCriteria, setFilterCriteria] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
+  // State for meme statistics
+  const [openStatistics, setOpenStatistics] = useState(false);
+
   useEffect(() => {
     // Apply filtering first
+    console.log(allMemes)
     let filteredMemes = allMemes.filter((meme) => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
@@ -225,6 +230,7 @@ const SingleView = () => {
 
   return (
     <div className="single-view">
+      <SingleViewStatistics meme={currentMeme} open={openStatistics} setOpen={setOpenStatistics}/>
       <div className="single-view-content">
         <div className="single-view-comments-container">
           {/* Comments section */}
@@ -298,6 +304,12 @@ const SingleView = () => {
             onClick={handleShareClick}
           >
             Share
+          </Button>
+          <Button
+            className="singleView-share-button"
+            onClick={() => setOpenStatistics(!openStatistics)}
+          >
+            Statistics
           </Button>
           <Snackbar
             open={openSnackbar}

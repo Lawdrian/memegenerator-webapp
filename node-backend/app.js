@@ -49,7 +49,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/api', postsRouter);
 
 
 app.use(function(req,res,next){  req.db = db;

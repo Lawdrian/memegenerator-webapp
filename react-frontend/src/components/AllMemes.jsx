@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Grid, Button, TextField } from "@mui/material";
 import { getAllMemes, handleCommentSubmit, handleDownVote, handleUpVote } from "../api/meme.js";
 import "./myMemes.css";
-import SingleViewMeme from "./Statistics/SingleViewMeme";
+import SingleViewStatistics from "./Statistics/SingleViewMeme";
 
 export default function AllMemes() {
     const [allImage, setAllImage] = useState([]);
@@ -43,7 +43,7 @@ export default function AllMemes() {
                         <Grid item xs={12} md={4}>
                             <Grid style={{ display: "flex" }}>
                                <img src={image.content} alt="DAS BILD IST ECHT GEIL FINDET IHR NICHT?" style={{ width: "auto", height: "300px" }} />
-                                {image.showStatistics && <SingleViewMeme meme={image} />}
+                                {image.showStatistics && <SingleViewStatistics meme={image} />}
                             </Grid>
                         </Grid>
                         <Grid item xs={12} md={9}>

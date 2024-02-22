@@ -57,7 +57,6 @@ const SingleView = () => {
 
   useEffect(() => {
     if (token && !memesLoaded) {
-      console.log("Fetching memes...");
       getAllMemes((memes) => {
         dispatch(setMemes({ memes: memes }));
       }, token);
@@ -73,7 +72,6 @@ const SingleView = () => {
 
   useEffect(() => {
     // Apply filtering first
-    console.log(allMemes)
     let filteredMemes = allMemes.filter((meme) => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
@@ -261,7 +259,11 @@ const SingleView = () => {
 
   return (
     <div className="single-view">
-      <SingleViewStatistics meme={currentMeme} open={openStatistics} setOpen={setOpenStatistics}/>
+      <SingleViewStatistics
+        meme={currentMeme}
+        open={openStatistics}
+        setOpen={setOpenStatistics}
+      />
       <div className="sorting-filtering-wrapper">
         <SortingFilteringComponent
           onSortChange={handleSortChange}
@@ -318,10 +320,12 @@ const SingleView = () => {
               </button>
             </div>
             <div className="single-view-actions">
-              {/* Buttons for liking, disliking, and commenting */}
+              <div className="action-buttons-group">
               <Button
                 variant="contained"
                 color="primary"
+                size="small"
+                style={{ minWidth: "90px", height: '50px' }}
                 onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
               >
                 Like ({currentMeme?.upVotes.length})
@@ -329,35 +333,55 @@ const SingleView = () => {
               <Button
                 variant="contained"
                 color="secondary"
+                size="small"
+                style={{ minWidth: "90px", height: '50px' }}
                 onClick={() => handleVoteClick(currentMeme._id, "downVotes")}
               >
                 Dislike ({currentMeme?.downVotes.length})
               </Button>
 
-              <Button variant="contained" onClick={navigateToRandomMeme}>
+              <Button
+                variant="contained"
+                size="small"
+                style={{ minWidth: "90px", height: '50px' }}
+                onClick={navigateToRandomMeme}
+              >
                 Random
               </Button>
-              <button onClick={() => setAutoplay(!autoplay)}>
-                {autoplay ? "Stop Autoplay" : "Start Autoplay"}
-              </button>
               <Button
-                className="singleView-share-button"
+                variant="contained"
+                color="primary"
+                size="small"
+                style={{ minWidth: "90px", height: '50px' }}
+                onClick={() => setAutoplay(!autoplay)}
+              >
+                {autoplay ? "Stop Autoplay" : "Start Autoplay"}
+              </Button>
+            </div>
+            <div className="secondary-action-buttons-group">
+              <Button
+                variant="outlined"
+                size="small"
+                style={{ minWidth: '90px', minHeight: '40px' }}
                 onClick={handleShareClick}
               >
                 Share
               </Button>
               <Button
-              className="singleView-share-button"
-              onClick={() => setOpenStatistics(!openStatistics)}
-            >
-              Statistics
-            </Button>
-          <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-              message="Meme link copied to clipboard!"
-            />
+                variant="outlined"
+                size="small"
+                style={{ minWidth: '90px', minHeight: '40px' }}
+                onClick={() => setOpenStatistics(!openStatistics)}
+              >
+                Statistics
+              </Button>
+            </div>
+              <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                message="Meme link copied to clipboard!"
+              />
             </div>
           </div>
         ) : (
@@ -366,8 +390,7 @@ const SingleView = () => {
               Currently only "image" is supported
             </h2>
           </div>
-        )
-      }
+        )}
       </div>
     </div>
   );

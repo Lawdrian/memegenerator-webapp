@@ -3,7 +3,7 @@ import SignInSignUp from './SignInSignUp';
 import MyAccount from "./MyAccount";
 
 import { useSelector } from 'react-redux';
-import GeneralStatistics from '../../components/Statistics/StatisticCreatedMemes';
+import GeneralStatistics from '../../components/Statistics/GeneralStatistics';
 
 export default function Account() {
   const [setProfile] = useState(null);

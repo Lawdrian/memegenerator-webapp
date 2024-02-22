@@ -15,7 +15,6 @@ const templateSlice = createSlice({
     reducers: {
         setTemplates: (state, action) => {  
             if(action.payload !== null && action.payload != []) {
-                console.log("templates successfully loaded")
                 state.templates = action.payload;
                 if(action.payload.length > 0) {
                     state.templatesLoaded = true;

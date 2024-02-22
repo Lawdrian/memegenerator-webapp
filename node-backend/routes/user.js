@@ -127,7 +127,7 @@ router.post('/api-login', async (req, res) => {
       console.log('Received API-Login ID:', googleId);
   
       const user = await User.findOne({ googleId });
-      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '3h' });
 
       if (!user) {
         const newUser = await GoogleUser.create({ googleId }); 

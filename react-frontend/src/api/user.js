@@ -40,8 +40,6 @@ export const login = (data) => async (dispatch) => {
     return response.json();
   })
   .then(result => {
-      //TOKEN
-      console.log(result.token);
       dispatch(setUser({ token: result.token, user: result.user }));
   })
   .catch(error => {
@@ -60,10 +58,7 @@ export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
       }
     })
     .then((res) => {
-      console.log(res);
-      console.log(res.data);
       const googleIdFromGoogleOAuth = res.data.id;
-      console.log("Google ID:" + googleIdFromGoogleOAuth);
 
       fetch('http://localhost:3001/user/api-login', {
           method: 'POST',
@@ -74,11 +69,7 @@ export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
       })
       .then(loginResponse => loginResponse.json())
       .then(result => {
-          console.log("result")
-          console.log(result)
-          console.log(res.data)
           dispatch(setUser({ token: result.token, user: res.data }));
-          console.log(result.body);
       })
       .catch(error => {
           console.error('Error during registration:', error);

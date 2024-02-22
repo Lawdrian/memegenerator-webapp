@@ -6,9 +6,7 @@ export default function SingleViewStatistics({ meme, open, setOpen}) {
 
 
   function memeDataLikes(){
-
     var dataSet = Array.from({ length: 12 }, () => 0);
-    console.log("meme", meme)
     if( !meme || meme?.upVotes.length == 0 ){return dataSet}
     meme.upVotes.forEach((like) => {
       const createdAt = new Date(like.createdAt);
@@ -41,8 +39,6 @@ export default function SingleViewStatistics({ meme, open, setOpen}) {
     meme.comments.forEach((comment) => {
       const createdAt = new Date(comment.timeStamp);
       const month = createdAt.getMonth()
-      console.log("month", month)
-      console.log("createdAt", createdAt)
       dataSet[month] ? dataSet[month]++ : (dataSet[month] = 1);
     });
     return dataSet;

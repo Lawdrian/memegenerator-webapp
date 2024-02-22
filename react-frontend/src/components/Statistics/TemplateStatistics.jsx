@@ -68,7 +68,6 @@ export default function TemplateStatistics({ template, open, setOpen}) {
         }
     });
 
-    console.log(dataSet);
     return dataSet;
   };
   return (

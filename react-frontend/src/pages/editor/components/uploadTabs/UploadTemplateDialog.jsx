@@ -36,11 +36,7 @@ const UploadTemplateDialog = ({ open, setOpen }) => {
 
     const handleTemplateUpload = () => {
       try {
-        console.log("token", token)
-        console.log("template")
-        console.log(statetemplates)
         dispatch(saveTemplate(template, token));
-        console.log("Template uploaded successfully");
       }
       catch (error) {
         console.log(error);

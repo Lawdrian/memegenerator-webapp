@@ -48,7 +48,6 @@ export default function SignInSignUp() {
   const handleLoginSubmit = (event) => {
     event.preventDefault();//prevents reload of page
     const formdata = new FormData(event.currentTarget);
-    console.log("Login gestartet");
     dispatch(login(formdata));
   };
 
@@ -62,7 +61,6 @@ export default function SignInSignUp() {
   const googleLogin = useGoogleLogin({
     onSuccess: (codeResponse) => {
       setGoogleLoginResponse(codeResponse);
-      console.log("Login erfolgreich. Willkommen!", codeResponse);
     },
     onError: (error) => console.log('Login Failed:', error)
   });

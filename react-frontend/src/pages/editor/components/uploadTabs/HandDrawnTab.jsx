@@ -46,7 +46,6 @@ import { emptyUploadTemplate } from "./UploadTemplateDialog";
   function convertCanvasToTemplate() {
     if (stageRef.current) {
       const dataUrl = stageRef.current.toDataURL();
-      console.log(dataUrl);
       setTemplate({...template, content: dataUrl, format: 'image'});
       // Now you can send dataUrl to the server or use it as the src for an Image element
     }

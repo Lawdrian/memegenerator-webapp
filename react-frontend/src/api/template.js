@@ -5,7 +5,6 @@ import { setTemplates, setTemplatesLoaded } from "../slices/templateSlice";
 export async function fetchImgflipTemplates() {
   const response = await fetch("https://api.imgflip.com/get_memes");
   const data = await response.json();
-  console.log(data);
   return data.data.memes || [];
 }
 
@@ -79,7 +78,6 @@ export async function getTempRefMemes(template, token) {
   }
 
   const data = await response.json();
-  console.log(data.data)
   return data.data || [];
 }
 

@@ -19,8 +19,6 @@ export function saveMeme(meme, token) {
     })
   })
   .then((res) => {
-    console.log("response")
-    console.log(res)
     if (res.status === 201) {
       alert("Meme saved successfully")   
       return res.json(); // Resolve with the JSON data if the status is 201
@@ -75,7 +73,6 @@ export function getSelfCreatedMemes(callBack, token) {
 
 
 export function changeMemePrivacy(privacy, memeId, token){
-  console.log(memeId)
   fetch("http://localhost:3001/meme/privacy", {
       method:"PUT",
       headers:{
@@ -87,7 +84,6 @@ export function changeMemePrivacy(privacy, memeId, token){
 }
 
 export async function handleCommentSubmit(meme, commentContent, token) {
-  console.log(commentContent);
   
   const response = await fetch('http://localhost:3001/meme/comment', {
     headers: {

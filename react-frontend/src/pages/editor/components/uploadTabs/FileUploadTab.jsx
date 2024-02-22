@@ -28,7 +28,6 @@ function FileUploadTab({ template, setTemplate }) {
 
   // this function transforms the first frame of a video or gif into a base64 string
   const captureFirstFrame = async (file) => {
-    console.log("captureFirstFrame");
   
     return new Promise((resolve) => {
       const isGIF = file.type === "image/gif";
@@ -87,7 +86,6 @@ function FileUploadTab({ template, setTemplate }) {
     if (file) {
       let base64;
       if (file.type.startsWith('image/gif') || file.type.startsWith('video/')) {
-        console.log("video or gif")
         // for videos or other types, capture the first frame
         base64 = await captureFirstFrame(file);
       } else {

@@ -72,7 +72,6 @@ const CanvasCreator = () => {
 
   // this useEffect is used to update the meme name state with the spoken text from the dictation
   useEffect(() => {
-    console.log("dictation.name: ", dictation.name);
     if(dictation.name !== "") {
       setCanvasName(dictation.name); 
     }
@@ -80,7 +79,6 @@ const CanvasCreator = () => {
 
   // this useEffect is used to update the meme description state with the spoken text from the dictation
   useEffect(() => {
-    console.log("dictation.description: ", dictation.description);
     if(dictation.description !== "") {
       setCanvasDescription(dictation.description);
     }
@@ -89,8 +87,6 @@ const CanvasCreator = () => {
 
   // Function to handle template selection
   const handleTemplateSelect = (template) => {
-    console.log("handleTemplateSelect")
-    console.log(template)
     if(selectedTemplates.includes(template)) {
       setSelectedTemplates(selectedTemplates.filter(t => t !== template));
     } else {
@@ -109,10 +105,7 @@ const CanvasCreator = () => {
       transformers.forEach(transformer => transformer.show());
 
     try {
-      console.log("template")
-      console.log(selectedTemplates)
       dispatch(saveTemplate({content: dataUrl, format: "image", name: canvasName, description: canvasDescription}, token));
-      console.log("Template uploaded successfully");
       navigate('../editor')
     }
     catch (error) {

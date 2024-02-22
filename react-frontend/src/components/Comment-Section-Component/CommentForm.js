@@ -8,7 +8,6 @@ const CommentForm = ({ meme, token }) => {
     e.preventDefault();
     handleCommentSubmit(meme, commentContent, token)
       .then(response => {
-        console.log('Comment added:', response);
         // Optionally reset commentContent state or update UI to show the new comment
         setCommentContent('');
       })

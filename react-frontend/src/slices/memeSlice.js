@@ -25,7 +25,6 @@ const memeSlice = createSlice({
   reducers: {
     setMemes: (state, action) => {
       const { memes } = action.payload || {};
-      console.log("Memes:", memes);
       state.memes = memes;
       
     },
@@ -47,17 +46,7 @@ const memeSlice = createSlice({
       const { memeId, comment } = action.payload;
       const index = state.memes.findIndex((meme) => meme._id === memeId);
       if (index !== -1) {
-        // make copy of the meme and add the new comment
-        const updatedMeme = {
-          ...state.memes[index],
-          comments: [...state.memes[index].comments, comment],
-        };
-
-        state.memes = [
-          ...state.memes.slice(0, index),
-          updatedMeme,
-          ...state.memes.slice(index + 1),
-        ];
+        state.memes[index] = comment.comment
       }
     },
     setSorting: (state, action) => {

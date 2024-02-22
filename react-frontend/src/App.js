@@ -62,6 +62,7 @@ function App() {
     return () => clearInterval(intervalId);
   }, [dispatch]);
 
+  /* Not finally implemented
   useEffect(() => {
     if(serverReachable && cachedMeme != [] && cachedMeme !== undefined && cachedMeme.length > 0) {
       console.log("Uploading cached memes");
@@ -72,6 +73,7 @@ function App() {
       dispatch(resetMemeCache());
     }
   }, [serverReachable])
+  */
  
   // fetch drafts from database on page load
   useEffect(() => {

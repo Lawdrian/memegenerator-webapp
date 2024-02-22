@@ -16,8 +16,6 @@ const ImageEditorFooter = ({templateSelected, handleMemeCreation, handleDraftCre
 
     // this useEffect is used to update the meme name state with the spoken text from the dictation
     useEffect(() => {
-      console.log("dictation.name: ", dictation.name);
-      console.log(dictation)
       if(dictation.name !== "") {
         setMemeName(dictation.name);
       }
@@ -25,12 +23,10 @@ const ImageEditorFooter = ({templateSelected, handleMemeCreation, handleDraftCre
 
     // this useEffect is used to update the meme description state with the spoken text from the dictation
     useEffect(() => {
-      console.log("dictation.description: ", dictation.description);
       if(dictation.description !== "") {
         setMemeDescription(dictation.description);
       }
     }, [dictation]);
-    console.log("templateSelected: ", templateSelected)
     return(
     <Box display="flex" alignItems="center" sx={{ gap: 2, padding:'10px' }}>
       <Typography>File Size:</Typography>

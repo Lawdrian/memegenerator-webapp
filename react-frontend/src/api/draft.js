@@ -2,7 +2,6 @@ import { setDrafts, setDraftsLoaded } from "../slices/draftSlice";
 import { setUser } from "../slices/userSlice";
 
 export const saveDraft = (draft, token, navigate) => async (dispatch) => {
-  console.log("saving draft")
   try {
     const response = await fetch("http://localhost:3001/draft", {
       method: "POST",

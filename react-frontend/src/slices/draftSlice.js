@@ -18,7 +18,6 @@ const draftSlice = createSlice({
     reducers: {
         setDrafts: (state, action) => { 
             if(action.payload !== null && action.payload != []) {
-                console.log("drafts successfully loaded")
                 state.drafts = action.payload;
                 state.draftsLoaded = true;
             } else {

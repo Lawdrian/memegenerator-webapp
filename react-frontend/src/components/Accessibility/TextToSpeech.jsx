@@ -26,7 +26,6 @@ export default function TextToSpeech() {
                 speech = createSpeechInstance();
                 window.speechSynthesis.speak(speech);
                 setSpeaking(true);
-                console.log('Text to speech started');
             }
         }
     }

@@ -18,7 +18,6 @@ export default function ReadImageDescription() {
     useEffect(() => {
         const handleMouseMove = (event) => {
             const hovered = document.elementFromPoint(event.clientX, event.clientY);
-            console.log(hovered)
             if (hovered && hovered.tagName === 'IMG') {
                 setHoveredElement(hovered);
             } else {

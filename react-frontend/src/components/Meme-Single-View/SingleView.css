@@ -75,16 +75,17 @@
 }
 
 .single-view-actions {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px;
-  margin-bottom: 20px;
-  background-color: rgba(255, 255, 255, 0.8);
   display: flex;
-  justify-content: space-between; 
+  flex-direction: column;
   align-items: center;
+}
+.action-buttons-group,
+.secondary-action-buttons-group {
+  margin-bottom: 10px; /* Spacing between button groups */
+  display: flex;
+  justify-content: center;
+  gap: 10px; 
+  margin-top: 5px;
 }
 
 .singleView-share-button {

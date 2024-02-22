@@ -5,6 +5,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import SortingFilteringComponent from "../../components/Sorting-Filtering-Component/SortingFiltering";
 import { setMemes, updateLikesDislikes } from "../../slices/memeSlice";
 import { getAllMemes, handleUpVote, handleDownVote } from "../../api/meme";
+import { Button } from "@mui/material"
 import "./Home.css";
 
 function Home() {
@@ -28,14 +29,11 @@ function Home() {
 
   useEffect(() => {
     if (token && !memesLoaded) {
-      console.log("Fetching memes...");
       getAllMemes((memes) => {dispatch(setMemes({ memes: memes }))}, token);
     }
   }, [token, memesLoaded, dispatch]);
 
   useEffect(() => {
-    console.log("Current User ID:", currentUserID);
-    console.log("Fetched Memes:", allMemes);
     const visibleMemes = allMemes.filter(meme => {
       // Check if the meme is public
       if (meme.privacy === "public") {
@@ -46,7 +44,6 @@ function Home() {
       const creatorId = meme.createdBy._id || meme.createdBy;
       return meme.privacy === "unlisted" && creatorId === currentUserID;
     });
-    console.log("Visible Memes:", visibleMemes);
     // first filter
     let filteredMemes = visibleMemes.filter((meme) => {
       switch (filterType) {
@@ -87,19 +84,14 @@ function Home() {
           }
         })
       : filteredMemes;
-        console.log("Sorted Filtered Memes:", sortedFilteredMemes);
     setDisplayedMemes(sortedFilteredMemes.slice(0, limit * page));
     setHomeMemes(sortedFilteredMemes);
-    console.log("set display memes...", displayedMemes.length);
   }, [dispatch, token, sortOrder, filterType, filterText, limit, allMemes, memesLoaded, page, currentUserID, displayedMemes.length]);
 
 
 
   const fetchMoreData = () => {
-    console.log("Fetching more data...", displayedMemes.length);
-    console.log(1)
     if (page * limit < homeMemes.length) {
-      console.log(2)
       setPage((prevPage) => prevPage + 1);
      
       // Now update the displayed memes with the sorted and filtered list
@@ -108,7 +100,6 @@ function Home() {
         ...homeMemes.slice(page * limit, (page + 1) * limit),
       ]);
     } else {
-      console.log(3)
       setHasMore(false);
     }
   };
@@ -159,7 +150,7 @@ function Home() {
         onFilterTypeChange={setFilterType}
         onFilterTextChange={setFilterText}
       />
-      <InfiniteScroll
+<InfiniteScroll
         dataLength={displayedMemes.length}
         next={fetchMoreData}
         hasMore={hasMore}
@@ -185,24 +176,32 @@ function Home() {
                 )}
               </div>
               <div className="meme-actions">
-                <button
-                  className="upvote-button"
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  style={{ minWidth: "90px", minHeight: '40px', marginRight: '8px' }}
                   onClick={() => handleVoteClick(meme._id, "upVotes")}
                 >
-                  Like <span>({meme.upVotes.length})</span>
-                </button>
-                <button
-                  className="downvote-button"
+                  Like ({meme.upVotes.length})
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="small"
+                  style={{ minWidth: "90px", minHeight: '40px', marginRight: '8px' }}
                   onClick={() => handleVoteClick(meme._id, "downVotes")}
                 >
-                  Dislike <span>({meme.downVotes.length})</span>
-                </button>
-                <button
-                  className="share-button"
+                  Dislike ({meme.downVotes.length})
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  style={{ minWidth: "90px", minHeight: '40px' }}
                   onClick={() => handleShareClick(meme._id)}
                 >
                   Share
-                </button>
+                </Button>
                 <div className="meme-comments-count">
                   Comments:{" "}
                   <span>{meme.comments ? meme.comments.length : 0}</span>

@@ -50,7 +50,6 @@ function EditableTextField({stageRef, textProps, onSelect, onDeselect, isSelecte
     if (stageRef.current) {
       stageRef.current.off('click tap');
       stageRef.current.on('click tap', () => {
-        console.log("stage clicked");
         if(isEditable) {
           setIsEditable(false);
         } else {

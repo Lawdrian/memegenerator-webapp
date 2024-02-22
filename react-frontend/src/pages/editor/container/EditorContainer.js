@@ -63,12 +63,8 @@ const EditorContainer = () => {
         content: content,
       }
       if(serverReachable) {
-        console.log("Sending meme to server")
         saveMeme(meme, token)
         .then((response) => {
-          console.log("response")
-          console.log(response)
-            console.log("Meme saved successfully")
             if(response?.memes.length > 0) {
               navigate(`/meme/${response.memes[0]._id}`)
             }

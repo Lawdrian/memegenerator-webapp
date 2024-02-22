@@ -30,7 +30,6 @@ export default function ImageToText() {
                 }
 
                 const result = await response.json();
-                console.log(result);
             } catch (error) {
                 console.error('Error:', error);
             }

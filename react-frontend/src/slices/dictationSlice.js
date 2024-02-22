@@ -26,16 +26,13 @@ const dictationSlice = createSlice({
         },
         setCaption: (state, action) => {
             const {index, spokenText} = action.payload || {};
-            console.log("setCaption: ", index, spokenText);
             state.caption = {index: index, value: spokenText};
         },
         setName: (state, action) => {
-            console.log("setName: ", action.payload);
             const {spokenText} = action.payload || {};
             state.name = spokenText; 
         },
         setDescription: (state, action) => {
-            console.log("setDescription: ", action.payload);
             const {spokenText} = action.payload || {};
             state.description = spokenText; 
         },

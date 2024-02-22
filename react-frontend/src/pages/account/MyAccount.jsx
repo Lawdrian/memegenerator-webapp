@@ -7,20 +7,15 @@ import Grid from '@mui/material/Grid';
 
 //Components
 import MyMemes from '../../components/MyMemes';
-import AllMemes from '../../components/AllMemes';
-import TextDictation from '../../components/Accessibility/TextDictation';
 import MyDrafts from '../../components/MyDrafts';
 import APITesting from '../../components/APITesting';
 
 //Redux - States
 import { setUser } from '../../slices/userSlice'; 
 import { useSelector, useDispatch } from 'react-redux';
-import AllTemplates from '../../components/AllTemplates';
 
 export default function MyAccount() {
     const user = useSelector((state) => state.user.currentUser);
-    console.log("MyAccount.jsx")
-    console.log(user);
     const dispatch = useDispatch();
 
     const [showAllMemes, setShowAllMemes] = React.useState(false);
@@ -29,7 +24,6 @@ export default function MyAccount() {
 
     const handleLogout = () => {
         dispatch(setUser(null));
-        console.log('Logout clicked');
     };
 
     return (
@@ -47,14 +41,6 @@ export default function MyAccount() {
                 <Grid item>
                     <Button onClick={() => setShowMyMemes(prevState => !prevState)}>Show My Memes</Button>
                     {showMyMemes && <MyMemes />}
-                </Grid>
-                <Grid item>
-                    <Button onClick={() => setShowAllMemes(prevState => !prevState)}>Show all Memes</Button>
-                    {showAllMemes && <AllMemes />}
-                </Grid>
-                <Grid item>
-                    <Button onClick={() => setshowAllTemplates(prevState => !prevState)}>Show all Templates</Button>
-                    {showAllTemplates && <AllTemplates />}
                 </Grid>
                 <Grid item>
                     <MyDrafts />

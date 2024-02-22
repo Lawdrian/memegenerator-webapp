@@ -8,6 +8,8 @@ const User = mongoose.model("User")
 const Meme = mongoose.model("Meme");
 const Template = mongoose.model("Template");
 
+const createZipArchive = require('../utils.js').createZipArchive;
+
 /**
  * @swagger
  * /meme:
@@ -76,7 +78,6 @@ router.post('/', verifyToken, async (req, res) => {
     Promise.all(createMemePromises)
     .then((createdMemes) => {
       // return the memes as a zip file instead of a JSON array
-      console.log("ZIP: ", typeof zip)
       if (zip == "true") {
         createZipArchive(data, (error, archive) => {
           if (error) {
@@ -173,16 +174,13 @@ router.get('/mine', verifyToken, async (req, res) => {
  *       500:
  *         description: An error occurred while processing your request
  */
-router.get('/:id?', async (req, res) => {
+router.get('/:id?', verifyToken, async (req, res) => {
   console.log("GET ALL MEMES");
 
   try {
     const { id } = req.params;
     const { user, format, usedTemplate, ordering, max, zip } = req.query;
     
-    if (id) {
-      console.log("id" + id); // logs the id parameter from the URL
-    }
     let memes;
     if(id) {
       if(!mongoose.Types.ObjectId.isValid(id)){
@@ -206,7 +204,6 @@ router.get('/:id?', async (req, res) => {
       if(usedTemplate) {
         query.usedTemplate = usedTemplate;
       }
-      console.log("query", query);
       memes = await Meme.find(query)
       .sort({ createdAt: ordering === 'desc' ? -1 : 1 }) // sort by creation date
       .limit(max ? parseInt(max) : 0) // limit the number of memes
@@ -223,7 +220,6 @@ router.get('/:id?', async (req, res) => {
           res.setHeader('Content-Type', 'application/zip');
           res.setHeader('Content-Disposition', 'attachment; filename="memes.zip"');
         
-          console.log("zipfile!!!")
           // pipe the archive to the response
           archive.pipe(res);
         }
@@ -277,7 +273,6 @@ router.put('/privacy', verifyToken, async (req, res) => {
     { new: true }
     );
     if (!updateMeme) {
-      console.log(updateMeme);
       return res.status(404).json({ error: "Meme not found " });
     }
   
@@ -385,15 +380,14 @@ router.put('/comment', verifyToken, async(req,res) =>{
   console.log("+++Make Comment+++");
   const {memeId, comment} = req.body;
   const decodedJwt = res.locals.decodedJwt;
-  console.log(comment);
-
   const updatedMeme = await Meme.findOneAndUpdate(
     { _id: memeId },
     {
       $push: { comments: { user: decodedJwt.userId, content: comment } }
     },
     { new: true }
-  );
+  )
+  .populate('comments.user', 'email')
 
   if(!updatedMeme){
     return res.status(404).json({ error: "Error creating Comment"});

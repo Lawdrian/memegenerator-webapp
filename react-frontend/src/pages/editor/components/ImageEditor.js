@@ -101,7 +101,6 @@ function ImageEditor({ templateSelected, imageUrl, handleSaveMeme, handleSaveDra
 
   // update the textField porperties state once a property inside the EditableTextField component changes
   const handleEditableTextFieldChange = throttle((property, value, key) => {
-    console.log("text changed", property, value, key);
     setTextFields(prevTextFields =>
       prevTextFields.map((textField, index) =>
         index === key ? {...textField, [property]: value} : textField
@@ -172,7 +171,6 @@ function ImageEditor({ templateSelected, imageUrl, handleSaveMeme, handleSaveDra
     reader.readAsDataURL(compressedFile);
     reader.onloadend = () => {
       const compressedDataUrl = reader.result;
-      console.log(compressedDataUrl)
       if(download == true) {
         // Download the compressed image
         const link = document.createElement('a');
@@ -209,8 +207,6 @@ function ImageEditor({ templateSelected, imageUrl, handleSaveMeme, handleSaveDra
   }, [dictation.caption]);
 
   useEffect(() => {
-    console.log(selectedTextFieldIndex)
-    console.log("dictation.selectCaption: ", dictation.selectCaption)
     if(dictation.selectCaption !== null) {
       setSelectedTextFieldIndex(dictation.selectCaption);
     }
@@ -218,7 +214,7 @@ function ImageEditor({ templateSelected, imageUrl, handleSaveMeme, handleSaveDra
 
   return (
     <Grid container direction="column" style={{ backgroundColor: '#F5F5F5', maxHeight: '90vh', overflow: 'clip'}}>
-      <Grid item style={{ height: '5vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
+      <Grid item style={{ height: '8vh', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }} >
         {textFields[selectedTextFieldIndex] ? (
           <TextPropertiesForm
             removeTextField={() => removeTextField(selectedTextFieldIndex)}
@@ -258,7 +254,7 @@ function ImageEditor({ templateSelected, imageUrl, handleSaveMeme, handleSaveDra
           ))}
         </Stage>
       </Grid>
-      <Grid item style={{ height: '15vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+      <Grid item style={{ height: '12vh', padding: '10px', backgroundColor: 'white', display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
         <ImageEditorFooter templateSelected={templateSelected} handleMemeCreation={(fileSize, memeName, description, privacy, local) => handleMemeCreation(fileSize, memeName, description, privacy, local)} handleDraftCreation={(draftName) => handleDraftCreation(draftName)} />
       </Grid>
     </Grid>

@@ -30,7 +30,6 @@ const { verifyToken } = require('../middlewares.js');
  *         description: User not found
  */
 router.post('/', verifyToken, async (req, res) => {
-  console.log("CREATE DRAFT");
   const { textProperties, name, format, templateId } = req.body; 
 
   const { decodedJwt } = res.locals;
@@ -41,7 +40,6 @@ router.post('/', verifyToken, async (req, res) => {
     return res.status(401).json({ error: 'User not found' });
   }
   else if(!textProperties || !format || !templateId){
-    console.log("textProperties: ", textProperties, "name: ", name, "format: ", format, "templateId: ", templateId)
     return res.status(400).json({ error: 'Missing data' });
   }
   try {
@@ -83,7 +81,6 @@ router.post('/', verifyToken, async (req, res) => {
  *         description: User not found
  */
 router.get('/', verifyToken, async (req, res) => {
-  console.log("GET MY DRAFTS");
   const { decodedJwt } = res.locals;
   
   const user = await User.findOne({ _id: decodedJwt.userId });
@@ -120,11 +117,9 @@ router.get('/', verifyToken, async (req, res) => {
  *         description: Error deleting draft from database
  */
 router.delete('/:draftId', verifyToken, async (req, res) => {
-  console.log("DELETE DRAFT");
   
   const draftId = req.params.draftId; 
   const { decodedJwt } = res.locals;
-  console.log(draftId)
   
   const user = await User.findOne({ _id: decodedJwt.userId });
   if (!user) {

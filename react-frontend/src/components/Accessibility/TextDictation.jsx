@@ -117,7 +117,6 @@ export default function TextDictation() {
       const index = spokenText.indexOf("name");
       const extractedTitel = spokenText.substring(index + "name".length).trim();
       //$('#memetitel').val(extractedTitel);
-      console.log("name: ",extractedTitel);
       dispatch(setName({ spokenText: extractedTitel }));
     }
 
@@ -127,23 +126,19 @@ export default function TextDictation() {
       const index = spokenText.indexOf("description");
       const extractedTitel = spokenText.substring(index + "description".length).trim();
       //$('#memetitel').val(extractedTitel);
-      console.log("description: ",extractedTitel);
       dispatch(setDescription({ spokenText: extractedTitel }));
     }
 
     // meme textfield value
     else if (spokenText.includes("caption")){
-      console.log("spokenText: ", spokenText)
       const ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth']; // extend this as needed
       let index = -1;
       for (let i = 0; i < ordinals.length; i++) {
-        console.log("spokenTextincludes: ", spokenText.includes(ordinals[i]))
         if (spokenText.includes(ordinals[i])) {
           index = i; // 0-based index
           break;
         }
       }
-      console.log("index: " + index)
       if(index !== -1){
         const textIndex = spokenText.indexOf("caption");
         const extractedText = spokenText.substring(textIndex + "caption".length).trim();

@@ -1,9 +1,9 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const secretKey = crypto.randomBytes(32).toString('hex')  //symmetric key for token (length: 32 byte)
+const secretKey = crypto.randomBytes(32).toString('hex');
 
 function verifyToken(req, res, next) {
-    console.log("verifyToken");
+    console.log("trying to verify token");
     if (!req.header("Authorization")) {
         return res.status(401).json({ success: false, error: "Not logged in" });
     }

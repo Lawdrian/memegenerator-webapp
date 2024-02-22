@@ -14,12 +14,9 @@ const serverSlice = createSlice({
       state.serverReachable = false;
     },
     cacheMeme: (state, action) => {
-      console.log("Caching meme in redux store");
-      console.log(action.payload);
       state.cachedMemes = [...state.cachedMemes, action.payload];
     },
     resetMemeCache: (state) => {
-      console.log("Resetting meme cache");
       state.cachedMemes = [];
     }
   },

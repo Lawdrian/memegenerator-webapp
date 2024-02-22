@@ -17,7 +17,9 @@ const templateSlice = createSlice({
             if(action.payload !== null && action.payload != []) {
                 console.log("templates successfully loaded")
                 state.templates = action.payload;
-                state.templatesLoaded = true;
+                if(action.payload.length > 0) {
+                    state.templatesLoaded = true;
+                }
             } else {
                 console.error("setTemplates: templates data is empty");
             }

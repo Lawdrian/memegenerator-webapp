@@ -31,11 +31,8 @@ export default function ReadImageDescription() {
         } else {
             document.removeEventListener('mousemove', handleMouseMove);
             //For Abort Image Reader -> Initiliaze utterance that says nothing but overwrites the old one (overwrite the sequence)!
-            const utterance = new SpeechSynthesisUtterance("");
-            utterance.volume = 1;
-            utterance.rate = 0.65;
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);        }
+            window.speechSynthesis.cancel();        
+        }
     }, [imageReader]);
 
 

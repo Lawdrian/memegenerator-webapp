@@ -15,6 +15,7 @@ const Template = mongoose.model("Template");
  *     security:
  *       - bearerAuth: []
  *     summary: Create a new meme
+ *     tags: [Meme]
  *     description: Create a new meme by providing an array of meme objects
  *     parameters:
  *       - in: body
@@ -112,6 +113,7 @@ router.post('/', verifyToken, async (req, res) => {
  *     security:
  *       - bearerAuth: []
  *     summary: Get self-created memes
+ *     tags: [Meme]
  *     description: Returns a list of memes created by the authenticated user
  *     responses:
  *       200:
@@ -138,6 +140,7 @@ router.get('/mine', verifyToken, async (req, res) => {
  * /meme/:
  *   get:
  *     summary: Get all memes
+ *     tags: [Meme]
  *     description: Returns a list of all memes
  *     responses:
  *       200:
@@ -151,6 +154,7 @@ router.get('/mine', verifyToken, async (req, res) => {
  * /meme/{id}:
  *   get:
  *     summary: Get a specific meme by id
+ *     tags: [Meme]
  *     description: Returns a specific meme by id
  *     parameters:
  *       - in: path
@@ -240,6 +244,7 @@ router.get('/:id?', async (req, res) => {
  *     security:
  *       - bearerAuth: []
  *     summary: Update meme privacy
+ *     tags: [Meme]
  *     description: Update the privacy of a meme
  *     parameters:
  *       - in: body
@@ -286,6 +291,7 @@ router.put('/privacy', verifyToken, async (req, res) => {
  *     security:
  *       - bearerAuth: []
  *     summary: Vote for a meme
+ *     tags: [Meme]
  *     description: Vote for a meme
  *     parameters:
  *       - in: body
@@ -360,6 +366,7 @@ router.put('/vote', verifyToken, async(req,res) => {
  *     security:
  *       - bearerAuth: []
  *     summary: Comment on a meme
+ *     tags: [Meme]
  *     description: Comment on a meme
  *     parameters:
  *       - in: body

@@ -89,11 +89,10 @@ export default function TextToSpeech() {
 
                             onMouseEnter={() => { setHover(true) }}
                         >
-                            Einstellungen
+                            Settings
                         </Typography>
                     </Grid>
                 )}
-
             </Grid>
 
 

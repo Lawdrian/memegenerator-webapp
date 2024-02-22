@@ -1,86 +1,90 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Dialog } from '@mui/material';
 import React from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 
-export default function SingleViewMeme({ meme }) {
+export default function SingleViewStatistics({ meme, open, setOpen}) {
 
 
   function memeDataLikes(){
 
-    var memeData = Array.from({ length: 12 }, () => 0);
-  
+    var dataSet = Array.from({ length: 12 }, () => 0);
+    console.log("meme", meme)
+    if( !meme || meme?.upVotes.length == 0 ){return dataSet}
     meme.upVotes.forEach((like) => {
       const createdAt = new Date(like.createdAt);
-      const month = createdAt.getMonth() + 1; //Month are 0-indexed
+      const month = createdAt.getMonth()
   
-      memeData[month] ? memeData[month]++ : (memeData[month] = 1);
+      dataSet[month] ? dataSet[month]++ : (dataSet[month] = 1);
     });
 
-    return memeData;
+    return dataSet;
   };
   
   function memeDataDislikes(){
 
-    var memeData = Array.from({ length: 12 }, () => 0);
-  
+    var dataSet = Array.from({ length: 12 }, () => 0);
+    if( !meme || meme?.downVotes.length == 0 ){return dataSet}
     meme.downVotes.forEach((dislike) => {
       const createdAt = new Date(dislike.createdAt);
-      const month = createdAt.getMonth() + 1; 
+      const month = createdAt.getMonth() 
   
-      memeData[month] ? memeData[month]++ : (memeData[month] = 1);
+      dataSet[month] ? dataSet[month]++ : (dataSet[month] = 1);
     });
 
-    return memeData;
+    return dataSet;
   };
 
   function memeDataComments(){
 
-    var memeData = Array.from({ length: 12 }, () => 0);
-  
-    meme.comments.forEach((comments) => {
-      const createdAt = new Date(comments.timeStamp);
-      const month = createdAt.getMonth() + 1; 
-  
-      memeData[month] ? memeData[month]++ : (memeData[month] = 1);
+    var dataSet = Array.from({ length: 12 }, () => 0);
+    if( !meme || meme?.comments.length == 0 ){return dataSet}
+    meme.comments.forEach((comment) => {
+      const createdAt = new Date(comment.timeStamp);
+      const month = createdAt.getMonth()
+      console.log("month", month)
+      console.log("createdAt", createdAt)
+      dataSet[month] ? dataSet[month]++ : (dataSet[month] = 1);
     });
-    return memeData;
+    return dataSet;
   };
 
 
   return (
-    <Grid>
-      <Grid container spacing={2}>
-        <Grid item style={{ background: "#ffffff" }}>
-          <Typography variant="h4" style={{ color: "green", textAlign: "center", marginBottom: 20 }}>
-            Likes/Dislikes over the time 
-          </Typography>
-          <BarChart
-            xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
-            yAxis={[{ type: 'number' }]}
-            series={[
-              { data: memeDataLikes(), color: "green" }, 
-              { data: memeDataDislikes(), color: "red"}]}
-            width={500}
-            height={250}
-          />
+    <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      <Grid>
+        <Grid container spacing={2}>
+          <Grid item style={{ background: "#ffffff" }}>
+            <Typography variant="h4" style={{ color: "green", textAlign: "center", marginBottom: 20 }}>
+              Likes/Dislikes over the time 
+            </Typography>
+            <BarChart
+              xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
+              yAxis={[{ type: 'number' }]}
+              series={[
+                { data: memeDataLikes(), color: "green" }, 
+                { data: memeDataDislikes(), color: "red"}]}
+              width={500}
+              height={250}
+            />
+          </Grid>
         </Grid>
-      </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item style={{ background: "#ffffff" }}>
-          <Typography variant="h4" style={{ color: "green", textAlign: "center", marginBottom: 20 }}>
-            Comments over the time
-          </Typography>
-          <BarChart
-            xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
-            yAxis={[{ type: 'number' }]}
-            series={[{ data: memeDataComments(), color: "black"}]}
-            width={500}
-            height={250}
-          />
+        <Grid container spacing={2}>
+          <Grid item style={{ background: "#ffffff" }}>
+            <Typography variant="h4" style={{ color: "green", textAlign: "center", marginBottom: 20 }}>
+              Comments over the time
+            </Typography>
+            <BarChart
+              xAxis={[{ data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], scaleType: 'band' }]}
+              yAxis={[{ type: 'number' }]}
+              series={[{ data: memeDataComments(), color: "black"}]}
+              width={500}
+              height={250}
+            />
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+      </Dialog>
   );
 }
 

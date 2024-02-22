@@ -8,7 +8,7 @@ const swaggerUi = require("swagger-ui-express");
 const cors = require('cors'); //cross-Origin resource sharing
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { createZipArchive } = require('./utils');
+
 //MongoDB Models
 const UserModel = require('./mongoDB/user.model.js');
 const User = mongoose.model("User"); 
@@ -25,10 +25,7 @@ const userRouter = require('./routes/user');
 const memeRouter = require('./routes/meme');
 const templateRouter = require('./routes/template');
 const draftRouter = require('./routes/draft');
-
-
-//LOGIN + Registration
-const argon2 = require('argon2');
+const indexRouter = require('./routes/index');
 
 // ##### IMPORTANT
 // ### Your backend project has to switch the MongoDB port like this
@@ -37,12 +34,6 @@ const MONGODB_PORT = process.env.DBPORT || '27017';
 const db = require('monk')(`127.0.0.1:${MONGODB_PORT}/omm-ws2223`); // connect to database omm-2021
 console.log(`Connected to MongoDB at port ${MONGODB_PORT}`)
 
-// For posts
-const postsRouter = require('./routes/posts');
-// ######
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 var app = express();
 
@@ -58,22 +49,19 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/api', postsRouter);
 
-const jwt = require('jsonwebtoken');
-const { verifyToken, secretKey } = require('./middlewares.js');
 
 app.use(function(req,res,next){  req.db = db;
   next();
 });
 
 
-mongoose.connect("mongodb://localhost:27017", { 
+mongoose.connect(`mongodb://localhost:${MONGODB_PORT}/omm-ws2223`, { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-
+app.use('/', indexRouter);
 app.use("/user", userRouter);
 app.use("/meme", memeRouter);
 app.use("/template", templateRouter);
@@ -84,19 +72,8 @@ const options = {
   definition: {
     openapi: "3.1.0",
     info: {
-      title: "LogRocket Express API with Swagger",
+      title: "Meme Generator API with Swagger",
       version: "0.1.0",
-      description:
-        "This is a simple CRUD API application made with Express and documented with Swagger",
-      license: {
-        name: "MIT",
-        url: "https://spdx.org/licenses/MIT.html",
-      },
-      contact: {
-        name: "LogRocket",
-        url: "https://logrocket.com",
-        email: "info@email.com",
-      },
     },
     servers: [
       {
@@ -104,7 +81,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: ["./routes/*.js", "./MongoDB/*.js", "./app.js"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -118,15 +95,35 @@ app.use(
 
 
 
-// API-endpoint to check if the server is reachable
+/**
+ * @swagger
+ * /health-check:
+ *   get:
+ *     summary: Checks if the server is reachable
+ *     tags: [Utils]
+ *     responses:
+ *       200:
+ *         description: The server is reachable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the server
+ *                   example: ok
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the server is reachable
+ *                   example: Server is reachable
+ */
 app.get('/health-check', async (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is reachable' });
 })
 
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -143,10 +140,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
-
-
-
 
 module.exports = app;

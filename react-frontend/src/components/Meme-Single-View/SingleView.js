@@ -15,6 +15,7 @@ import {
   getAllMemes,
 } from "../../api/meme";
 import "./SingleView.css";
+import SingleViewStatistics from "../Statistics/SingleViewMeme";
 
 const SingleView = () => {
   const { id } = useParams();
@@ -67,8 +68,12 @@ const SingleView = () => {
     state.meme.memes.find((meme) => meme._id === id)
   );
 
+  // State for meme statistics
+  const [openStatistics, setOpenStatistics] = useState(false);
+
   useEffect(() => {
     // Apply filtering first
+    console.log(allMemes)
     let filteredMemes = allMemes.filter((meme) => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
@@ -256,6 +261,7 @@ const SingleView = () => {
 
   return (
     <div className="single-view">
+      <SingleViewStatistics meme={currentMeme} open={openStatistics} setOpen={setOpenStatistics}/>
       <div className="sorting-filtering-wrapper">
         <SortingFilteringComponent
           onSortChange={handleSortChange}
@@ -340,12 +346,18 @@ const SingleView = () => {
               >
                 Share
               </Button>
-              <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-                message="Meme link copied to clipboard!"
-              />
+              <Button
+              className="singleView-share-button"
+              onClick={() => setOpenStatistics(!openStatistics)}
+            >
+              Statistics
+            </Button>
+          <Snackbar
+              open={openSnackbar}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              message="Meme link copied to clipboard!"
+            />
             </div>
           </div>
         ) : (
@@ -354,7 +366,8 @@ const SingleView = () => {
               Currently only "image" is supported
             </h2>
           </div>
-        )}
+        )
+      }
       </div>
     </div>
   );

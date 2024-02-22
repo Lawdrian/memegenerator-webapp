@@ -142,6 +142,8 @@ router.get('/mine', verifyToken, async (req, res) => {
  *   get:
  *     summary: Get all memes
  *     tags: [Meme]
+ *     security:
+ *       - bearerAuth: []
  *     description: Returns a list of all memes
  *     responses:
  *       200:
@@ -156,6 +158,8 @@ router.get('/mine', verifyToken, async (req, res) => {
  *   get:
  *     summary: Get a specific meme by id
  *     tags: [Meme]
+ *     security:
+ *       - bearerAuth: []
  *     description: Returns a specific meme by id
  *     parameters:
  *       - in: path

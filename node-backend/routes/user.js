@@ -127,19 +127,18 @@ router.post('/api-login', async (req, res) => {
       console.log('Received API-Login ID:', googleId);
   
       const user = await User.findOne({ googleId });
-      const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '3h' });
-
-      if (!user) {
+      if(user){
+        const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '3h' });
+        return res.json({ success: 'Success API-authentification - logged in', token:token });
+      } else {
         const newUser = await GoogleUser.create({ googleId }); 
-  
+        const token = jwt.sign({ userId: newUser._id }, secretKey, { expiresIn: '3h' });
         res.json({
             success: 'User successfully created in the database && logged in',
             user: { _id: newUser._id, googleId: newUser.googleId},
             token: token
           });      
-        } else {
-        res.json({ success: 'Success API-authentification - logged in', token:token });
-      }
+      } 
     } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({ error: 'Internal Server Error' });

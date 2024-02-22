@@ -69,6 +69,7 @@ export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
       })
       .then(loginResponse => loginResponse.json())
       .then(result => {
+          console.log("result", result);
           dispatch(setUser({ token: result.token, user: res.data }));
       })
       .catch(error => {

@@ -2,11 +2,9 @@ import TextDictation from './TextDictation';
 import TextToSpeech from './TextToSpeech';
 import ReadImageDescription from './ReadImageDescription';
 import { Grid } from '@mui/material';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import Icon from '@mui/material/Icon';
 
-import image from './Icon_accessibility.png';
 import './accessibilityContent.css';
 
 import Icon_accessibility from './Icon_accessibility.png';

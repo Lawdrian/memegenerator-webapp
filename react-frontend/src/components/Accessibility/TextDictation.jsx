@@ -79,6 +79,12 @@ export default function TextDictation() {
     else if (spokenText.includes("save draft")){
       $('#saveDraftBtn').trigger("click")
     }
+    else if (spokenText.includes("upload")){
+      $('#uploadTemplateBtn').trigger("click")
+    }
+    else if (spokenText.includes("statistic")){
+      $('#templateStatisticsBtn').trigger("click")
+    }
 
     // canvas
     else if (spokenText.includes("upload")){
@@ -158,9 +164,7 @@ export default function TextDictation() {
   }
 
 
-  const handleClose = (bywhom) => {
-    console.log("handle close")
-    console.log("bywhom: ", bywhom)
+  const handleClose = () => {
     setTextDictation(false);
     setCurrentText([null]);
     dispatch(resetDictation());
@@ -173,7 +177,7 @@ export default function TextDictation() {
       {showTextDictation &&
         (<Popover
           open={showTextDictation}
-          onClose={() => handleClose("popover")}
+          onClose={() => handleClose()}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >

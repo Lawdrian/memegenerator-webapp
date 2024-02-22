@@ -16,7 +16,6 @@ const Editor = (props) => {
     const renderCanvasPage = () => {
       navigate('../canvas')
     }
-    console.log("selectedTemplate: ", selectedTemplate ? true : false)
     return (
       <Grid container style={{maxHeight: '90vh', overflow: 'auto', }}>
         <UploadTemplateDialog open={uploadTemplatePage} setOpen={setUploadTemplatePage}/>

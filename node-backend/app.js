@@ -81,7 +81,7 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js", "./MongoDB/*.js"],
+  apis: ["./routes/*.js", "./MongoDB/*.js", "./app.js"],
 };
 
 const specs = swaggerJsdoc(options);
@@ -95,7 +95,29 @@ app.use(
 
 
 
-// API-endpoint to check if the server is reachable
+/**
+ * @swagger
+ * /health-check:
+ *   get:
+ *     summary: Checks if the server is reachable
+ *     tags: [Utils]
+ *     responses:
+ *       200:
+ *         description: The server is reachable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: The status of the server
+ *                   example: ok
+ *                 message:
+ *                   type: string
+ *                   description: A message indicating the server is reachable
+ *                   example: Server is reachable
+ */
 app.get('/health-check', async (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is reachable' });
 })

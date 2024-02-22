@@ -5,13 +5,14 @@ import { Button, TextField, Snackbar } from "@mui/material";
 import {
   updateLikesDislikes,
   addComment,
-  fetchAllMemes,
+  setMemes,
 } from "../../slices/memeSlice";
 import SortingFilteringComponent from "../Sorting-Filtering-Component/SortingFiltering";
 import {
   handleUpVote,
   handleDownVote,
   handleCommentSubmit,
+  getAllMemes,
 } from "../../api/meme";
 import "./SingleView.css";
 
@@ -36,28 +37,39 @@ const SingleView = () => {
   const [filterValue, setFilterValue] = useState("");
 
   const currentUserID = currentUser?._id;
+  //const publicMemes = filterPublicMemes(allMemes, currentUserID);
+
+  const filterPublicMemes = (memes, currentUserID) => {
+    const publicMemes = memes.filter(
+      (meme) =>
+        meme.privacy === "public" ||
+        (meme.privacy === "unlisted" && meme.createdBy?._id === currentUserID)
+    );
+
+    if (publicMemes.length === 0) {
+      // Display an alert
+      alert("No public memes available");
+    }
+
+    return publicMemes;
+  };
 
   useEffect(() => {
-    if (!memesLoaded) {
-      dispatch(fetchAllMemes({ token: token, currentUserID: currentUserID }));
+    if (token && !memesLoaded) {
+      console.log("Fetching memes...");
+      getAllMemes((memes) => {
+        dispatch(setMemes({ memes: memes }));
+      }, token);
     }
-  }, [dispatch, memesLoaded, token, currentUserID]);
-  
+  }, [token, memesLoaded, dispatch]);
   // find the current meme from the Redux store
   const currentMeme = useSelector((state) =>
     state.meme.memes.find((meme) => meme._id === id)
   );
 
   useEffect(() => {
-    // Filter memes first based on visibility criteria
-    let visibleMemes = allMemes.filter((meme) => {
-      return (
-        meme.privacy === "public" ||
-        (meme.privacy === "unlisted" && meme.createdBy._id && meme.createdBy._id === currentUserID)
-      );
-    });
     // Apply filtering first
-    let filteredMemes = visibleMemes.filter((meme) => {
+    let filteredMemes = allMemes.filter((meme) => {
       // Apply filter based on the criteria and value
       switch (filterCriteria) {
         case "title":
@@ -139,9 +151,10 @@ const SingleView = () => {
   }, []);
 
   const navigateToRandomMeme = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * allMemes.length);
-    navigate(`/meme/${allMemes[randomIndex]._id}`);
-  }, [allMemes, navigate]);
+    const visibleMemes = filterPublicMemes(allMemes, currentUserID);
+    const randomIndex = Math.floor(Math.random() * visibleMemes.length);
+    navigate(`/meme/${visibleMemes[randomIndex]._id}`);
+  }, [allMemes, navigate, currentUserID]);
 
   const autoplayIntervalRef = useRef(null);
 
@@ -158,19 +171,22 @@ const SingleView = () => {
   }, [autoplay, navigateToRandomMeme, allMemes.length]);
 
   const navigateToNextMeme = () => {
-    const currentIndex = sortedMemes.findIndex((meme) => meme._id === id);
-    const nextIndex = (currentIndex + 1) % sortedMemes.length;
-    if (sortedMemes[nextIndex]) {
-      navigate(`/meme/${sortedMemes[nextIndex]._id}`);
+    // Apply the filterPublicMemes function to get only the memes that should be visible to the current user
+    const visibleMemes = filterPublicMemes(sortedMemes, currentUserID);
+    const currentIndex = visibleMemes.findIndex((meme) => meme._id === id);
+    const nextIndex = (currentIndex + 1) % visibleMemes.length;
+    if (visibleMemes[nextIndex]) {
+      navigate(`/meme/${visibleMemes[nextIndex]._id}`);
     }
   };
 
   const navigateToPreviousMeme = () => {
-    const currentIndex = sortedMemes.findIndex((meme) => meme._id === id);
+    const visibleMemes = filterPublicMemes(sortedMemes, currentUserID);
+    const currentIndex = visibleMemes.findIndex((meme) => meme._id === id);
     const prevIndex =
-      (currentIndex - 1 + sortedMemes.length) % sortedMemes.length;
-    if (sortedMemes[prevIndex]) {
-      navigate(`/meme/${sortedMemes[prevIndex]._id}`);
+      (currentIndex - 1 + visibleMemes.length) % visibleMemes.length;
+    if (visibleMemes[prevIndex]) {
+      navigate(`/meme/${visibleMemes[prevIndex]._id}`);
     }
   };
 
@@ -240,95 +256,106 @@ const SingleView = () => {
 
   return (
     <div className="single-view">
-      <div className="single-view-content">
-        <div className="single-view-comments-container">
-          {/* Comments section */}
-          <TextField
-            fullWidth
-            label="Add a comment"
-            variant="outlined"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-          />
-          <Button onClick={handleSubmitComment}>Submit Comment</Button>
-          {currentMeme?.comments?.map((comment, index) => (
-            <div key={index} className="single-view-comment">
-              <p>
-                <strong>{comment.user?.email}</strong>: {comment.content}
-              </p>
-            </div>
-          ))}
-        </div>{" "}
+      <div className="sorting-filtering-wrapper">
+        <SortingFilteringComponent
+          onSortChange={handleSortChange}
+          onFilterTypeChange={handleFilterTypeChange}
+          onFilterTextChange={handleFilterValueChange}
+          selectedSort={selectedSortCriteria}
+          selectedFilterType={filterCriteria}
+          filterText={filterValue}
+        />
       </div>
-      <SortingFilteringComponent
-        onSortChange={handleSortChange}
-        onFilterTypeChange={handleFilterTypeChange}
-        onFilterTextChange={handleFilterValueChange}
-        selectedSort={selectedSortCriteria}
-        selectedFilterType={filterCriteria}
-        filterText={filterValue}
-      />
-      {currentMeme && isVisible ? (
-        <div className="single-view-card">
-          <h2 className="single-view-title">{currentMeme?.name}</h2>
-          <p className="single-view-description">{currentMeme?.description}</p>
-          <div className="single-view-image">
-            <img src={currentMeme?.content} alt={currentMeme?.name} />
-          </div>
-          <div className="single-view-navigation">
-            <button
-              className="nav-button previous-button"
-              onClick={navigateToPreviousMeme}
-            >
-              Previous
-            </button>
-            <button
-              className="nav-button next-button"
-              onClick={navigateToNextMeme}
-            >
-              Next
-            </button>
-          </div>
-          <div className="single-view-actions">
-            {/* Buttons for liking, disliking, and commenting */}
-            <button
-              className="upvote-button"
-              onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
-            >
-              Like <span>({currentMeme?.upVotes.length})</span>
-            </button>
-            <button
-              className="downvote-button"
-              onClick={() => handleVoteClick(currentMeme?._id, "downVotes")}
-            >
-              Dislike <span>({currentMeme?.downVotes.length})</span>
-            </button>
-
-            <button onClick={navigateToRandomMeme}>Random</button>
-            <button onClick={() => setAutoplay(!autoplay)}>
-              {autoplay ? "Stop Autoplay" : "Start Autoplay"}
-            </button>
-            <Button
-              className="singleView-share-button"
-              onClick={handleShareClick}
-            >
-              Share
-            </Button>
-            <Snackbar
-              open={openSnackbar}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-              message="Meme link copied to clipboard!"
+      <div className="single-view-main-content">
+        <div className="single-view-content">
+          <div className="single-view-comments-container">
+            {/* Comments section */}
+            <TextField
+              fullWidth
+              label="Add a comment"
+              variant="outlined"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
             />
+            <Button onClick={handleSubmitComment}>Submit Comment</Button>
+            {currentMeme?.comments?.map((comment, index) => (
+              <div key={index} className="single-view-comment">
+                <p>
+                  <strong>{comment.user?.email}</strong>: {comment.content}
+                </p>
+              </div>
+            ))}
+          </div>{" "}
+        </div>
+
+        {currentMeme && isVisible ? (
+          <div className="single-view-card">
+            <h2 className="single-view-title">{currentMeme?.name}</h2>
+            <p className="single-view-description">
+              {currentMeme?.description}
+            </p>
+            <div className="single-view-image">
+              <img src={currentMeme?.content} alt={currentMeme?.name} />
+            </div>
+            <div className="single-view-navigation">
+              <button
+                className="nav-button previous-button"
+                onClick={navigateToPreviousMeme}
+              >
+                Previous
+              </button>
+              <button
+                className="nav-button next-button"
+                onClick={navigateToNextMeme}
+              >
+                Next
+              </button>
+            </div>
+            <div className="single-view-actions">
+              {/* Buttons for liking, disliking, and commenting */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleVoteClick(currentMeme._id, "upVotes")}
+              >
+                Like ({currentMeme?.upVotes.length})
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleVoteClick(currentMeme._id, "downVotes")}
+              >
+                Dislike ({currentMeme?.downVotes.length})
+              </Button>
+
+              <Button variant="contained" onClick={navigateToRandomMeme}>
+                Random
+              </Button>
+              <button onClick={() => setAutoplay(!autoplay)}>
+                {autoplay ? "Stop Autoplay" : "Start Autoplay"}
+              </button>
+              <Button
+                className="singleView-share-button"
+                onClick={handleShareClick}
+              >
+                Share
+              </Button>
+              <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                message="Meme link copied to clipboard!"
+              />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="single-view-card">
-          <h2 className="single-view-title">
-            Currently only "image" is supported
-          </h2>
-        </div>
-      )}
+        ) : (
+          <div className="single-view-card">
+            <h2 className="single-view-title">
+              Currently only "image" is supported
+            </h2>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,32 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-// Asynchronous thunk for fetching all memes
-export const fetchAllMemes = createAsyncThunk(
-  'meme/fetchAll',
-  async ({ token, currentUserID }, { rejectWithValue }) => {
-    try {
-      const response = await fetch("http://localhost:3001/meme", {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) throw new Error('Failed to fetch memes');
-      const { memes } = await response.json();
-
-     
-      const filteredMemes = memes.filter(meme =>
-        meme.privacy === 'public' ||
-        (meme.privacy === 'unlisted' && meme.createdBy._id === currentUserID)
-      );
-
-      return filteredMemes;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
 const memeSlice = createSlice({
   name: "meme",
@@ -52,8 +25,9 @@ const memeSlice = createSlice({
   reducers: {
     setMemes: (state, action) => {
       const { memes } = action.payload || {};
-
+      console.log("Memes:", memes);
       state.memes = memes;
+      
     },
     updateLikesDislikes: (state, action) => {
       const { memeId, upVotes, downVotes } = action.payload;
@@ -93,17 +67,7 @@ const memeSlice = createSlice({
         state.filtering = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchAllMemes.fulfilled, (state, action) => {
-        state.memes = action.payload;
-        state.memesLoaded = true;
-      })
-      .addCase(fetchAllMemes.rejected, (state, action) => {
-        // Handle the rejected case
-        console.error("Failed to load memes:", action.payload);
-      });
-  },
+  
 });
 
 export const { setMemes, appendMemes, updateLikesDislikes, addComment, setSorting, setFiltering } =

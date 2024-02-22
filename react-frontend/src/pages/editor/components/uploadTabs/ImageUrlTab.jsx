@@ -39,8 +39,23 @@ function ImageUrlTab({ template, setTemplate }) {
               endIcon={<SendIcon />}
               disabled={!inputUrl}
               onClick={async (e) => {
-                const base64 = await convertUrlToBase64(inputUrl);
-                setTemplate({...template, content: base64, format: 'image'});
+                try {
+                  const response = await fetch(inputUrl);
+                  const contentType = response.headers.get('content-type');
+                  if (contentType && contentType.startsWith('image/') && contentType !== 'image/gif') {
+                    const blob = await response.blob();
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                      const base64data = reader.result;
+                      setTemplate({...template, content: base64data, format: 'image'});
+                    }
+                    reader.readAsDataURL(blob);
+                  } else {
+                    alert('Only Image URLs are supported for this upload type');
+                  }
+                } catch (error) {
+                  alert('The provided URL does not contain a valid image.');
+                }
               }}
             >
               Preview

@@ -33,7 +33,7 @@ const EditorContainer = () => {
     const serverReachable = useSelector((state) => state.server.serverReachable);
     const token = useSelector((state) => state.user.token);
     const drafts = useSelector((state) => state.draft.drafts);
-    if(!storeTemplates.templatesLoaded) {
+    if(token && !storeTemplates.templatesLoaded) {
       dispatch(getTemplates(token))
     }
 

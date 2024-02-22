@@ -11,9 +11,8 @@ const EditorSidebar = (props) => {
   const handleTemplateClick = (template) => {
     setSelectedTemplate(template);
   };
-
+  
   const filteredTemplates = templates.filter(template => template.format === selectedFormat);
-
 
   return (
     <Grid container direction="column" justifyContent="flex-start" style={{maxHeight: '90vh', overflow: 'clip'}}>
@@ -39,7 +38,7 @@ const EditorSidebar = (props) => {
       </Grid>
       <Grid item xs={9} style={{overflow: 'auto', maxHeight: '50vh'}}>
         <ImageList cols={2} gap={15} rowHeight={'auto'} style={{padding:'1rem'}}>
-          {filteredTemplates.map((template, index) => (
+          { filteredTemplates.length > 0 ? (filteredTemplates.map((template, index) => (
                 <ImageListItem key={index}>
                 <img 
                   src={template.content} 
@@ -49,18 +48,23 @@ const EditorSidebar = (props) => {
                   alt={`name: ${template.name}, description: ${template.description}`}
                 />
               </ImageListItem>
-          ))}
+          )))
+          : (<Grid container justifyContent="center" alignItems="center" >
+              <h3>Coming soon</h3>
+            </Grid>)
+        
+        }
         </ImageList>
       </Grid>
       <Grid  container item direction='column' xs={2} spacing={2} style={{ alignItems: 'center', paddingTop: '2rem'}}>
         <Grid item>
-          <Button variant="contained" color="primary" disabled={!selectedTemplate} onClick={renderTemplateStatisticPage}>Show Template Statistic</Button>
+          <Button id="templateStatisticsBtn" variant="contained" color="primary" disabled={!selectedTemplate} onClick={renderTemplateStatisticPage}>Show Template Statistic</Button>
         </Grid>
         <Grid item>
           <Button variant="contained" color="secondary" onClick={renderCreateCanvasPage}>Create Canvas</Button>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="secondary" onClick={renderUploadTemplatePage}>Upload Template</Button>
+          <Button id="uploadTemplateBtn" variant="contained" color="secondary" onClick={renderUploadTemplatePage}>Upload Template</Button>
         </Grid>
       </Grid>
     </Grid>

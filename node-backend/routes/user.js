@@ -89,7 +89,7 @@ router.post('/login', async (req, res) => {
     if (!verified) {
       return res.status(401).json({ error: 'passwort incorrect' });
     }
-    const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '3h' });
 
     res.json({ success: 'Authentication successful', token, user });
 } catch (error) {

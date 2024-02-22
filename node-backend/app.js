@@ -49,7 +49,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/api', postsRouter);
 
 
 app.use(function(req,res,next){  req.db = db;
@@ -57,7 +56,7 @@ app.use(function(req,res,next){  req.db = db;
 });
 
 
-mongoose.connect("mongodb://localhost:27017/omm-ws2223", { 
+mongoose.connect(`mongodb://localhost:${MONGODB_PORT}/omm-ws2223`, { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

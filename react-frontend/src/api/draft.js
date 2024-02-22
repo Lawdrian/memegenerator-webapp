@@ -1,4 +1,5 @@
 import { setDrafts, setDraftsLoaded } from "../slices/draftSlice";
+import { setUser } from "../slices/userSlice";
 
 export const saveDraft = (draft, token, navigate) => async (dispatch) => {
   console.log("saving draft")
@@ -47,7 +48,14 @@ export const getDrafts = (token) => async (dispatch) =>{
     })
     const data = await response.json();
     if(data.error) {
-      alert("Error retrieving drafts from database")
+      if(data.error === "Token not verified") {
+        dispatch(setUser(null));
+        setTimeout(() => {
+          alert("Token expired, please login again");
+        }, 1000);
+      } else {
+        alert("Error retrieving drafts from database")
+      }
     } else {
        dispatch(setDrafts(data.data || []))
     }

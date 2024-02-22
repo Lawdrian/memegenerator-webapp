@@ -10,10 +10,10 @@ import { resetDictation, selectCaption, setCaption, setDescription, setName } fr
 import speechToText from './Icon_speechToText.svg';
 import Icon from '@mui/material/Icon';
 //Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setDictation } from '../../slices/dictationSlice';
 
-export default function SpeechRecognitionTest() {
+export default function TextDictation() {
   const [currentText, setCurrentText] = useState([null]);
   const [showTextDictation, setTextDictation] = useState(false);
 
@@ -158,19 +158,22 @@ export default function SpeechRecognitionTest() {
   }
 
 
-  const handleClose = () => {
+  const handleClose = (bywhom) => {
+    console.log("handle close")
+    console.log("bywhom: ", bywhom)
     setTextDictation(false);
+    setCurrentText([null]);
     dispatch(resetDictation());
   }
 
   return (
-    <Grid title = "Dictation" container direction="column" alignItems="center" onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>
+    <Grid title = "Dictation" container direction="column" alignItems="center" onClick={() => { !showTextDictation && setTextDictation(true) }}>
       <Icon title = "Dictation" style={{ filter: showTextDictation ? 'invert(0%)': 'invert(100%)', backgroundImage: `url(${speechToText})`, backgroundSize: 'cover', width: 25, height: 25 }}  />
       {/* <Button color="inherit" style={{ fontSize: "12px" }} onClick={() => { showTextDictation ? setTextDictation(false) : setTextDictation(true) }}>Dictation</Button> */}
       {showTextDictation &&
         (<Popover
           open={showTextDictation}
-          onClose={handleClose}
+          onClose={() => handleClose("popover")}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >

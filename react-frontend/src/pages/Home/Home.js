@@ -168,7 +168,7 @@ function Home() {
                 {meme.content ? (
                   <img
                     src={meme.content}
-                    alt={`Meme ${meme._id}`}
+                    alt={`name: ${meme.name}, description: ${meme.description}`}
                     style={{ width: "100%", height: "auto" }}
                   />
                 ) : (

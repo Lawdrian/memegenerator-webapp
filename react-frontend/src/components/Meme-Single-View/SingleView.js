@@ -303,7 +303,7 @@ const SingleView = () => {
               {currentMeme?.description}
             </p>
             <div className="single-view-image">
-              <img src={currentMeme?.content} alt={currentMeme?.name} />
+              <img src={currentMeme?.content} alt={`name: ${currentMeme?.name}, description: ${currentMeme?.description}`} />
             </div>
             <div className="single-view-navigation">
               <button

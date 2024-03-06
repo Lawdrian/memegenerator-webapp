@@ -1,6 +1,8 @@
+import { SERVER_DOMAIN } from '../utils/authUtils';
+
 export function saveMeme(meme, token) {
 
-  return fetch("http://localhost:3001/meme", {
+  return fetch(`${SERVER_DOMAIN}:3001/meme`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +37,7 @@ export function saveMeme(meme, token) {
 }
 
 export function getAllMemes(callBack, token) {
-  fetch("http://localhost:3001/meme", {
+  fetch(`${SERVER_DOMAIN}:3001/meme`, {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json',
@@ -58,7 +60,7 @@ export function getAllMemes(callBack, token) {
 
 
 export function getSelfCreatedMemes(callBack, token) {
-  fetch("http://localhost:3001/meme/mine", {
+  fetch(`${SERVER_DOMAIN}:3001/meme/mine`, {
       method: 'GET',
       headers: {
           "Authorization": "Bearer " + token, 
@@ -73,7 +75,7 @@ export function getSelfCreatedMemes(callBack, token) {
 
 
 export function changeMemePrivacy(privacy, memeId, token){
-  fetch("http://localhost:3001/meme/privacy", {
+  fetch(`${SERVER_DOMAIN}:3001/meme/privacy`, {
       method:"PUT",
       headers:{
           "Content-Type": "application/json",
@@ -85,7 +87,7 @@ export function changeMemePrivacy(privacy, memeId, token){
 
 export async function handleCommentSubmit(meme, commentContent, token) {
   
-  const response = await fetch('http://localhost:3001/meme/comment', {
+  const response = await fetch(`${SERVER_DOMAIN}:3001/meme/comment`, {
     headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json'
@@ -104,7 +106,7 @@ export async function handleCommentSubmit(meme, commentContent, token) {
 
 
 export function handleUpVote(memeId, token) {
-  return fetch('http://localhost:3001/meme/vote', {
+  return fetch(`${SERVER_DOMAIN}:3001/meme/vote`, {
       method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,
@@ -124,7 +126,7 @@ export function handleUpVote(memeId, token) {
 }
 
 export function handleDownVote(memeId, token) {
-  return fetch('http://localhost:3001/meme/vote', {
+  return fetch(`${SERVER_DOMAIN}:3001/meme/vote`, {
       method: 'PUT',
       headers: {
           "Authorization": "Bearer " + token,

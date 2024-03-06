@@ -2,6 +2,8 @@
 import { setServerNotReachable } from "../slices/serverSlice";
 import { setTemplates, setTemplatesLoaded } from "../slices/templateSlice";
 
+import { SERVER_DOMAIN } from "../utils/authUtils";
+
 export async function fetchImgflipTemplates() {
   const response = await fetch("https://api.imgflip.com/get_memes");
   const data = await response.json();
@@ -12,7 +14,7 @@ export async function fetchImgflipTemplates() {
 export const getTemplates = (token) => async (dispatch) => {
   
   try {
-    const response = await fetch("http://localhost:3001/template", {
+    const response = await fetch(`${SERVER_DOMAIN}:3001/template`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +36,7 @@ export const getTemplates = (token) => async (dispatch) => {
 
 // I am using Redux Thunk here -> this function needs to be invoked with dispatch(saveTemplate(template, token))
 export const saveTemplate = (template, token) => async (dispatch) => {
-  fetch("http://localhost:3001/template", {
+  fetch(`${SERVER_DOMAIN}:3001/template`, {
     method: "POST",
     //crossDomain: true,
     headers: {
@@ -64,7 +66,7 @@ export const saveTemplate = (template, token) => async (dispatch) => {
 
 
 export async function getTempRefMemes(template, token) {
-  const response = await fetch(`http://localhost:3001/template/info/${template._id}`, {
+  const response = await fetch(`${SERVER_DOMAIN}:3001/template/info/${template._id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -6,6 +6,8 @@ import { useSelector } from "react-redux"
 import { getAllMemes } from "../api/meme"
 import { formatTime } from "../utils/timeUtils"
 
+import { SERVER_DOMAIN } from "../utils/authUtils"
+
 
 const APITesting = () => {
   const [memes, setMemes] = react.useState([])
@@ -49,7 +51,7 @@ const APITesting = () => {
         },
       ]              
       
-      fetch(`http://localhost:3001/meme?zip=${zip}`, {
+      fetch(`${SERVER_DOMAIN}:3001/meme?zip=${zip}`, {
         method: "POST",
         crossDomain: true,
         headers: {
@@ -93,7 +95,7 @@ const APITesting = () => {
 
   const fetchMemeBatch = async (zip) => {
     setFetchMemesRsponse([])
-    fetch(`http://localhost:3001/meme?max=3&ordering=asc&format=image&zip=${zip}`, {
+    fetch(`${SERVER_DOMAIN}:3001/meme?max=3&ordering=asc&format=image&zip=${zip}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

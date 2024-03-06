@@ -30,8 +30,11 @@ const indexRouter = require('./routes/index');
 // ##### IMPORTANT
 // ### Your backend project has to switch the MongoDB port like this
 // ### Thus copy paste this block to your project
-const MONGODB_PORT = process.env.DBPORT || '27017';
-const db = require('monk')(`127.0.0.1:${MONGODB_PORT}/omm-ws2223`); // connect to database omm-2021
+const MONGODB_PORT = process.env.DB_PORT || '27017';
+const MONGODB_DOMAIN = process.env.DB_DOMAIN || 'mongodb://localhost';
+const MONGODB_NAME = process.env.DB_NAME || 'omm-ws2223';
+const SERVER_DOMAIN = process.env.SERVER_DOMAIN || 'http://localhost';
+//const db = require('monk')(`127.0.0.1:${MONGODB_PORT}/omm-ws2223`); // connect to database omm-2021
 console.log(`Connected to MongoDB at port ${MONGODB_PORT}`)
 
 
@@ -56,7 +59,7 @@ app.use(function(req,res,next){  req.db = db;
 });
 
 
-mongoose.connect(`mongodb://localhost:${MONGODB_PORT}/omm-ws2223`, { 
+mongoose.connect(`${MONGODB_DOMAIN}:${MONGODB_PORT}/${MONGODB_NAME}`, { 
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -77,7 +80,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3001",
+        url: `${SERVER_DOMAIN}:3001`,
       },
     ],
   },

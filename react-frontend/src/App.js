@@ -52,10 +52,11 @@ function App() {
   const templatesLoaded = useSelector((state) => state.template.templatesLoaded);
 
   // check server availability every 10 seconds
+  // change to reduce server load
   useEffect(() => {
     const intervalId = setInterval(() => {
       dispatch(checkServerAvailability());
-    }, 10000);
+    }, 900000);
 
 
     // clear the interval on component unmount

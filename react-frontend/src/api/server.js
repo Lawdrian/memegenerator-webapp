@@ -5,7 +5,7 @@ import { SERVER_DOMAIN } from '../utils/authUtils';
 const checkServerAvailability = () => async (dispatch) => {
   try {
     // make a dummy request to the server
-    const response = await fetch(`${SERVER_DOMAIN}:3001/health-check`);
+    const response = await fetch(`${SERVER_DOMAIN}:3000/health-check`);
 
     // assuming the server is reachable if the dummy request is successful
     dispatch(setServerReachable());

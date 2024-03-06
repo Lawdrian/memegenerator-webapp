@@ -51,7 +51,7 @@ const APITesting = () => {
         },
       ]              
       
-      fetch(`${SERVER_DOMAIN}:3001/meme?zip=${zip}`, {
+      fetch(`${SERVER_DOMAIN}:3000/meme?zip=${zip}`, {
         method: "POST",
         crossDomain: true,
         headers: {
@@ -95,7 +95,7 @@ const APITesting = () => {
 
   const fetchMemeBatch = async (zip) => {
     setFetchMemesRsponse([])
-    fetch(`${SERVER_DOMAIN}:3001/meme?max=3&ordering=asc&format=image&zip=${zip}`, {
+    fetch(`${SERVER_DOMAIN}:3000/meme?max=3&ordering=asc&format=image&zip=${zip}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

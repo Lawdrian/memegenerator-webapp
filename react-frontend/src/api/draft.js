@@ -4,7 +4,7 @@ import { SERVER_DOMAIN } from "../utils/authUtils";
 
 export const saveDraft = (draft, token, navigate) => async (dispatch) => {
   try {
-    const response = await fetch(`${SERVER_DOMAIN}:3001/draft`, {
+    const response = await fetch(`${SERVER_DOMAIN}:3000/draft`, {
       method: "POST",
       //crossDomain: true,
       headers: {
@@ -36,7 +36,7 @@ export const saveDraft = (draft, token, navigate) => async (dispatch) => {
 
 export const getDrafts = (token) => async (dispatch) =>{
   try {
-    const response = await fetch(`${SERVER_DOMAIN}:3001/draft`, {
+    const response = await fetch(`${SERVER_DOMAIN}:3000/draft`, {
       method: "GET",
       crossDomain: true,
       headers: {
@@ -66,7 +66,7 @@ export const getDrafts = (token) => async (dispatch) =>{
 
 export const deleteDraft = (draftId, token) => async (dispatch) => {
   try {
-    const response = await fetch(`${SERVER_DOMAIN}:3001/draft/${draftId}`, {
+    const response = await fetch(`${SERVER_DOMAIN}:3000/draft/${draftId}`, {
       method: "DELETE",
       crossDomain: true,
       headers: {

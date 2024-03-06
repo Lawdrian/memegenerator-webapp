@@ -14,7 +14,7 @@ export async function fetchImgflipTemplates() {
 export const getTemplates = (token) => async (dispatch) => {
   
   try {
-    const response = await fetch(`${SERVER_DOMAIN}:3000/template`, {
+    const response = await fetch(`${SERVER_DOMAIN}/template`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const getTemplates = (token) => async (dispatch) => {
 
 // I am using Redux Thunk here -> this function needs to be invoked with dispatch(saveTemplate(template, token))
 export const saveTemplate = (template, token) => async (dispatch) => {
-  fetch(`${SERVER_DOMAIN}:3000/template`, {
+  fetch(`${SERVER_DOMAIN}/template`, {
     method: "POST",
     //crossDomain: true,
     headers: {
@@ -66,7 +66,7 @@ export const saveTemplate = (template, token) => async (dispatch) => {
 
 
 export async function getTempRefMemes(template, token) {
-  const response = await fetch(`${SERVER_DOMAIN}:3000/template/info/${template._id}`, {
+  const response = await fetch(`${SERVER_DOMAIN}/template/info/${template._id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import { setUser } from '../slices/userSlice'
 import { SERVER_DOMAIN } from '../utils/authUtils';
 
 export const registration = (data) => {
-  fetch(`${SERVER_DOMAIN}:3000/user/registration`, {
+  fetch(`${SERVER_DOMAIN}/user/registration`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -28,7 +28,7 @@ export const registration = (data) => {
 }
 
 export const login = (data) => async (dispatch) => {
-  fetch(`${SERVER_DOMAIN}:3000/user/login`, {
+  fetch(`${SERVER_DOMAIN}/user/login`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -62,7 +62,7 @@ export const googleBackendLogin = (googleLoginResponse) => async (dispatch) => {
     .then((res) => {
       const googleIdFromGoogleOAuth = res.data.id;
 
-      fetch(`${SERVER_DOMAIN}:3001/user/api-login`, {
+      fetch(`${SERVER_DOMAIN}/user/api-login`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',

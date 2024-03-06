@@ -80,7 +80,7 @@ const options = {
     },
     servers: [
       {
-        url: `${SERVER_DOMAIN}:3000`,
+        url: `${SERVER_DOMAIN}`,
       },
     ],
   },

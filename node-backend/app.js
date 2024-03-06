@@ -53,11 +53,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
+/*
 app.use(function(req,res,next){  req.db = db;
   next();
 });
-
+*/
 
 mongoose.connect(`${MONGODB_DOMAIN}:${MONGODB_PORT}/${MONGODB_NAME}`, { 
   useNewUrlParser: true,

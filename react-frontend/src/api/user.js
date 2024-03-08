@@ -4,6 +4,8 @@ import { setUser } from '../slices/userSlice'
 import { SERVER_DOMAIN } from '../utils/authUtils';
 
 export const registration = (data) => {
+  console.log("Serverdomain", SERVER_DOMAIN)
+  console.log(process.env.REACT_APP_SERVER_DOMAIN)
   fetch(`${SERVER_DOMAIN}/user/registration`, {
     method: 'POST',
     headers: {

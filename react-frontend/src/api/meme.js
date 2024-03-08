@@ -46,7 +46,7 @@ export function getAllMemes(callBack, token) {
   })
   .then((res) => {
     if (!res.ok) {
-      throw new Error(res.statusText);
+      console.error(res.statusText);
     }
     return res.json();
   })
@@ -99,7 +99,7 @@ export async function handleCommentSubmit(meme, commentContent, token) {
     })
   });
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    console.error('Network response was not ok');
   }
   return await response.json();
 }
@@ -119,7 +119,7 @@ export function handleUpVote(memeId, token) {
   })
   .then(response => {
     if (!response.ok) {
-      throw new Error('Failed to upvote meme');
+      console.error('Failed to upvote meme');
     }
     return response.json(); 
   });
@@ -139,7 +139,7 @@ export function handleDownVote(memeId, token) {
   })
   .then(response => {
     if (!response.ok) {
-      throw new Error('Failed to downvote meme');
+      console.error('Failed to downvote meme');
     }
     return response.json(); 
   });

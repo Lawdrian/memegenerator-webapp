@@ -22,7 +22,7 @@ function FileUploadTab({ template, setTemplate }) {
       case 'video/mp4':
         return 'video';
       default:
-        throw new Error('Unsupported file format');
+        console.error('Unsupported file format');
     }
   }
 

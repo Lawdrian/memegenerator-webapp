@@ -26,7 +26,7 @@ export default function ImageToText() {
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
+                    console.error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
                 }
 
                 const result = await response.json();

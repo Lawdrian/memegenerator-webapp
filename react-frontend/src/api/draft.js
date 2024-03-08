@@ -49,10 +49,11 @@ export const getDrafts = (token) => async (dispatch) =>{
     const data = await response.json();
     if(data.error) {
       if(data.error === "Token not verified") {
-        //dispatch(setUser(null));
+        /*dispatch(setUser(null));
         setTimeout(() => {
           alert("Token expired, please login again");
         }, 1000);
+        */
       } else {
         alert("Error retrieving drafts from database")
       }

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const secretKey = crypto.randomBytes(32).toString('hex');
+const secretKey = "1231231safsda123"
+//const secretKey = crypto.randomBytes(32).toString('hex');
 
 function verifyToken(req, res, next) {
     console.log("trying to verify token");
@@ -9,6 +10,7 @@ function verifyToken(req, res, next) {
     }
 
     const token = req.header("Authorization").split(" ")[1];
+    console.log("token:", token)
 
     jwt.verify(token, secretKey, async (err, decoded) => {
         if (err) {

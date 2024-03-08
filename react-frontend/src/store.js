@@ -23,6 +23,7 @@ const store = configureStore({
   },});
 
 store.subscribe(() => {
+  console.log("store changed", store.getState().user);
   localStorage.setItem('user', JSON.stringify(store.getState().user));
 });
 

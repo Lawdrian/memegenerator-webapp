@@ -33,9 +33,8 @@ const indexRouter = require('./routes/index');
 const MONGODB_PORT = process.env.DB_PORT || '27017';
 const MONGODB_NAME = process.env.DB_NAME || 'omm-ws2223';
 const MONGODB_DOMAIN = process.env.DB_DOMAIN || `mongodb://localhost:${MONGODB_PORT}/${MONGODB_NAME}`;
-const SERVER_DOMAIN = process.env.SERVER_DOMAIN || 'http://localhost';
+const SERVER_DOMAIN = process.env.SERVER_DOMAIN || 'http://localhost:3000';
 //const db = require('monk')(`127.0.0.1:${MONGODB_PORT}/omm-ws2223`); // connect to database omm-2021
-console.log(`Connected to MongoDB at port ${MONGODB_PORT}`)
 
 
 var app = express();
@@ -58,11 +57,16 @@ app.use(function(req,res,next){  req.db = db;
   next();
 });
 */
-
-mongoose.connect(`${MONGODB_DOMAIN}`, { 
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+try {
+  mongoose.connect(`${MONGODB_DOMAIN}`, { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  console.log(`Connected to MongoDB at port ${MONGODB_PORT}`)
+  console.log(MONGODB_DOMAIN)
+} catch (error) {
+  console.log("Error while connecting to MongoDB: ", error);
+}
 
 app.use('/', indexRouter);
 app.use("/user", userRouter);

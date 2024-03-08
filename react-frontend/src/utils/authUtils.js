@@ -1,1 +1,1 @@
-export const SERVER_DOMAIN =  process.env.SERVER_DOMAIN || "http://localhost:3000";
+export const SERVER_DOMAIN =  process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:3000";

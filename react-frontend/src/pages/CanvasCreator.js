@@ -64,10 +64,6 @@ const CanvasCreator = () => {
   const dictation = useSelector((state) => state.dictation);
   const navigate = useNavigate();
 
-  if(!storeTemplates.templatesLoaded) {
-    dispatch(getTemplates(token))
-  }
-
   const imageTemplates = templates.filter(template => template.format === 'image');
 
   // this useEffect is used to update the meme name state with the spoken text from the dictation

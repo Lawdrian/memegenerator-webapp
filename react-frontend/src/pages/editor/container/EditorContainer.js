@@ -33,9 +33,6 @@ const EditorContainer = () => {
     const serverReachable = useSelector((state) => state.server.serverReachable);
     const token = useSelector((state) => state.user.token);
     const drafts = useSelector((state) => state.draft.drafts);
-    if(token && !storeTemplates.templatesLoaded) {
-      dispatch(getTemplates(token))
-    }
 
     // find the template that has been used with the draft and set it as selected template
     useEffect(() => {
